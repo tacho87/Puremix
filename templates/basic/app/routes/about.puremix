@@ -1,0 +1,118 @@
+<layout>main</layout>
+
+<head>
+  <title>About - PureMix Framework</title>
+  <meta name="description" content="Learn about PureMix Framework and its innovative approach to web development">
+</head>
+
+<loader>
+  async function loadAbout(request, actionResult) {
+    const teamMembers = [
+      {
+        name: 'Alex Developer',
+        role: 'Full Stack Engineer',
+        bio: 'Passionate about creating efficient web applications with modern frameworks.',
+        avatar: '/images/avatar-1.jpg'
+      },
+      {
+        name: 'Sarah Designer',
+        role: 'UX/UI Designer',
+        bio: 'Focused on creating beautiful and intuitive user experiences.',
+        avatar: '/images/avatar-2.jpg'
+      }
+    ];
+
+    return {
+      data: { 
+        teamMembers,
+        companyInfo: {
+          founded: '2024',
+          mission: 'To make web development more accessible and productive for everyone.',
+          values: ['Innovation', 'Simplicity', 'Community', 'Quality']
+        }
+      },
+      state: { 
+        showTeam: true 
+      }
+    };
+  }
+</loader>
+
+<div class="animate-fade-in">
+  <!-- Hero Section -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-6">
+      About PureMix
+    </h1>
+    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+      We're building the next generation of web development tools that combine 
+      the best of server-side rendering with modern component architecture.
+    </p>
+  </div>
+
+  <!-- Mission Section -->
+  <div class="card mb-8">
+    <div class="card-header">
+      <h2 class="text-2xl font-semibold text-gray-900">Our Mission</h2>
+    </div>
+    <div class="card-body">
+      <p class="text-gray-600 text-lg leading-relaxed">
+        {loadAbout.data.companyInfo.mission}
+      </p>
+    </div>
+  </div>
+
+  <!-- Values Section -->
+  <div class="card mb-8">
+    <div class="card-header">
+      <h2 class="text-2xl font-semibold text-gray-900">Our Values</h2>
+    </div>
+    <div class="card-body">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {loadAbout.data.companyInfo.values.map(value => 
+          <div class="text-center p-4 bg-primary-50 rounded-lg">
+            <div class="font-semibold text-primary-700">{value}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Section -->
+  {loadAbout.state.showTeam ? 
+    <div class="card">
+      <div class="card-header">
+        <h2 class="text-2xl font-semibold text-gray-900">Meet Our Team</h2>
+      </div>
+      <div class="card-body">
+        <div class="grid md:grid-cols-2 gap-6">
+          {loadAbout.data.teamMembers.map(member => 
+            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+              <div class="w-16 h-16 bg-gradient-to-r from-primary-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                {member.name.charAt(0)}
+              </div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-gray-900">{member.name}</h3>
+                <p class="text-primary-600 text-sm">{member.role}</p>
+                <p class="text-gray-600 text-sm mt-1">{member.bio}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  : <div></div>}
+
+  <!-- CTA Section -->
+  <div class="text-center mt-12">
+    <h3 class="text-2xl font-bold text-gray-900 mb-4">
+      Want to Join Our Mission?
+    </h3>
+    <p class="text-gray-600 mb-6">
+      Get in touch and let's build something amazing together.
+    </p>
+    <a href="/contact" class="btn-primary text-lg px-8 py-3">
+      Contact Us
+    </a>
+  </div>
+</div>

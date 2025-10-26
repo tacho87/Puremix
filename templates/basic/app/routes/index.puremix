@@ -1,0 +1,161 @@
+<layout>main</layout>
+
+<imports>
+  import WelcomeCard from '../components/WelcomeCard.puremix'
+  import FeatureCard from '../components/FeatureCard.puremix'
+</imports>
+
+<head>
+  <title>Welcome to PureMix</title>
+  <meta name="description" content="Get started with PureMix Framework - the HTML-first full-stack web framework">
+</head>
+
+<loader>
+  async function loadHome(request, actionResult) {
+    const features = [
+      {
+        id: 1,
+        title: 'HTML-First Development',
+        description: 'Build with familiar HTML syntax while getting the power of server-side rendering.',
+        icon: '📝',
+        color: 'blue'
+      },
+      {
+        id: 2,
+        title: 'Component Architecture',
+        description: 'Create reusable components with React-style props and selective updates.',
+        icon: '🧩',
+        color: 'green'
+      },
+      {
+        id: 3,
+        title: 'Python Integration',
+        description: 'Seamlessly mix JavaScript and Python in your server-side logic.',
+        icon: '🐍',
+        color: 'yellow'
+      },
+      {
+        id: 4,
+        title: 'Zero Build Complexity',
+        description: 'No bundlers, no complex tooling. Just pure development productivity.',
+        icon: '⚡',
+        color: 'purple'
+      }
+    ];
+
+    const stats = {
+      visitors: actionResult?.incrementVisitors ? 1543 : 1542,
+      components: 25,
+      routes: 8
+    };
+
+    return {
+      data: { features, stats, welcomeMessage: 'Welcome to PureMix Framework!' },
+      state: { showFeatures: true, isNewVisitor: !request.session?.visited }
+    };
+  }
+</loader>
+
+<div class="animate-fade-in relative overflow-hidden">
+  <!-- Animated Background -->
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+    <div class="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+  </div>
+  
+  <!-- Hero Section -->
+  <div class="text-center mb-12 relative">
+    <div class="mb-6">
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-primary-100 to-purple-100 text-primary-800 border border-primary-200 mb-6">
+        ✨ Now in Production
+      </span>
+    </div>
+    
+    <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 tracking-tight">
+      Build Modern Web Apps with
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-purple-600 to-pink-600 animate-gradient">
+        PureMix
+      </span>
+    </h1>
+    
+    <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
+      The HTML-first full-stack web framework that combines the simplicity of server-side rendering 
+      with the interactivity of modern JavaScript frameworks.
+    </p>
+    
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <form onsubmit="incrementVisitors" class="inline-block">
+        <button type="submit" class="btn-primary text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+          🚀 Get Started
+          <span class="ml-2 animate-bounce inline-block">→</span>
+        </button>
+      </form>
+      
+      <a href="/about" class="btn-outline text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300 hover:shadow-lg">
+        📖 Learn More
+      </a>
+    </div>
+    
+    <div class="mt-8 text-sm text-gray-500">
+      <span class="inline-flex items-center space-x-6">
+        <span>⚡ Zero Build Complexity</span>
+        <span>🔥 Hot Reload</span>
+        <span>🐍 Python + JavaScript</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Welcome Card Component -->
+  <div class="mb-12">
+    <WelcomeCard 
+      message={loadHome.data.welcomeMessage}
+      isNewVisitor={loadHome.state.isNewVisitor}
+      stats={loadHome.data.stats}
+    />
+  </div>
+
+  <!-- Features Section -->
+  {loadHome.state.showFeatures ? 
+    <div class="mb-12">
+      <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">
+        Why Choose PureMix?
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {loadHome.data.features.map(feature => 
+          <FeatureCard 
+            feature={feature}
+            key={feature.id}
+          />
+        )}
+      </div>
+    </div>
+  : <div></div>}
+
+  <!-- CTA Section -->
+  <div class="bg-gradient-to-r from-primary-50 to-purple-50 rounded-2xl p-8 text-center">
+    <h3 class="text-2xl font-bold text-gray-900 mb-4">
+      Ready to Build Something Amazing?
+    </h3>
+    <p class="text-gray-600 mb-6">
+      Start your next project with PureMix and experience the future of web development.
+    </p>
+    <a href="/contact" class="btn-primary text-lg px-8 py-3">
+      Contact Us
+    </a>
+  </div>
+</div>
+
+<script server>
+  async function incrementVisitors(formData, request) {
+    // Mark user as visited
+    request.session.visited = true;
+    
+    return {
+      success: true,
+      incrementVisitors: true,
+      message: 'Welcome! You are visitor #1543'
+    };
+  }
+</script>

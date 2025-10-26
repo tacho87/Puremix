@@ -1,0 +1,184 @@
+<loader>
+  async function loadContactForm(request, actionResult, props) {
+    return {
+      data: { 
+        submitting: actionResult?.submitting || false,
+        errors: actionResult?.errors || {}
+      },
+      state: { 
+        canSubmit: !actionResult?.submitting
+      }
+    };
+  }
+</loader>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="text-2xl font-semibold text-gray-900">Send us a Message</h2>
+  </div>
+  <div class="card-body">
+    <form onsubmit="ContactForm.ContactForm_submitMessage" class="space-y-6">
+      <!-- Name Field -->
+      <div>
+        <label class="form-label" for="name">
+          Full Name *
+        </label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-input {loadContactForm.data.errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}" 
+          placeholder="Your full name"
+          required
+        >
+        {loadContactForm.data.errors.name ? 
+          <p class="mt-1 text-sm text-red-600">{loadContactForm.data.errors.name}</p>
+        : <div></div>}
+      </div>
+
+      <!-- Email Field -->
+      <div>
+        <label class="form-label" for="email">
+          Email Address *
+        </label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="form-input {loadContactForm.data.errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}" 
+          placeholder="your.email@example.com"
+          required
+        >
+        {loadContactForm.data.errors.email ? 
+          <p class="mt-1 text-sm text-red-600">{loadContactForm.data.errors.email}</p>
+        : <div></div>}
+      </div>
+
+      <!-- Subject Field -->
+      <div>
+        <label class="form-label" for="subject">
+          Subject *
+        </label>
+        <select 
+          id="subject" 
+          name="subject" 
+          class="form-input {loadContactForm.data.errors.subject ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}"
+          required
+        >
+          <option value="">Select a subject</option>
+          <option value="general">General Inquiry</option>
+          <option value="support">Technical Support</option>
+          <option value="partnership">Partnership</option>
+          <option value="feedback">Feedback</option>
+          <option value="other">Other</option>
+        </select>
+        {loadContactForm.data.errors.subject ? 
+          <p class="mt-1 text-sm text-red-600">{loadContactForm.data.errors.subject}</p>
+        : <div></div>}
+      </div>
+
+      <!-- Message Field -->
+      <div>
+        <label class="form-label" for="message">
+          Message *
+        </label>
+        <textarea 
+          id="message" 
+          name="message" 
+          rows="4" 
+          class="form-input {loadContactForm.data.errors.message ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}" 
+          placeholder="Tell us more about your inquiry..."
+          required
+        ></textarea>
+        {loadContactForm.data.errors.message ? 
+          <p class="mt-1 text-sm text-red-600">{loadContactForm.data.errors.message}</p>
+        : <div></div>}
+      </div>
+
+      <!-- Newsletter Signup -->
+      <div class="flex items-center">
+        <input 
+          id="newsletter" 
+          name="newsletter" 
+          type="checkbox" 
+          class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+        >
+        <label for="newsletter" class="ml-2 block text-sm text-gray-700">
+          Subscribe to our newsletter for updates and tips
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-500">
+          * Required fields
+        </p>
+        
+        {loadContactForm.state.canSubmit ? 
+          <button type="submit" class="btn-primary">
+            {loadContactForm.data.submitting ? '📤 Sending...' : '📤 Send Message'}
+          </button>
+        : 
+          <button type="button" class="btn-primary opacity-50 cursor-not-allowed" disabled>
+            📤 Sending...
+          </button>
+        }
+      </div>
+    </form>
+  </div>
+</div>
+
+<script server>
+  async function submitMessage(formData, request) {
+    // Validation
+    const errors = {};
+    
+    if (!formData.name || formData.name.trim().length < 2) {
+      errors.name = 'Name must be at least 2 characters long';
+    }
+    
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    
+    if (!formData.subject) {
+      errors.subject = 'Please select a subject';
+    }
+    
+    if (!formData.message || formData.message.trim().length < 10) {
+      errors.message = 'Message must be at least 10 characters long';
+    }
+    
+    // If there are errors, return them
+    if (Object.keys(errors).length > 0) {
+      return {
+        success: false,
+        errors,
+        submitting: false
+      };
+    }
+    
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // In a real app, you would:
+    // 1. Save to database
+    // 2. Send email notification
+    // 3. Add to CRM system
+    // etc.
+    
+    console.log('📧 Contact form submitted:', {
+      name: formData.name,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+      newsletter: formData.newsletter,
+      timestamp: new Date().toISOString()
+    });
+    
+    return {
+      success: true,
+      message: `Thank you ${formData.name}! We've received your message and will get back to you soon.`
+    };
+  }
+</script>

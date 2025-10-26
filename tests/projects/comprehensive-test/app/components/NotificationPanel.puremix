@@ -1,0 +1,391 @@
+<loader>
+  async function loadNotificationPanel(request, actionResult) {
+    console.log('🔔 NotificationPanel loader called');
+    
+    // Simulate notification fetch
+    await new Promise(resolve => setTimeout(resolve, 120));
+    
+    let notifications = [
+      { id: 1, type: 'info', message: 'System maintenance scheduled for tonight', time: '2 min ago', read: false },
+      { id: 2, type: 'success', message: 'New user registration: alice@example.com', time: '5 min ago', read: false },
+      { id: 3, type: 'warning', message: 'Low disk space warning: 85% full', time: '10 min ago', read: true },
+      { id: 4, type: 'error', message: 'Failed login attempt detected', time: '15 min ago', read: true },
+      { id: 5, type: 'info', message: 'Daily backup completed successfully', time: '1 hour ago', read: true }
+    ];
+    
+    // Handle action results
+    if (actionResult?.notificationMarkedAsRead) {
+      notifications = notifications.map(n => 
+        n.id === actionResult.notificationId 
+          ? { ...n, read: true }
+          : n
+      );
+    }
+    
+    if (actionResult?.notificationAdded) {
+      notifications.unshift({
+        id: Date.now(),
+        type: actionResult.newNotification.type,
+        message: actionResult.newNotification.message,
+        time: 'just now',
+        read: false
+      });
+    }
+    
+    if (actionResult?.allMarkedAsRead) {
+      notifications = notifications.map(n => ({ ...n, read: true }));
+    }
+    
+    const unreadCount = notifications.filter(n => !n.read).length;
+    
+    return {
+      data: { 
+        notifications,
+        unreadCount,
+        lastUpdated: new Date().toLocaleTimeString()
+      },
+      state: { 
+        hasUnread: unreadCount > 0,
+        canMarkAllRead: unreadCount > 0,
+        showAddForm: false
+      }
+    };
+  }
+</loader>
+
+<div class="notification-panel">
+  <div class="panel-header">
+    <h3>🔔 Notifications</h3>
+    <div class="notification-count">
+      {loadNotificationPanel.data.unreadCount > 0 ? 
+        <span class="unread-badge">{loadNotificationPanel.data.unreadCount}</span>
+      : <span></span>}
+    </div>
+  </div>
+  
+  <div class="panel-actions">
+    <button onclick="NotificationPanel.markAllAsRead" 
+            class="btn-mark-all {loadNotificationPanel.state.canMarkAllRead ? '' : 'disabled'}">
+      ✅ Mark All Read
+    </button>
+    <button onclick="NotificationPanel.toggleAddForm" class="btn-add">
+      ➕ Add Notification
+    </button>
+    <button onclick="NotificationPanel.refreshNotifications" class="btn-refresh">
+      🔄 Refresh
+    </button>
+  </div>
+  
+  {loadNotificationPanel.state.showAddForm ? 
+    <form onsubmit="NotificationPanel.addNotification" class="add-notification-form">
+      <select name="type" required>
+        <option value="">Select Type</option>
+        <option value="info">Info</option>
+        <option value="success">Success</option>
+        <option value="warning">Warning</option>
+        <option value="error">Error</option>
+      </select>
+      <input name="message" placeholder="Notification message..." required>
+      <div class="form-buttons">
+        <button type="submit" class="btn-submit">Add</button>
+        <button type="button" onclick="NotificationPanel.cancelAdd" class="btn-cancel">Cancel</button>
+      </div>
+    </form>
+  : <div></div>}
+  
+  <div class="notifications-list">
+    {loadNotificationPanel.data.notifications.map(notification => 
+      <div class="notification-item {notification.read ? 'read' : 'unread'} {notification.type}">
+        <div class="notification-icon">
+          {notification.type === 'info' ? <span>💡</span> : <span>🔔</span>}
+          {notification.type === 'success' ? <span>✅</span> : <span></span>}
+          {notification.type === 'warning' ? <span>⚠️</span> : <span></span>}
+          {notification.type === 'error' ? <span>❌</span> : <span></span>}
+        </div>
+        <div class="notification-content">
+          <div class="notification-message">{notification.message}</div>
+          <div class="notification-time">{notification.time}</div>
+        </div>
+        <div class="notification-actions">
+          {!notification.read ? 
+            <button onclick="NotificationPanel.markAsRead" 
+                    data-id="{notification.id}" 
+                    class="btn-mark-read">
+              👁️ Read
+            </button>
+          : <span></span>}
+        </div>
+      </div>
+    )}
+  </div>
+  
+  <div class="panel-footer">
+    <small>Last updated: {loadNotificationPanel.data.lastUpdated}</small>
+  </div>
+</div>
+
+<script server>
+  async function markAsRead(formData, request) {
+    console.log('👁️ NotificationPanel.markAsRead called:', formData);
+    
+    const notificationId = parseInt(formData.id);
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    return {
+      success: true,
+      notificationMarkedAsRead: true,
+      notificationId: notificationId,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Notification marked as read'
+    };
+  }
+  
+  async function markAllAsRead(formData, request) {
+    console.log('✅ NotificationPanel.markAllAsRead called');
+    
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    return {
+      success: true,
+      allMarkedAsRead: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'All notifications marked as read'
+    };
+  }
+  
+  async function addNotification(formData, request) {
+    console.log('➕ NotificationPanel.addNotification called:', formData);
+    
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    return {
+      success: true,
+      notificationAdded: true,
+      newNotification: {
+        type: formData.type,
+        message: formData.message
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Notification added successfully'
+    };
+  }
+  
+  async function toggleAddForm(formData, request) {
+    console.log('🔄 NotificationPanel.toggleAddForm called');
+    
+    return {
+      success: true,
+      toggleForm: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Form toggled'
+    };
+  }
+  
+  async function cancelAdd(formData, request) {
+    console.log('❌ NotificationPanel.cancelAdd called');
+    
+    return {
+      success: true,
+      formCancelled: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Add form cancelled'
+    };
+  }
+  
+  async function refreshNotifications(formData, request) {
+    console.log('🔄 NotificationPanel.refreshNotifications called');
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    return {
+      success: true,
+      refreshed: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Notifications refreshed'
+    };
+  }
+</script>
+
+<style>
+  .notification-panel {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  
+  .panel-header {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .panel-header h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  .unread-badge {
+    background: #ef4444;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .panel-actions {
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .btn-mark-all, .btn-add, .btn-refresh {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-mark-all {
+    background: #10b981;
+    color: white;
+  }
+  
+  .btn-mark-all.disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  .btn-add {
+    background: #3b82f6;
+    color: white;
+  }
+  
+  .btn-refresh {
+    background: #6b7280;
+    color: white;
+  }
+  
+  .add-notification-form {
+    padding: 12px;
+    background: #fef3c7;
+    border-bottom: 1px solid #fbbf24;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .add-notification-form select, .add-notification-form input {
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .form-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-submit, .btn-cancel {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .btn-submit {
+    background: #059669;
+    color: white;
+  }
+  
+  .btn-cancel {
+    background: #6b7280;
+    color: white;
+  }
+  
+  .notifications-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .notification-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+  }
+  
+  .notification-item:hover {
+    background: #f8fafc;
+  }
+  
+  .notification-item.unread {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+  }
+  
+  .notification-item.read {
+    opacity: 0.7;
+  }
+  
+  .notification-icon {
+    font-size: 20px;
+    width: 30px;
+    text-align: center;
+  }
+  
+  .notification-content {
+    flex: 1;
+  }
+  
+  .notification-message {
+    font-size: 14px;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+  
+  .notification-time {
+    font-size: 12px;
+    color: #6b7280;
+  }
+  
+  .btn-mark-read {
+    padding: 4px 8px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-mark-read:hover {
+    background: #d1d5db;
+  }
+  
+  .panel-footer {
+    padding: 8px 12px;
+    background: #f1f5f9;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .panel-footer small {
+    color: #64748b;
+    font-size: 11px;
+  }
+</style>

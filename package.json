@@ -1,0 +1,66 @@
+{
+  "name": "puremix",
+  "version": "0.0.1",
+  "description": "HTML-first full-stack framework with seamless Python integration",
+  "main": "lib/puremix-engine.ts",
+  "type": "module",
+  "bin": {
+    "puremix": "./puremix"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:verbose": "jest --verbose",
+    "test:multiconfig": "jest --verbose --logHeapUsage --silent --colors     ",
+    "dev": "node cli/dev.ts",
+    "start": "node cli/puremix.ts start",
+    "create": "node cli/create.ts",
+    "build": "echo 'No build needed - Node.js 22+ runs TypeScript natively'",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "commander": "^12.1.0",
+    "cookie-parser": "^1.4.6",
+    "csso": "^5.0.5",
+    "esbuild": "^0.24.0",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "formidable": "^3.5.4",
+    "html-minifier-terser": "^7.2.0",
+    "javascript-obfuscator": "^4.0.2",
+    "terser": "^5.36.0",
+    "vm2": "^3.9.19",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [
+    "framework",
+    "fullstack",
+    "python",
+    "html",
+    "web",
+    "nodejs",
+    "express",
+    "typescript"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/puremix/puremix.git"
+  },
+  "author": "Anastacio Gianareas <agianareas@devpath.io>"
+}

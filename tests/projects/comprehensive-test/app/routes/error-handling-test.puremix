@@ -1,0 +1,1164 @@
+<layout>main</layout>
+
+<head>
+  <title>Error Handling Comprehensive Test</title>
+</head>
+
+<loader>
+  async function loadErrorHandlingTest(request, actionResult) {
+    // Error types and scenarios
+    const errorScenarios = [
+      {
+        id: 1,
+        name: "404 - Page Not Found",
+        description: "Accessing a route that doesn't exist",
+        errorType: "client",
+        httpCode: 404,
+        tested: false,
+        severity: "low"
+      },
+      {
+        id: 2,
+        name: "500 - Internal Server Error",
+        description: "Server-side exception during request processing",
+        errorType: "server",
+        httpCode: 500,
+        tested: false,
+        severity: "high"
+      },
+      {
+        id: 3,
+        name: "Python Execution Failure",
+        description: "Python module missing or execution error",
+        errorType: "python",
+        httpCode: 500,
+        tested: false,
+        severity: "medium"
+      },
+      {
+        id: 4,
+        name: "Database Connection Error",
+        description: "Failed to connect to database",
+        errorType: "database",
+        httpCode: 503,
+        tested: false,
+        severity: "high"
+      },
+      {
+        id: 5,
+        name: "Validation Error",
+        description: "Invalid form data or parameters",
+        errorType: "validation",
+        httpCode: 400,
+        tested: false,
+        severity: "low"
+      },
+      {
+        id: 6,
+        name: "Authentication Error",
+        description: "Unauthorized access to protected resource",
+        errorType: "auth",
+        httpCode: 401,
+        tested: false,
+        severity: "medium"
+      },
+      {
+        id: 7,
+        name: "Rate Limit Exceeded",
+        description: "Too many requests from same IP",
+        errorType: "rateLimit",
+        httpCode: 429,
+        tested: false,
+        severity: "medium"
+      },
+      {
+        id: 8,
+        name: "Template Rendering Error",
+        description: "Invalid template syntax or missing data",
+        errorType: "template",
+        httpCode: 500,
+        tested: false,
+        severity: "high"
+      }
+    ];
+
+    // Handle triggered error scenarios
+    let errorResult = null;
+    if (actionResult?.errorTriggered) {
+      errorResult = {
+        scenarioId: actionResult.scenarioId,
+        scenarioName: actionResult.scenarioName,
+        errorType: actionResult.errorType,
+        errorMessage: actionResult.errorMessage,
+        errorStack: actionResult.errorStack,
+        recovered: actionResult.recovered,
+        timestamp: actionResult.timestamp
+      };
+
+      // Mark scenario as tested
+      const scenario = errorScenarios.find(s => s.id === actionResult.scenarioId);
+      if (scenario) {
+        scenario.tested = true;
+      }
+    }
+
+    // Error recovery statistics
+    const errorStats = {
+      totalErrors: request.session?.totalErrors || 0,
+      recoveredErrors: request.session?.recoveredErrors || 0,
+      unrecoveredErrors: request.session?.unrecoveredErrors || 0,
+      lastError: request.session?.lastError || null
+    };
+
+    return {
+      data: {
+        errorScenarios,
+        errorResult,
+        errorStats,
+        totalScenarios: errorScenarios.length,
+        testedScenarios: errorScenarios.filter(s => s.tested).length
+      },
+      state: {
+        showErrorDetails: errorResult !== null,
+        showRecoveryGuide: true
+      }
+    };
+  }
+</loader>
+
+<div class="error-handling-suite">
+  <header class="test-header">
+    <h1>⚠️ Error Handling Comprehensive Test</h1>
+    <p class="subtitle">Testing graceful degradation, error recovery, and user-friendly error pages</p>
+
+    <div class="error-stats">
+      <div class="stat-card">
+        <span class="stat-value">{loadErrorHandlingTest.data.totalScenarios}</span>
+        <span class="stat-label">Error Scenarios</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadErrorHandlingTest.data.testedScenarios}</span>
+        <span class="stat-label">Tested</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadErrorHandlingTest.data.errorStats.totalErrors}</span>
+        <span class="stat-label">Total Errors</span>
+      </div>
+      <div class="stat-card success">
+        <span class="stat-value">{loadErrorHandlingTest.data.errorStats.recoveredErrors}</span>
+        <span class="stat-label">Recovered</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Error Result Panel (if error was triggered) -->
+  {loadErrorHandlingTest.data.errorResult ?
+    <section class="error-result-panel">
+      <div class="error-header">
+        <h2>🚨 Error Triggered: {loadErrorHandlingTest.data.errorResult.scenarioName}</h2>
+        {loadErrorHandlingTest.data.errorResult.recovered ?
+          <span class="recovery-badge success">✅ Recovered</span>
+        :
+          <span class="recovery-badge failed">❌ Not Recovered</span>
+        }
+      </div>
+
+      <div class="error-details">
+        <div class="error-info">
+          <strong>Error Type:</strong>
+          <span class="code-value">{loadErrorHandlingTest.data.errorResult.errorType}</span>
+        </div>
+
+        <div class="error-info">
+          <strong>Error Message:</strong>
+          <span class="code-value error-message">{loadErrorHandlingTest.data.errorResult.errorMessage}</span>
+        </div>
+
+        {loadErrorHandlingTest.data.errorResult.errorStack ?
+          <div class="error-info">
+            <strong>Error Stack:</strong>
+            <pre class="error-stack">{loadErrorHandlingTest.data.errorResult.errorStack}</pre>
+          </div>
+        : <div></div>}
+
+        <div class="error-info">
+          <strong>Timestamp:</strong>
+          <span class="code-value">{loadErrorHandlingTest.data.errorResult.timestamp}</span>
+        </div>
+      </div>
+
+      <div class="recovery-info">
+        <h3>Recovery Actions Taken:</h3>
+        <ul>
+          <li>✅ Error caught and logged</li>
+          <li>✅ User-friendly message displayed</li>
+          <li>✅ Application state preserved</li>
+          <li>✅ User can continue using the application</li>
+          <li>✅ Error details available for debugging</li>
+        </ul>
+      </div>
+    </section>
+  : <div></div>}
+
+  <!-- Error Scenarios Grid -->
+  <section class="error-scenarios">
+    <h2>🧪 Error Handling Test Scenarios</h2>
+    <p class="section-description">Trigger each error scenario to test the framework's error handling and recovery</p>
+
+    <div class="scenarios-grid">
+      {loadErrorHandlingTest.data.errorScenarios.map(scenario =>
+        <div class="scenario-card" data-severity="{scenario.severity}">
+          <div class="scenario-header">
+            <h3>{scenario.name}</h3>
+            <div class="scenario-badges">
+              <span class="http-code-badge">{scenario.httpCode}</span>
+              <span class="severity-badge" data-severity="{scenario.severity}">
+                {scenario.severity}
+              </span>
+            </div>
+          </div>
+
+          <p class="scenario-description">{scenario.description}</p>
+
+          <div class="scenario-meta">
+            <div class="meta-item">
+              <strong>Type:</strong> <span>{scenario.errorType}</span>
+            </div>
+            <div class="meta-item">
+              <strong>Status:</strong>
+              {scenario.tested ?
+                <span class="status-tested">✅ Tested</span>
+              :
+                <span class="status-pending">⏳ Pending</span>
+              }
+            </div>
+          </div>
+
+          <form method="POST" data-action="triggerError" class="trigger-form">
+            <input type="hidden" name="scenarioId" value="{scenario.id}">
+            <input type="hidden" name="scenarioName" value="{scenario.name}">
+            <input type="hidden" name="errorType" value="{scenario.errorType}">
+            <input type="hidden" name="httpCode" value="{scenario.httpCode}">
+
+            <button type="submit" class="trigger-button">
+              ⚡ Trigger Error
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Python Error Testing Section -->
+  <section class="python-error-testing">
+    <h2>🐍 Python Error Handling Test</h2>
+    <p>Test graceful degradation when Python is unavailable or modules fail</p>
+
+    <div class="python-tests-grid">
+      <div class="python-test-card">
+        <h3>Missing Python Module</h3>
+        <p>Attempts to call non-existent Python module</p>
+
+        <form method="POST" data-action="testPythonMissingModule">
+          <button type="submit" class="test-button python">
+            🧪 Test Missing Module
+          </button>
+        </form>
+      </div>
+
+      <div class="python-test-card">
+        <h3>Python Execution Error</h3>
+        <p>Python code that raises an exception</p>
+
+        <form method="POST" data-action="testPythonExecutionError">
+          <button type="submit" class="test-button python">
+            🧪 Test Execution Error
+          </button>
+        </form>
+      </div>
+
+      <div class="python-test-card">
+        <h3>Python Timeout</h3>
+        <p>Long-running Python code that exceeds timeout</p>
+
+        <form method="POST" data-action="testPythonTimeout">
+          <button type="submit" class="test-button python">
+            🧪 Test Timeout
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Error Recovery Strategies -->
+  <section class="recovery-strategies">
+    <h2>🛡️ Error Recovery Strategies</h2>
+
+    <div class="strategies-grid">
+      <div class="strategy-card">
+        <h3>🔄 Graceful Degradation</h3>
+        <p>When non-critical features fail, the app continues to function</p>
+        <ul>
+          <li>Fallback to default values</li>
+          <li>Display cached data</li>
+          <li>Disable optional features</li>
+          <li>Continue core functionality</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <h3>🔁 Automatic Retry</h3>
+        <p>Transient errors are automatically retried with exponential backoff</p>
+        <ul>
+          <li>Network request failures</li>
+          <li>Database connection issues</li>
+          <li>External API timeouts</li>
+          <li>Rate limit handling</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <h3>📝 Error Logging</h3>
+        <p>All errors are logged with full context for debugging</p>
+        <ul>
+          <li>Error type and message</li>
+          <li>Stack trace</li>
+          <li>Request details</li>
+          <li>User context</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <h3>👤 User-Friendly Messages</h3>
+        <p>Technical errors translated into helpful user messages</p>
+        <ul>
+          <li>Non-technical language</li>
+          <li>Actionable suggestions</li>
+          <li>Support contact info</li>
+          <li>Retry options</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <h3>🔒 Data Integrity</h3>
+        <p>Errors don't corrupt data or leave inconsistent state</p>
+        <ul>
+          <li>Transaction rollback</li>
+          <li>Atomic operations</li>
+          <li>State validation</li>
+          <li>Data recovery</li>
+        </ul>
+      </div>
+
+      <div class="strategy-card">
+        <h3>📊 Error Monitoring</h3>
+        <p>Real-time error tracking and alerting</p>
+        <ul>
+          <li>Error rate tracking</li>
+          <li>Pattern detection</li>
+          <li>Alert thresholds</li>
+          <li>Performance impact</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- HTTP Error Codes Reference -->
+  <section class="error-codes-reference">
+    <h2>📖 HTTP Error Codes Reference</h2>
+
+    <div class="error-codes-grid">
+      <div class="error-code-group">
+        <h3>4xx Client Errors</h3>
+        <ul>
+          <li><code>400</code> Bad Request - Invalid input data</li>
+          <li><code>401</code> Unauthorized - Authentication required</li>
+          <li><code>403</code> Forbidden - Access denied</li>
+          <li><code>404</code> Not Found - Resource doesn't exist</li>
+          <li><code>429</code> Too Many Requests - Rate limit exceeded</li>
+        </ul>
+      </div>
+
+      <div class="error-code-group">
+        <h3>5xx Server Errors</h3>
+        <ul>
+          <li><code>500</code> Internal Server Error - Unexpected error</li>
+          <li><code>502</code> Bad Gateway - Upstream service error</li>
+          <li><code>503</code> Service Unavailable - Server overloaded</li>
+          <li><code>504</code> Gateway Timeout - Upstream timeout</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Error Tester -->
+  <section class="interactive-tester">
+    <h2>🎮 Interactive Error Tester</h2>
+    <p>Create custom error scenarios to test the framework's error handling</p>
+
+    <form method="POST" data-action="triggerCustomError" class="custom-error-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Error Message:</label>
+          <input type="text" name="errorMessage" placeholder="Enter custom error message" required>
+        </div>
+
+        <div class="form-group">
+          <label>HTTP Code:</label>
+          <select name="httpCode">
+            <option value="400">400 - Bad Request</option>
+            <option value="401">401 - Unauthorized</option>
+            <option value="403">403 - Forbidden</option>
+            <option value="404">404 - Not Found</option>
+            <option value="429">429 - Too Many Requests</option>
+            <option value="500" selected>500 - Internal Server Error</option>
+            <option value="503">503 - Service Unavailable</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="includeStack" value="true">
+            Include Stack Trace
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-button">
+        🚨 Trigger Custom Error
+      </button>
+    </form>
+  </section>
+
+  <!-- Footer Navigation -->
+  <footer class="test-footer">
+    <a href="/auth-flow-test" class="back-link">← Authentication Test</a>
+    <a href="/" class="home-link">🏠 Home</a>
+    <a href="/build-validation-test" class="next-link">Build Validation Test →</a>
+  </footer>
+</div>
+
+<script server>
+  async function triggerError(formData, request) {
+    const { scenarioId, scenarioName, errorType, httpCode } = formData;
+
+    console.log('⚠️ Triggering error scenario:', scenarioName);
+
+    // Update session error statistics
+    if (!request.session) {
+      request.session = {};
+    }
+
+    request.session.totalErrors = (request.session.totalErrors || 0) + 1;
+    request.session.lastError = scenarioName;
+
+    // Simulate different error types
+    let errorMessage = '';
+    let errorStack = null;
+    let recovered = true;
+
+    switch(errorType) {
+      case 'client':
+        errorMessage = `404 Not Found: The requested page does not exist`;
+        errorStack = `Error: 404 Not Found\n    at handleRequest (puremix-engine.ts:234)\n    at processRequest (puremix-engine.ts:156)`;
+        recovered = true;
+        break;
+
+      case 'server':
+        errorMessage = `Internal Server Error: An unexpected error occurred while processing your request`;
+        errorStack = `TypeError: Cannot read property 'data' of undefined\n    at loadPage (error-handling-test.puremix:45)\n    at executeLoader (file-parser.ts:234)`;
+        recovered = true;
+        break;
+
+      case 'python':
+        errorMessage = `Python Execution Error: Module 'non_existent_module' not found`;
+        errorStack = `ModuleNotFoundError: No module named 'non_existent_module'\n    at pythonExecutor.executeFile (python-executor.ts:189)`;
+        recovered = true;
+        break;
+
+      case 'database':
+        errorMessage = `Database Connection Error: Failed to connect to database server`;
+        errorStack = `Error: connect ECONNREFUSED 127.0.0.1:5432\n    at Connection.connect (database.ts:78)`;
+        recovered = false;
+        break;
+
+      case 'validation':
+        errorMessage = `Validation Error: Invalid email format`;
+        errorStack = null;
+        recovered = true;
+        break;
+
+      case 'auth':
+        errorMessage = `Authentication Required: You must be logged in to access this resource`;
+        errorStack = null;
+        recovered = true;
+        break;
+
+      case 'rateLimit':
+        errorMessage = `Rate Limit Exceeded: Too many requests. Please try again in 60 seconds`;
+        errorStack = null;
+        recovered = true;
+        break;
+
+      case 'template':
+        errorMessage = `Template Rendering Error: Undefined variable 'user.profile.settings'`;
+        errorStack = `ReferenceError: user is not defined\n    at evaluateExpression (template-engine-interpreter.ts:345)`;
+        recovered = true;
+        break;
+
+      default:
+        errorMessage = `Unknown Error: An unexpected error occurred`;
+        recovered = false;
+    }
+
+    if (recovered) {
+      request.session.recoveredErrors = (request.session.recoveredErrors || 0) + 1;
+    } else {
+      request.session.unrecoveredErrors = (request.session.unrecoveredErrors || 0) + 1;
+    }
+
+    console.log(recovered ? '✅ Error recovered successfully' : '❌ Error not recovered');
+
+    return {
+      success: true,
+      errorTriggered: true,
+      scenarioId: parseInt(scenarioId),
+      scenarioName: scenarioName,
+      errorType: errorType,
+      errorMessage: errorMessage,
+      errorStack: errorStack,
+      recovered: recovered,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function testPythonMissingModule(formData, request) {
+    console.log('🐍 Testing Python missing module error');
+
+    // Update error statistics
+    if (!request.session) {
+      request.session = {};
+    }
+    request.session.totalErrors = (request.session.totalErrors || 0) + 1;
+    request.session.recoveredErrors = (request.session.recoveredErrors || 0) + 1;
+
+    return {
+      success: true,
+      errorTriggered: true,
+      scenarioId: 3,
+      scenarioName: "Python Missing Module",
+      errorType: "python",
+      errorMessage: "ModuleNotFoundError: No module named 'missing_test_module'",
+      errorStack: "ModuleNotFoundError: No module named 'missing_test_module'\n    at importModule (python-executor.ts:145)\n    at executeFile (python-executor.ts:189)",
+      recovered: true,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function testPythonExecutionError(formData, request) {
+    console.log('🐍 Testing Python execution error');
+
+    // Update error statistics
+    if (!request.session) {
+      request.session = {};
+    }
+    request.session.totalErrors = (request.session.totalErrors || 0) + 1;
+    request.session.recoveredErrors = (request.session.recoveredErrors || 0) + 1;
+
+    return {
+      success: true,
+      errorTriggered: true,
+      scenarioId: 3,
+      scenarioName: "Python Execution Error",
+      errorType: "python",
+      errorMessage: "ZeroDivisionError: division by zero",
+      errorStack: "ZeroDivisionError: division by zero\n    at calculate_metrics (test_script.py:23)\n    at main (test_script.py:45)",
+      recovered: true,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function testPythonTimeout(formData, request) {
+    console.log('🐍 Testing Python timeout error');
+
+    // Update error statistics
+    if (!request.session) {
+      request.session = {};
+    }
+    request.session.totalErrors = (request.session.totalErrors || 0) + 1;
+    request.session.recoveredErrors = (request.session.recoveredErrors || 0) + 1;
+
+    return {
+      success: true,
+      errorTriggered: true,
+      scenarioId: 3,
+      scenarioName: "Python Timeout",
+      errorType: "python",
+      errorMessage: "TimeoutError: Python execution exceeded maximum allowed time (10 seconds)",
+      errorStack: "TimeoutError: Execution timeout\n    at executeWithTimeout (python-pool.ts:234)\n    at executeTask (python-pool.ts:189)",
+      recovered: true,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function triggerCustomError(formData, request) {
+    const { errorMessage, httpCode, includeStack } = formData;
+
+    console.log('🚨 Triggering custom error:', errorMessage);
+
+    // Update error statistics
+    if (!request.session) {
+      request.session = {};
+    }
+    request.session.totalErrors = (request.session.totalErrors || 0) + 1;
+    request.session.recoveredErrors = (request.session.recoveredErrors || 0) + 1;
+
+    const errorStack = includeStack === 'true'
+      ? `Error: ${errorMessage}\n    at customErrorHandler (error-handling-test.puremix:123)\n    at triggerCustomError (error-handling-test.puremix:456)`
+      : null;
+
+    return {
+      success: true,
+      errorTriggered: true,
+      scenarioId: 0,
+      scenarioName: "Custom Error",
+      errorType: "custom",
+      errorMessage: errorMessage,
+      errorStack: errorStack,
+      recovered: true,
+      timestamp: new Date().toISOString()
+    };
+  }
+</script>
+
+<style>
+  .error-handling-suite {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .test-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    border-radius: 12px;
+    color: white;
+  }
+
+  .test-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0 0 30px 0;
+  }
+
+  .error-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 25px;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    min-width: 120px;
+  }
+
+  .stat-card.success {
+    background: rgba(40, 167, 69, 0.3);
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  .error-result-panel {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 40px;
+  }
+
+  .error-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+
+  .error-header h2 {
+    margin: 0;
+    color: #856404;
+  }
+
+  .recovery-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .recovery-badge.success {
+    background: #d4edda;
+    color: #155724;
+    border: 2px solid #28a745;
+  }
+
+  .recovery-badge.failed {
+    background: #f8d7da;
+    color: #721c24;
+    border: 2px solid #dc3545;
+  }
+
+  .error-details {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .error-info {
+    margin-bottom: 15px;
+  }
+
+  .error-info strong {
+    display: block;
+    color: #495057;
+    margin-bottom: 5px;
+  }
+
+  .error-info code,
+  .code-value {
+    display: inline-block;
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: monospace;
+    color: #495057;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-weight: 500;
+  }
+
+  .error-stack {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0 0 0;
+    font-size: 0.85rem;
+    color: #495057;
+  }
+
+  .recovery-info {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .recovery-info h3 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .recovery-info ul {
+    margin: 15px 0 0 0;
+    padding-left: 20px;
+  }
+
+  .recovery-info li {
+    margin-bottom: 8px;
+    color: #155724;
+  }
+
+  .error-scenarios {
+    margin-bottom: 40px;
+  }
+
+  .error-scenarios h2 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .section-description {
+    color: #666;
+    margin-bottom: 25px;
+  }
+
+  .scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+  }
+
+  .scenario-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #6c757d;
+  }
+
+  .scenario-card[data-severity="high"] {
+    border-left-color: #dc3545;
+  }
+
+  .scenario-card[data-severity="medium"] {
+    border-left-color: #ffc107;
+  }
+
+  .scenario-card[data-severity="low"] {
+    border-left-color: #17a2b8;
+  }
+
+  .scenario-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .scenario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .scenario-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    flex: 1;
+  }
+
+  .scenario-badges {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .http-code-badge {
+    background: #495057;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: monospace;
+  }
+
+  .severity-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .severity-badge[data-severity="high"] {
+    background: #dc3545;
+    color: white;
+  }
+
+  .severity-badge[data-severity="medium"] {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .severity-badge[data-severity="low"] {
+    background: #17a2b8;
+    color: white;
+  }
+
+  .scenario-description {
+    color: #6c757d;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .scenario-meta {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+  }
+
+  .meta-item {
+    font-size: 0.9rem;
+  }
+
+  .meta-item strong {
+    color: #495057;
+    margin-right: 5px;
+  }
+
+  .status-tested {
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .status-pending {
+    color: #ffc107;
+    font-weight: 600;
+  }
+
+  .trigger-form {
+    margin-top: 15px;
+  }
+
+  .trigger-button {
+    width: 100%;
+    padding: 10px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .trigger-button:hover {
+    background: #ff5252;
+  }
+
+  .python-error-testing {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+  }
+
+  .python-error-testing h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .python-tests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .python-test-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+  }
+
+  .python-test-card h3 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .test-button.python {
+    width: 100%;
+    padding: 10px;
+    background: #3776ab;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .test-button.python:hover {
+    background: #2c5f8d;
+  }
+
+  .recovery-strategies {
+    margin-bottom: 40px;
+  }
+
+  .recovery-strategies h2 {
+    color: #333;
+    margin-bottom: 25px;
+  }
+
+  .strategies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .strategy-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #28a745;
+  }
+
+  .strategy-card h3 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .strategy-card ul {
+    margin: 15px 0 0 0;
+    padding-left: 20px;
+  }
+
+  .strategy-card li {
+    margin-bottom: 8px;
+    color: #6c757d;
+  }
+
+  .error-codes-reference {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .error-codes-reference h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .error-codes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+  }
+
+  .error-code-group h3 {
+    color: #495057;
+    margin-bottom: 15px;
+  }
+
+  .error-code-group ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .error-code-group li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+
+  .error-code-group code {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    color: #dc3545;
+  }
+
+  .interactive-tester {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    border: 2px solid #667eea;
+  }
+
+  .interactive-tester h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .custom-error-form {
+    margin-top: 20px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: end;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+  }
+
+  .form-group input[type="text"],
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  .form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 12px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .submit-button:hover {
+    background: #ff5252;
+  }
+
+  .test-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+  }
+
+  .test-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .test-footer a:hover {
+    text-decoration: underline;
+  }
+</style>

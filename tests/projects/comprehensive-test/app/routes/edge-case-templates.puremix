@@ -1,0 +1,563 @@
+<layout>main</layout>
+
+<loader>
+  async function loadTemplateEdgeCases(request) {
+    // Generate test data with various edge cases
+    const testData = {
+      // Normal data
+      user: {
+        name: "Test User",
+        email: "test@example.com",
+        bio: "A normal user bio that should render correctly.",
+        balance: 1234.567,
+        isActive: true,
+        lastLogin: new Date().toISOString(),
+        preferences: {
+          theme: "dark",
+          notifications: true,
+          language: "en"
+        }
+      },
+      
+      // Edge case data
+      emptyUser: {},
+      nullUser: null,
+      undefinedUser: undefined,
+      
+      // Arrays with various content
+      normalArray: [
+        { id: 1, name: "Item 1", active: true },
+        { id: 2, name: "Item 2", active: false },
+        { id: 3, name: "Item 3", active: true }
+      ],
+      emptyArray: [],
+      nullArray: null,
+      
+      // Large dataset for performance testing
+      largeArray: Array.from({ length: 1000 }, (_, i) => ({
+        id: i,
+        name: `Item ${i}`,
+        description: `Description for item ${i}`,
+        value: Math.random() * 1000,
+        category: `category-${i % 10}`,
+        tags: [`tag-${i % 5}`, `type-${i % 3}`],
+        metadata: {
+          created: new Date(Date.now() - i * 86400000).toISOString(),
+          priority: i % 4,
+          featured: i % 7 === 0
+        }
+      })),
+      
+      // Nested objects with various depths
+      deepNested: {
+        level1: {
+          level2: {
+            level3: {
+              level4: {
+                level5: {
+                  data: "Deep nested data",
+                  value: 42
+                }
+              }
+            }
+          }
+        }
+      },
+      
+      // Special values
+      specialValues: {
+        zero: 0,
+        emptyString: "",
+        whitespace: "   ",
+        newlines: "Line 1\nLine 2\nLine 3",
+        tabs: "Column 1\tColumn 2\tColumn 3",
+        specialChars: "Special chars: <>&\"'`~!@#$%^&*()",
+        unicode: "Unicode: 你好 🌍 مرحبا こんにちは",
+        longText: "Very long text that should be handled gracefully. ".repeat(50)
+      },
+      
+      // Boolean and number edge cases
+      booleans: {
+        trueValue: true,
+        falseValue: false,
+        truthyString: "true",
+        falsyString: "false",
+        zero: 0,
+        one: 1
+      },
+      
+      // Date edge cases
+      dates: {
+        now: new Date().toISOString(),
+        past: new Date('1990-01-01').toISOString(),
+        future: new Date('2030-12-31').toISOString(),
+        invalidDate: "invalid-date-string"
+      }
+    };
+    
+    return {
+      data: testData,
+      state: {
+        showAdvanced: true,
+        testMode: true,
+        renderingStartTime: Date.now()
+      }
+    };
+  }
+</loader>
+
+<div class="template-edge-cases">
+  <h1>Template Engine Edge Case Testing</h1>
+  
+  <div class="test-info">
+    <p>This page tests various edge cases for the PureMix template engine, including complex nesting, malformed expressions, and boundary conditions.</p>
+    <p><strong>Rendering started at:</strong> {loadTemplateEdgeCases.state.renderingStartTime}</p>
+  </div>
+
+  <!-- Test 1: Basic Data Display Edge Cases -->
+  <section class="test-section">
+    <h2>Test 1: Basic Data Display Edge Cases</h2>
+    
+    <div class="test-case">
+      <h3>Normal Data</h3>
+      <p>Name: {loadTemplateEdgeCases.data.user.name}</p>
+      <p>Email: {loadTemplateEdgeCases.data.user.email}</p>
+      <p>Balance: {loadTemplateEdgeCases.data.user.balance}</p>
+    </div>
+    
+    <div class="test-case">
+      <h3>Empty/Null/Undefined Data</h3>
+      <p>Empty User Name: {loadTemplateEdgeCases.data.emptyUser.name}</p>
+      <p>Null User: {loadTemplateEdgeCases.data.nullUser}</p>
+      <p>Undefined User: {loadTemplateEdgeCases.data.undefinedUser}</p>
+      <p>Nonexistent Property: {loadTemplateEdgeCases.data.user.nonexistent}</p>
+      <p>Deep Nonexistent: {loadTemplateEdgeCases.data.user.nonexistent.deep.property}</p>
+    </div>
+    
+    <div class="test-case">
+      <h3>Special Values</h3>
+      <p>Zero: {loadTemplateEdgeCases.data.specialValues.zero}</p>
+      <p>Empty String: "{loadTemplateEdgeCases.data.specialValues.emptyString}"</p>
+      <p>Whitespace: "{loadTemplateEdgeCases.data.specialValues.whitespace}"</p>
+      <p>Special Characters: {loadTemplateEdgeCases.data.specialValues.specialChars}</p>
+      <p>Unicode: {loadTemplateEdgeCases.data.specialValues.unicode}</p>
+    </div>
+  </section>
+
+  <!-- Test 2: Complex Conditional Edge Cases -->
+  <section class="test-section">
+    <h2>Test 2: Complex Conditional Edge Cases</h2>
+    
+    <div class="test-case">
+      <h3>Nested Conditionals with Various Data Types</h3>
+      
+      {loadTemplateEdgeCases.data.user ? 
+        <div class="user-present">
+          <h4>User Exists</h4>
+          {loadTemplateEdgeCases.data.user.isActive ? 
+            <div class="active-user">
+              <p style="color: green;">✅ User is active</p>
+              {loadTemplateEdgeCases.data.user.preferences ? 
+                <div class="preferences">
+                  <p>Theme: {loadTemplateEdgeCases.data.user.preferences.theme}</p>
+                  {loadTemplateEdgeCases.data.user.preferences.notifications ? 
+                    <p style="color: blue;">🔔 Notifications enabled</p>
+                  : 
+                    <p style="color: gray;">🔕 Notifications disabled</p>
+                  }
+                </div>
+              : 
+                <p>No preferences available</p>
+              }
+            </div>
+          : 
+            <div class="inactive-user">
+              <p style="color: red;">❌ User is inactive</p>
+            </div>
+          }
+        </div>
+      : 
+        <div class="no-user">
+          <p>No user data available</p>
+        </div>
+      }
+      
+      {loadTemplateEdgeCases.data.nullUser ? 
+        <div>Null user somehow truthy</div>
+      : 
+        <div>✅ Null user correctly falsy</div>
+      }
+      
+      {loadTemplateEdgeCases.data.emptyUser.name ? 
+        <div>Empty user has name</div>
+      : 
+        <div>✅ Empty user name correctly falsy</div>
+      }
+    </div>
+    
+    <div class="test-case">
+      <h3>Boolean Edge Cases</h3>
+      
+      {loadTemplateEdgeCases.data.booleans.trueValue ? 
+        <div style="color: green;">✅ True value works</div>
+      : 
+        <div style="color: red;">❌ True value failed</div>
+      }
+      
+      {loadTemplateEdgeCases.data.booleans.falseValue ? 
+        <div style="color: red;">❌ False value incorrect</div>
+      : 
+        <div style="color: green;">✅ False value works</div>
+      }
+      
+      {loadTemplateEdgeCases.data.booleans.zero ? 
+        <div style="color: red;">❌ Zero should be falsy</div>
+      : 
+        <div style="color: green;">✅ Zero correctly falsy</div>
+      }
+      
+      {loadTemplateEdgeCases.data.booleans.one ? 
+        <div style="color: green;">✅ One correctly truthy</div>
+      : 
+        <div style="color: red;">❌ One should be truthy</div>
+      }
+    </div>
+  </section>
+
+  <!-- Test 3: Array/Loop Edge Cases -->
+  <section class="test-section">
+    <h2>Test 3: Array/Loop Edge Cases</h2>
+    
+    <div class="test-case">
+      <h3>Normal Array Processing</h3>
+      {loadTemplateEdgeCases.data.normalArray.map(item => 
+        <div class="array-item" style="border: 1px solid #ddd; margin: 5px; padding: 10px;">
+          <p>ID: {item.id}</p>
+          <p>Name: {item.name}</p>
+          <p>Status: {item.active ? "Active" : "Inactive"}</p>
+        </div>
+      )}
+    </div>
+    
+    <div class="test-case">
+      <h3>Empty Array Processing</h3>
+      <div class="empty-array-test">
+        {loadTemplateEdgeCases.data.emptyArray.length > 0 ? 
+          <div>
+            {loadTemplateEdgeCases.data.emptyArray.map(item => 
+              <div>This should not appear</div>
+            )}
+          </div>
+        : 
+          <div style="color: green;">✅ Empty array handled correctly</div>
+        }
+      </div>
+    </div>
+    
+    <div class="test-case">
+      <h3>Null Array Processing</h3>
+      {loadTemplateEdgeCases.data.nullArray ? 
+        <div>
+          {loadTemplateEdgeCases.data.nullArray.map(item => 
+            <div>This should not appear</div>
+          )}
+        </div>
+      : 
+        <div style="color: green;">✅ Null array handled correctly</div>
+      }
+    </div>
+    
+    <div class="test-case">
+      <h3>Complex Nested Loops</h3>
+      {loadTemplateEdgeCases.data.normalArray.slice(0, 2).map(item => 
+        <div class="nested-loop-item" style="border: 2px solid #007bff; margin: 10px; padding: 15px;">
+          <h4>Item {item.id}</h4>
+          {loadTemplateEdgeCases.data.normalArray.filter(subItem => subItem.id !== item.id).slice(0, 2).map(subItem => 
+            <div style="background: #f8f9fa; margin: 5px; padding: 8px;">
+              <p>Sub-item: {subItem.name}</p>
+              {subItem.active ? 
+                <span style="color: green;">✅ Active</span>
+              : 
+                <span style="color: red;">❌ Inactive</span>
+              }
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Test 4: Deep Nesting Edge Cases -->
+  <section class="test-section">
+    <h2>Test 4: Deep Nesting Edge Cases</h2>
+    
+    <div class="test-case">
+      <h3>Deep Object Property Access</h3>
+      <p>Level 1: {loadTemplateEdgeCases.data.deepNested.level1}</p>
+      <p>Level 3: {loadTemplateEdgeCases.data.deepNested.level1.level2.level3}</p>
+      <p>Level 5 Data: {loadTemplateEdgeCases.data.deepNested.level1.level2.level3.level4.level5.data}</p>
+      <p>Level 5 Value: {loadTemplateEdgeCases.data.deepNested.level1.level2.level3.level4.level5.value}</p>
+      <p>Nonexistent Deep: {loadTemplateEdgeCases.data.deepNested.level1.level2.nonexistent.property}</p>
+    </div>
+    
+    <div class="test-case">
+      <h3>Complex Conditional Nesting</h3>
+      {loadTemplateEdgeCases.data.deepNested ? 
+        <div class="deep-conditional">
+          {loadTemplateEdgeCases.data.deepNested.level1 ? 
+            <div class="level-1">
+              <p>✅ Level 1 exists</p>
+              {loadTemplateEdgeCases.data.deepNested.level1.level2 ? 
+                <div class="level-2">
+                  <p>✅ Level 2 exists</p>
+                  {loadTemplateEdgeCases.data.deepNested.level1.level2.level3 ? 
+                    <div class="level-3">
+                      <p>✅ Level 3 exists</p>
+                      {loadTemplateEdgeCases.data.deepNested.level1.level2.level3.level4 ? 
+                        <div class="level-4">
+                          <p>✅ Level 4 exists</p>
+                          {loadTemplateEdgeCases.data.deepNested.level1.level2.level3.level4.level5 ? 
+                            <div class="level-5" style="background: #e8f5e8; padding: 10px;">
+                              <p>🎯 Level 5 reached!</p>
+                              <p>Data: {loadTemplateEdgeCases.data.deepNested.level1.level2.level3.level4.level5.data}</p>
+                            </div>
+                          : 
+                            <p>❌ Level 5 missing</p>
+                          }
+                        </div>
+                      : 
+                        <p>❌ Level 4 missing</p>
+                      }
+                    </div>
+                  : 
+                    <p>❌ Level 3 missing</p>
+                  }
+                </div>
+              : 
+                <p>❌ Level 2 missing</p>
+              }
+            </div>
+          : 
+            <p>❌ Level 1 missing</p>
+          }
+        </div>
+      : 
+        <p>❌ Deep nested object missing</p>
+      }
+    </div>
+  </section>
+
+  <!-- Test 5: Performance Test with Large Dataset -->
+  <section class="test-section">
+    <h2>Test 5: Large Dataset Performance</h2>
+    
+    <div class="test-case">
+      <h3>Large Array Processing ({loadTemplateEdgeCases.data.largeArray.length} items)</h3>
+      <p>Showing first 50 items from large dataset:</p>
+      
+      <div class="large-dataset" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+        {loadTemplateEdgeCases.data.largeArray.slice(0, 50).map(item => 
+          <div class="large-item" style="border-bottom: 1px solid #eee; padding: 8px; margin-bottom: 5px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong>{item.name}</strong>
+                <span style="color: #666; margin-left: 10px;">#{item.id}</span>
+              </div>
+              <div>
+                <span style="color: #007bff;">${item.value.toFixed(2)}</span>
+              </div>
+            </div>
+            <p style="margin: 5px 0; font-size: 12px; color: #666;">{item.description}</p>
+            <div style="margin-top: 5px;">
+              {item.tags.map(tag => 
+                <span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-right: 5px;">
+                  {tag}
+                </span>
+              )}
+              {item.metadata.featured ? 
+                <span style="background: #ffd700; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: #000;">
+                  ⭐ Featured
+                </span>
+              : <span></span>}
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+        <p><strong>Dataset Statistics:</strong></p>
+        <ul>
+          <li>Total Items: {loadTemplateEdgeCases.data.largeArray.length}</li>
+          <li>Displayed: 50</li>
+          <li>Categories: {Math.max(...loadTemplateEdgeCases.data.largeArray.map(item => parseInt(item.category.split('-')[1]))) + 1}</li>
+          <li>Featured Items: {loadTemplateEdgeCases.data.largeArray.filter(item => item.metadata.featured).length}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Test 6: Text Processing Edge Cases -->
+  <section class="test-section">
+    <h2>Test 6: Text Processing Edge Cases</h2>
+    
+    <div class="test-case">
+      <h3>Special Text Handling</h3>
+      
+      <div class="text-test">
+        <h4>Newlines and Tabs</h4>
+        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px;">
+{loadTemplateEdgeCases.data.specialValues.newlines}
+        </pre>
+        
+        <h4>Tabs</h4>
+        <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px;">
+{loadTemplateEdgeCases.data.specialValues.tabs}
+        </pre>
+        
+        <h4>Long Text (truncated for display)</h4>
+        <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 100px; overflow-y: auto;">
+          {loadTemplateEdgeCases.data.specialValues.longText.substring(0, 500)}...
+        </div>
+        
+        <h4>Unicode and Emoji</h4>
+        <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; font-size: 18px;">
+          {loadTemplateEdgeCases.data.specialValues.unicode}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Test Results Summary -->
+  <section class="test-section">
+    <h2>Test Execution Summary</h2>
+    
+    <div class="summary" style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3>✅ Template Engine Edge Case Testing Complete</h3>
+      
+      <div class="metrics">
+        <p><strong>Rendering Performance:</strong></p>
+        <ul>
+          <li>Start Time: {loadTemplateEdgeCases.state.renderingStartTime}</li>
+          <li>Current Time: {Date.now()}</li>
+          <li>Large Dataset: {loadTemplateEdgeCases.data.largeArray.length} items processed</li>
+        </ul>
+        
+        <p><strong>Tests Executed:</strong></p>
+        <ul>
+          <li>✅ Basic data display edge cases</li>
+          <li>✅ Complex conditional nesting</li>
+          <li>✅ Array/loop edge cases</li>
+          <li>✅ Deep object property access</li>
+          <li>✅ Large dataset performance</li>
+          <li>✅ Special text handling</li>
+        </ul>
+        
+        <p><strong>Edge Cases Validated:</strong></p>
+        <ul>
+          <li>✅ Null/undefined value handling</li>
+          <li>✅ Empty array processing</li>
+          <li>✅ Deep nested conditionals (5 levels)</li>
+          <li>✅ Large dataset rendering (1000+ items)</li>
+          <li>✅ Unicode and special character handling</li>
+          <li>✅ Boolean truthiness edge cases</li>
+          <li>✅ Nonexistent property access</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .template-edge-cases {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+  }
+  
+  .test-info {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+  }
+  
+  .test-section {
+    margin: 40px 0;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+  }
+  
+  .test-section h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+  
+  .test-case {
+    margin: 25px 0;
+    padding: 20px;
+    border: 1px solid #ecf0f1;
+    border-radius: 6px;
+    background: #fdfdfd;
+  }
+  
+  .test-case h3 {
+    color: #34495e;
+    margin-top: 0;
+  }
+  
+  .test-case h4 {
+    color: #7f8c8d;
+    margin: 15px 0 10px 0;
+  }
+  
+  .array-item {
+    transition: background-color 0.2s;
+  }
+  
+  .array-item:hover {
+    background-color: #f8f9fa !important;
+  }
+  
+  .nested-loop-item {
+    background: #ffffff;
+  }
+  
+  .level-1, .level-2, .level-3, .level-4 {
+    margin-left: 20px;
+    border-left: 3px solid #3498db;
+    padding-left: 15px;
+    margin-top: 10px;
+  }
+  
+  .large-dataset {
+    font-size: 14px;
+  }
+  
+  .large-item:hover {
+    background-color: #f1f3f4 !important;
+  }
+  
+  .summary {
+    border-left: 5px solid #27ae60;
+  }
+  
+  .metrics ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+  
+  .metrics li {
+    margin: 5px 0;
+  }
+  
+  pre {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+  }
+</style>

@@ -1,0 +1,620 @@
+<layout>main</layout>
+
+<imports>
+  import UserCard from '../components/UserCard.puremix'
+</imports>
+
+<head>
+  <title>Welcome to PureMix</title>
+</head>
+
+<loading>
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+</loading>
+
+<loader>
+  async function loadWelcome(request, actionResult) {
+    // Example loader that runs on page request
+    const welcomeMessage = "Welcome to PureMix Framework!";
+    const currentTime = new Date().toLocaleString();
+    
+    // Handle any action results or flash messages
+    let message = null;
+    if (actionResult?.success) {
+      message = actionResult.message;
+    } else if (request.session?.flashMessage) {
+      // Get flash message and remove it from session
+      message = request.session.flashMessage;
+      delete request.session.flashMessage;
+    }
+    
+    // Test users for component demonstration
+    const users = [
+      { name: "John Doe", email: "john@example.com", department: "Engineering" },
+      { name: "Jane Smith", email: "jane@example.com", department: "Design" }, 
+      { name: "Alex Johnson", email: "alex@example.com", department: "Marketing" }
+    ];
+
+    return {
+      data: { 
+        welcomeMessage,
+        currentTime,
+        userAgent: request.req.headers['user-agent'],
+        nodeVersion: process.version,
+        users
+      },
+      state: { message },
+      loading: false
+    };
+  }
+</loader>
+
+<div class="container">
+  <header class="header">
+    <h1>🚀 TEST: {loadWelcome.data.welcomeMessage}</h1>
+    <p class="subtitle">HTML-first full-stack development with Python integration</p>
+  </header>
+
+  <main class="main">
+    {loadWelcome.state.message ? <div class="alert alert-success">{loadWelcome.state.message}</div> : <span></span>}
+    
+    <section class="intro">
+      <h2>🎯 What is PureMix?</h2>
+      <p>PureMix is a modern web framework that combines the simplicity of HTML with the power of Node.js and Python. Build full-stack applications with ease!</p>
+      
+      <div class="features">
+        <div class="feature">
+          <h3>📝 HTML-First</h3>
+          <p>Write HTML with embedded server functions and data loaders</p>
+        </div>
+        
+        <div class="feature">
+          <h3>🐍 Python Integration</h3>
+          <p>Call Python functions seamlessly for ML/AI capabilities</p>
+        </div>
+        
+        <div class="feature">
+          <h3>🔄 Hot Reload</h3>
+          <p>Instant page refresh during development</p>
+        </div>
+        
+        <div class="feature">
+          <h3>🛣️ File-based Routing</h3>
+          <p>Routes automatically generated from .puremix files</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="info">
+      <h2>📊 System Information</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Current Time:</strong>
+          <span>{loadWelcome.data.currentTime}</span>
+        </div>
+        <div class="info-item">
+          <strong>Node.js Version:</strong>
+          <span>{loadWelcome.data.nodeVersion}</span>
+        </div>
+        <div class="info-item">
+          <strong>Framework:</strong>
+          <span>PureMix v1.0.0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h2>🔧 Try Server Functions</h2>
+      <p>Click the button below to call a server-side function:</p>
+      
+      <form method="POST" data-action="sayHello">
+        <input type="text" name="name" placeholder="Enter your name" required>
+        <button type="submit">Say Hello 👋</button>
+      </form>
+      
+      <p class="note">This will call a server function and reload the page with the result!</p>
+    </section>
+
+    <section class="ajax-demo">
+      <h2>⚡ AJAX Server Functions</h2>
+      <p>Test calling server functions without page reload:</p>
+      
+      <div style="display: flex; gap: 12px; margin: 16px 0;">
+        <input type="text" id="ajaxName" placeholder="Enter your name" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        <button onclick="testAjaxCall()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          Call Server Function (AJAX)
+        </button>
+      </div>
+      
+      <div id="ajaxResult" style="margin: 16px 0; padding: 12px; background: #f8f9fa; border-radius: 4px; display: none;">
+        <strong>Server Response:</strong> <span id="ajaxMessage"></span>
+      </div>
+      
+      <div style="margin: 16px 0;">
+        <button onclick="multipleAjaxCalls()" style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          Test Multiple Calls
+        </button>
+        <span id="multipleCallsStatus" style="margin-left: 12px; color: #666;"></span>
+      </div>
+      
+      <div style="margin: 16px 0;">
+        <h3>🧪 Server Function Manifest Testing</h3>
+        <p>These buttons test the new precise server function matching system:</p>
+        
+        <button onclick="testClientFunction()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 4px;">
+          Test Client-Only Function
+        </button>
+        
+        <button onclick="testOldHeuristic()" style="padding: 8px 16px; background: #fd7e14; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 4px;">
+          Test "handle" Function (Should Stay Client-Side)
+        </button>
+        
+        <div id="manifestTestResult" style="margin: 12px 0; padding: 12px; background: #f8f9fa; border-radius: 4px; display: none;">
+          <strong>Test Result:</strong> <span id="manifestTestMessage"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="component-test">
+      <h2>🧩 Enhanced Component Testing</h2>
+      <p>Testing selective component updates and auto-mapping system:</p>
+      
+      <!-- Components in PureMix are self-contained - no props needed -->
+      <UserCard />
+      <UserCard />
+      <UserCard />
+      
+      <!-- Component interaction testing -->
+      <div class="component-controls" style="margin: 20px 0; padding: 15px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid #007bff;">
+        <h3>🎮 Component Control Panel</h3>
+        <p>Test selective updates - each button updates only one component:</p>
+        
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0;">
+          <!-- These will target specific UserCard instances -->
+          <button onclick="PureMix.call('UserCard.refreshProfile', {})" 
+                  style="padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            🔄 Refresh First Card
+          </button>
+          
+          <button onclick="testComponentIsolation()" 
+                  style="padding: 8px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            🧪 Test Component Isolation
+          </button>
+          
+          <button onclick="testMultipleComponents()" 
+                  style="padding: 8px 12px; background: #f59e0b; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            🚀 Update Multiple Components
+          </button>
+        </div>
+        
+        <div id="component-test-results" 
+             style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; display: none;">
+          <strong>Component Test Results:</strong>
+          <div id="test-log"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-steps">
+      <h2>🚀 Next Steps</h2>
+      <ul>
+        <li>Edit this file at <code>app/routes/index.puremix</code></li>
+        <li>Create new routes by adding .puremix files to <code>app/routes/</code></li>
+        <li>Add controllers, models, and services to organize your code</li>
+        <li>Install Python packages for ML/AI features</li>
+        <li>Deploy your app to production with <code>npm run build</code></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Built with 💜 using PureMix Framework</p>
+    <p>
+      <a href="/basic-form-test">Form Test</a> |
+      <a href="/security-test">Security Test</a> |
+      <a href="/unified-template-literals">Template Test</a> |
+      <a href="/typescript-javascript-test">TypeScript/JS Test</a> |
+      <a href="/python-integration-test">🐍 Python Integration</a>
+    </p>
+  </footer>
+</div>
+
+<script server>
+  async function sayHello(formData, request) {
+    const { name } = formData;
+    
+    if (!name || name.trim() === '') {
+      return {
+        error: 'Please enter your name!'
+      };
+    }
+    
+    // You can do database operations, API calls, Python functions, etc. here
+    const greeting = `Hello, ${name}! 👋 Welcome to PureMix Framework!`;
+    
+    // Store the message in session for display after reload
+    if (request.session) {
+      request.session.flashMessage = greeting;
+    }
+    
+    return {
+      success: true,
+      message: greeting,
+      reload: true
+    };
+  }
+
+  async function ajaxGreeting(data, request) {
+    const name = data.name || 'Anonymous';
+    const timestamp = new Date().toLocaleTimeString();
+    
+    return {
+      success: true,
+      message: `Hello ${name}! Server response at ${timestamp}`,
+      data: {
+        name: name,
+        timestamp: timestamp,
+        serverStatus: 'operational'
+      }
+    };
+  }
+
+  async function getServerStatus(data, request) {
+    return {
+      success: true,
+      status: 'Server is running perfectly!',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    };
+  }
+  
+  // ==================== ENHANCED COMPONENT TESTING FUNCTIONS ====================
+  
+  async function testComponentSystem(formData, request) {
+    // Test the component system functionality
+    console.log('🧪 Testing component system with data:', formData);
+    
+    return {
+      success: true,
+      message: 'Component system test completed',
+      testData: formData,
+      componentCount: formData.componentCount || 'unknown',
+      timestamp: new Date().toISOString()
+    };
+  }
+  
+  async function refreshAllUserCards(formData, request) {
+    // Test refreshing multiple components (should target all UserCard instances)
+    console.log('🔄 Refreshing all UserCard components');
+    
+    return {
+      success: true,
+      message: 'All UserCard components refreshed',
+      operation: 'bulk_refresh',
+      affectedComponents: 'UserCard',
+      timestamp: new Date().toISOString()
+    };
+  }
+  
+  async function demonstrateNewPatterns(formData, request) {
+    // Demonstrate the new enhanced server function patterns
+    console.log('🚀 Demonstrating new auto-mapping patterns with:', formData);
+    
+    return {
+      success: true,
+      message: 'New patterns demonstration completed',
+      patterns: {
+        autoFormData: 'Form fields automatically extracted',
+        directCalls: 'Functions callable without PureMix.call()',
+        componentScoped: 'Component.function syntax supported',
+        dynamicData: 'Client-side variables supported'
+      },
+      receivedData: formData,
+      timestamp: new Date().toISOString()
+    };
+  }
+</script>
+
+<script>
+  // Client-side JavaScript for AJAX testing
+  window.testAjaxCall = async function() {
+    const nameInput = document.getElementById('ajaxName');
+    const resultDiv = document.getElementById('ajaxResult');
+    const messageSpan = document.getElementById('ajaxMessage');
+    
+    const name = nameInput.value.trim();
+    
+    try {
+      // Call server function using PureMix client API
+      const response = await PureMix.call('ajaxGreeting', { name: name || 'Anonymous' });
+      
+      messageSpan.textContent = response.message;
+      resultDiv.style.display = 'block';
+      
+      console.log('Server response:', response);
+    } catch (error) {
+      messageSpan.textContent = 'Error: ' + error.message;
+      resultDiv.style.display = 'block';
+      console.error('AJAX call failed:', error);
+    }
+  };
+  
+  async function multipleAjaxCalls() {
+    const statusSpan = document.getElementById('multipleCallsStatus');
+    
+    statusSpan.textContent = 'Making 3 concurrent calls...';
+    
+    try {
+      // Make multiple concurrent AJAX calls
+      const promises = [
+        PureMix.call('getServerStatus', {}),
+        PureMix.call('ajaxGreeting', { name: 'User1' }),
+        PureMix.call('ajaxGreeting', { name: 'User2' })
+      ];
+      
+      const results = await Promise.all(promises);
+      statusSpan.textContent = '✅ All 3 calls completed successfully!';
+      
+      console.log('Multiple call results:', results);
+    } catch (error) {
+      statusSpan.textContent = '❌ Error: ' + error.message;
+      console.error('Multiple calls failed:', error);
+    }
+  }
+  
+  // Test client-side function that should NOT be intercepted
+  function clientOnlyFunction() {
+    console.log('This is a client-only function and should NOT be intercepted by server');
+    return 'Client-side result';
+  }
+  
+  // Test function that might trigger old heuristic (starts with 'handle')
+  function handleClientSideTask() {
+    console.log('This client function starts with "handle" but should NOT be intercepted');
+    return 'Handled client-side';
+  }
+  
+  // Test functions for the manifest system
+  function testClientFunction() {
+    const resultDiv = document.getElementById('manifestTestResult');
+    const messageSpan = document.getElementById('manifestTestMessage');
+    
+    try {
+      const result = clientOnlyFunction();
+      messageSpan.textContent = `✅ Client function executed correctly: ${result}`;
+      resultDiv.style.display = 'block';
+      console.log('✅ Client-only function test passed:', result);
+    } catch (error) {
+      messageSpan.textContent = `❌ Client function failed: ${error.message}`;
+      resultDiv.style.display = 'block';
+      console.error('❌ Client-only function test failed:', error);
+    }
+  }
+  
+  function testOldHeuristic() {
+    const resultDiv = document.getElementById('manifestTestResult');
+    const messageSpan = document.getElementById('manifestTestMessage');
+    
+    try {
+      const result = handleClientSideTask();
+      messageSpan.textContent = `✅ "handle" prefixed function stayed client-side: ${result}`;
+      resultDiv.style.display = 'block';
+      console.log('✅ Handle function test passed (not intercepted):', result);
+    } catch (error) {
+      messageSpan.textContent = `❌ "handle" function was incorrectly intercepted: ${error.message}`;
+      resultDiv.style.display = 'block';
+      console.error('❌ Handle function test failed (was intercepted):', error);
+    }
+  }
+  
+  // ==================== COMPONENT TESTING FUNCTIONS ====================
+  
+  async function testComponentIsolation() {
+    const testResults = document.getElementById('component-test-results');
+    const testLog = document.getElementById('test-log');
+    
+    testResults.style.display = 'block';
+    testLog.innerHTML = '<div>🧪 Starting component isolation test...</div>';
+    
+    try {
+      // Get all UserCard components on the page
+      const userCards = document.querySelectorAll('[data-component="UserCard"]');
+      testLog.innerHTML += `<div>📊 Found ${userCards.length} UserCard components</div>`;
+      
+      if (userCards.length >= 2) {
+        // Test updating only the second component
+        const secondCard = userCards[1];
+        const componentId = secondCard.getAttribute('data-component-id');
+        
+        testLog.innerHTML += `<div>🎯 Targeting component: UserCard#${componentId?.substr(-6)}</div>`;
+        
+        // Store initial state of all cards for comparison
+        const initialStates = Array.from(userCards).map(card => ({
+          id: card.getAttribute('data-component-id'),
+          html: card.innerHTML,
+          timestamp: Date.now()
+        }));
+        
+        // Call component-specific action
+        const result = await PureMix.call('UserCard.updateStatus', { status: 'testing' });
+        
+        if (result.success) {
+          // Wait a moment for DOM to update
+          setTimeout(() => {
+            // Check if only the targeted component changed
+            const finalStates = Array.from(userCards).map(card => ({
+              id: card.getAttribute('data-component-id'),
+              html: card.innerHTML,
+              timestamp: Date.now()
+            }));
+            
+            let changedCount = 0;
+            finalStates.forEach((finalState, index) => {
+              const initialState = initialStates[index];
+              const hasChanged = finalState.html !== initialState.html;
+              
+              if (hasChanged) {
+                changedCount++;
+                testLog.innerHTML += `<div>🔄 Component ${index + 1} changed: ${hasChanged}</div>`;
+              } else {
+                testLog.innerHTML += `<div>✅ Component ${index + 1} unchanged: ${!hasChanged}</div>`;
+              }
+            });
+            
+            const isolationSuccess = changedCount === 1;
+            testLog.innerHTML += `<div style="color: ${isolationSuccess ? '#22c55e' : '#ef4444'}; font-weight: bold;">Result: ${isolationSuccess ? '✅ Perfect isolation' : '❌ Multiple components changed'}</div>`;
+          }, 500);
+        } else {
+          testLog.innerHTML += `<div style="color: #ef4444;">❌ Component action failed: ${result.error}</div>`;
+        }
+      } else {
+        testLog.innerHTML += '<div style="color: #f59e0b;">⚠️ Need at least 2 UserCard components for isolation test</div>';
+      }
+    } catch (error) {
+      testLog.innerHTML += `<div style="color: #ef4444;">❌ Test error: ${error.message}</div>`;
+    }
+  }
+  
+  async function testMultipleComponents() {
+    const testResults = document.getElementById('component-test-results');
+    const testLog = document.getElementById('test-log');
+    
+    testResults.style.display = 'block';
+    testLog.innerHTML = '<div>🚀 Starting multiple component update test...</div>';
+    
+    try {
+      const userCards = document.querySelectorAll('[data-component="UserCard"]');
+      testLog.innerHTML += `<div>📊 Testing ${userCards.length} components</div>`;
+      
+      // Test rapid sequential updates
+      for (let i = 0; i < Math.min(userCards.length, 3); i++) {
+        const delay = i * 500; // Stagger the updates
+        
+        setTimeout(async () => {
+          try {
+            const result = await PureMix.call('UserCard.refreshProfile', { batchTest: true, index: i });
+            testLog.innerHTML += `<div>✅ Component ${i + 1} updated: ${result.success ? 'Success' : 'Failed'}</div>`;
+          } catch (error) {
+            testLog.innerHTML += `<div style="color: #ef4444;">❌ Component ${i + 1} error: ${error.message}</div>`;
+          }
+        }, delay);
+      }
+      
+      // Final results after all updates
+      setTimeout(() => {
+        testLog.innerHTML += '<div style="color: #007bff; font-weight: bold; margin-top: 8px;">🎉 Multiple component test completed!</div>';
+      }, userCards.length * 500 + 1000);
+      
+    } catch (error) {
+      testLog.innerHTML += `<div style="color: #ef4444;">❌ Batch test error: ${error.message}</div>`;
+    }
+  }
+</script>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 10px 0 30px 0;
+  }
+  
+  .alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  
+  .alert-success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+  }
+  
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+  
+  .feature {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .info-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #007bff;
+  }
+  
+  .demo, .ajax-demo {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+  
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #0056b3;
+  }
+  
+  .note {
+    color: #666;
+    font-style: italic;
+    margin-top: 10px;
+  }
+  
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    color: #666;
+  }
+  
+  .footer a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .footer a:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,27 @@
+{
+  "name": "tests/projects/comprehensive-test",
+  "version": "1.0.0",
+  "description": "A basic PureMix application",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node ../../../cli/puremix.ts dev",
+    "build": "node ../../../cli/puremix.ts build",
+    "start": "node ../../../cli/puremix.ts start",
+    "doctor": "node ../../../cli/puremix.ts doctor"
+  },
+  "dependencies": {
+    "puremix": "file:../../"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [
+    "puremix",
+    "web",
+    "framework",
+    "html-first"
+  ],
+  "author": "",
+  "license": "MIT"
+}

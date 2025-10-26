@@ -1,0 +1,355 @@
+<layout>main</layout>
+
+<loader>
+  async function loadJavaScriptTest(request) {
+    return {
+      data: {
+        numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        products: [
+          { id: 1, name: "Laptop", price: 999.99, category: "Electronics", inStock: true, rating: 4.5 },
+          { id: 2, name: "Mouse", price: 29.99, category: "Accessories", inStock: false, rating: 4.0 },
+          { id: 3, name: "Keyboard", price: 129.99, category: "Accessories", inStock: true, rating: 4.7 },
+          { id: 4, name: "Monitor", price: 249.99, category: "Electronics", inStock: true, rating: 4.3 }
+        ],
+        users: [
+          { id: 1, name: "Alice", score: 95, active: true },
+          { id: 2, name: "Bob", score: 87, active: false },
+          { id: 3, name: "Charlie", score: 92, active: true },
+          { id: 4, name: "Diana", score: 88, active: true }
+        ]
+      }
+    };
+  }
+</loader>
+
+<div class="container mx-auto p-8">
+  <h1 class="text-3xl font-bold mb-6">🚀 JavaScript Block Execution Test</h1>
+
+  <div class="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+    <h2 class="text-xl font-semibold mb-2">About JavaScript Block Execution</h2>
+    <p>PureMix supports full JavaScript execution within templates using <code>{`{ ... }`}</code> blocks. You can use variables, loops, functions, and complex logic, then export results with <code>__export</code>.</p>
+  </div>
+
+  <!-- Test 1: Simple Variable Declaration and Math -->
+  <div class="test-section mb-8">
+    <h2 class="text-2xl font-bold mb-4">🔢 Test 1: Variables and Mathematics</h2>
+
+    {
+      // Simple variable declarations
+      let a = 10;
+      let b = 20;
+      let sum = a + b;
+      let product = a * b;
+
+      // Complex calculations
+      let factorial = 1;
+      for (let i = 1; i <= 5; i++) {
+        factorial *= i;
+      }
+
+      __export = { a, b, sum, product, factorial };
+    }
+
+    <div class="results bg-gray-100 p-4 rounded">
+      <p><strong>Variables:</strong> a = {a}, b = {b}</p>
+      <p><strong>Sum:</strong> {sum}</p>
+      <p><strong>Product:</strong> {product}</p>
+      <p><strong>5! (factorial):</strong> {factorial}</p>
+    </div>
+  </div>
+
+  <!-- Test 2: Array Processing with While Loops -->
+  <div class="test-section mb-8">
+    <h2 class="text-2xl font-bold mb-4">🔄 Test 2: While Loops and Array Processing</h2>
+
+    {
+      let numbers = loadJavaScriptTest.data.numbers;
+      let evenNumbers = [];
+      let oddNumbers = [];
+      let i = 0;
+
+      // Using while loop to process array
+      while (i < numbers.length) {
+        if (numbers[i] % 2 === 0) {
+          evenNumbers.push(numbers[i]);
+        } else {
+          oddNumbers.push(numbers[i]);
+        }
+        i++;
+      }
+
+      // Calculate statistics
+      let evenSum = 0;
+      let oddSum = 0;
+
+      for (let num of evenNumbers) {
+        evenSum += num;
+      }
+
+      for (let num of oddNumbers) {
+        oddSum += num;
+      }
+
+      __export = { evenNumbers, oddNumbers, evenSum, oddSum };
+    }
+
+    <div class="results bg-gray-100 p-4 rounded">
+      <p><strong>Original:</strong> {loadJavaScriptTest.data.numbers.join(', ')}</p>
+      <p><strong>Even Numbers:</strong> {evenNumbers.join(', ')} (Sum: {evenSum})</p>
+      <p><strong>Odd Numbers:</strong> {oddNumbers.join(', ')} (Sum: {oddSum})</p>
+    </div>
+  </div>
+
+  <!-- Test 3: Complex Data Transformation -->
+  <div class="test-section mb-8">
+    <h2 class="text-2xl font-bold mb-4">🔄 Test 3: Complex Data Transformation</h2>
+
+    {
+      let products = loadJavaScriptTest.data.products;
+      let users = loadJavaScriptTest.data.users;
+
+      // Filter and transform products
+      let inStockProducts = [];
+      let outOfStockProducts = [];
+      let totalValue = 0;
+
+      for (let product of products) {
+        if (product.inStock) {
+          inStockProducts.push({
+            ...product,
+            displayName: `${product.name} (${product.category})`,
+            priceFormatted: `$${product.price.toFixed(2)}`,
+            ratingStars: '⭐'.repeat(Math.floor(product.rating))
+          });
+          totalValue += product.price;
+        } else {
+          outOfStockProducts.push(product);
+        }
+      }
+
+      // Process users with score categories
+      let userCategories = {
+        excellent: [],
+        good: [],
+        average: []
+      };
+
+      users.forEach(user => {
+        if (user.score >= 90) {
+          userCategories.excellent.push(user);
+        } else if (user.score >= 85) {
+          userCategories.good.push(user);
+        } else {
+          userCategories.average.push(user);
+        }
+      });
+
+      // Create summary statistics
+      let stats = {
+        totalProducts: products.length,
+        inStockCount: inStockProducts.length,
+        outOfStockCount: outOfStockProducts.length,
+        averagePrice: totalValue / inStockProducts.length,
+        totalValue: totalValue
+      };
+
+      __export = { inStockProducts, outOfStockProducts, userCategories, stats };
+    }
+
+    <div class="results bg-gray-100 p-4 rounded">
+      <h3 class="font-bold mb-2">📊 Product Statistics</h3>
+      <p><strong>Total Products:</strong> {stats.totalProducts}</p>
+      <p><strong>In Stock:</strong> {stats.inStockCount} (Value: ${stats.totalValue.toFixed(2)})</p>
+      <p><strong>Out of Stock:</strong> {stats.outOfStockCount}</p>
+      <p><strong>Average Price:</strong> ${stats.averagePrice.toFixed(2)}</p>
+
+      <h3 class="font-bold mt-4 mb-2">📦 In Stock Products</h3>
+      {inStockProducts.map(product =>
+        <div class="border p-2 mb-2">
+          <p><strong>{product.displayName}</strong></p>
+          <p>Price: {product.priceFormatted} | Rating: {product.ratingStars}</p>
+        </div>
+      )}
+
+      <h3 class="font-bold mt-4 mb-2">👥 User Categories</h3>
+      <p><strong>Excellent (90+):</strong> {userCategories.excellent.map(u => u.name).join(', ')}</p>
+      <p><strong>Good (85-89):</strong> {userCategories.good.map(u => u.name).join(', ')}</p>
+      <p><strong>Average (&lt;85):</strong> {userCategories.average.map(u => u.name).join(', ')}</p>
+    </div>
+  </div>
+
+  <!-- Test 4: Function Declarations -->
+  <div class="test-section mb-8">
+    <h2 class="text-2xl font-bold mb-4">⚙️ Test 4: Function Declarations</h2>
+
+    {
+      // Function declarations within JavaScript blocks
+      function fibonacci(n) {
+        if (n <= 1) return n;
+        return fibonacci(n - 1) + fibonacci(n - 2);
+      }
+
+      function isPrime(num) {
+        if (num <= 1) return false;
+        for (let i = 2; i * i <= num; i++) {
+          if (num % i === 0) return false;
+        }
+        return true;
+      }
+
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        }).format(amount);
+      }
+
+      // Generate data using functions
+      let fibSequence = [];
+      for (let i = 0; i < 10; i++) {
+        fibSequence.push(fibonacci(i));
+      }
+
+      let primeNumbers = [];
+      for (let i = 1; i <= 20; i++) {
+        if (isPrime(i)) {
+          primeNumbers.push(i);
+        }
+      }
+
+      let formattedPrices = loadJavaScriptTest.data.products.map(p => ({
+        name: p.name,
+        formattedPrice: formatCurrency(p.price)
+      }));
+
+      __export = { fibonacci, isPrime, formatCurrency, fibSequence, primeNumbers, formattedPrices };
+    }
+
+    <div class="results bg-gray-100 p-4 rounded">
+      <p><strong>Fibonacci(8):</strong> {fibonacci(8)}</p>
+      <p><strong>Is 17 Prime?</strong> {isPrime(17) ? 'Yes' : 'No'}</p>
+      <p><strong>Fibonacci Sequence (0-9):</strong> {fibSequence.join(', ')}</p>
+      <p><strong>Prime Numbers (1-20):</strong> {primeNumbers.join(', ')}</p>
+
+      <h3 class="font-bold mt-4 mb-2">💰 Formatted Prices</h3>
+      {formattedPrices.map(item =>
+        <p>{item.name}: {item.formattedPrice}</p>
+      )}
+    </div>
+  </div>
+
+  <!-- Test 5: Compact Filter/Map Testing -->
+  <div class="test-section mb-8">
+    <h2 class="text-2xl font-bold mb-4">🔗 Test 5: Compact Filter/Map Operations</h2>
+
+    <div class="results bg-gray-100 p-4 rounded">
+      <h3 class="font-bold mb-2">Simple Filter/Map (should work):</h3>
+      <p><strong>In Stock Products:</strong> {loadJavaScriptTest.data.products.filter(p => p.inStock).map(p => p.name).join(', ')}</p>
+
+      <h3 class="font-bold mt-4 mb-2">Active Users with High Scores:</h3>
+      <p>{loadJavaScriptTest.data.users.filter(u => u.active && u.score > 90).map(u => `${u.name} (${u.score})`).join(', ')}</p>
+
+      <h3 class="font-bold mt-4 mb-2">Product Count by Category:</h3>
+      <p>Electronics: {loadJavaScriptTest.data.products.filter(p => p.category === 'Electronics').length}</p>
+      <p>Accessories: {loadJavaScriptTest.data.products.filter(p => p.category === 'Accessories').length}</p>
+    </div>
+  </div>
+
+  <!-- Test 6: Advanced Loops and Conditionals -->
+  <div class="test-section mb-8">
+    <h2 class="text-2xl font-bold mb-4">🎯 Test 6: Advanced Control Flow</h2>
+
+    {
+      let products = loadJavaScriptTest.data.products;
+      let analysis = {
+        categoryStats: {},
+        priceRanges: { low: [], medium: [], high: [] },
+        recommendations: []
+      };
+
+      // Category analysis with nested loops
+      for (let product of products) {
+        if (!analysis.categoryStats[product.category]) {
+          analysis.categoryStats[product.category] = {
+            count: 0,
+            totalValue: 0,
+            averageRating: 0,
+            inStock: 0
+          };
+        }
+
+        let category = analysis.categoryStats[product.category];
+        category.count++;
+        category.totalValue += product.price;
+        category.averageRating += product.rating;
+
+        if (product.inStock) {
+          category.inStock++;
+        }
+      }
+
+      // Calculate averages
+      Object.keys(analysis.categoryStats).forEach(category => {
+        let stats = analysis.categoryStats[category];
+        stats.averagePrice = stats.totalValue / stats.count;
+        stats.averageRating = stats.averageRating / stats.count;
+      });
+
+      // Price range classification
+      for (let product of products) {
+        if (product.price < 100) {
+          analysis.priceRanges.low.push(product);
+        } else if (product.price < 300) {
+          analysis.priceRanges.medium.push(product);
+        } else {
+          analysis.priceRanges.high.push(product);
+        }
+      }
+
+      // Generate recommendations
+      if (analysis.priceRanges.low.length > 0) {
+        analysis.recommendations.push("Consider budget-friendly options in the low price range");
+      }
+
+      if (analysis.categoryStats.Electronics && analysis.categoryStats.Electronics.averageRating > 4.4) {
+        analysis.recommendations.push("Electronics category has excellent ratings");
+      }
+
+      __export = { analysis };
+    }
+
+    <div class="results bg-gray-100 p-4 rounded">
+      <h3 class="font-bold mb-2">📊 Category Analysis</h3>
+      {Object.keys(analysis.categoryStats).map(category =>
+        <div class="border p-2 mb-2">
+          <p><strong>{category}</strong></p>
+          <p>Count: {analysis.categoryStats[category].count} | In Stock: {analysis.categoryStats[category].inStock}</p>
+          <p>Avg Price: ${analysis.categoryStats[category].averagePrice.toFixed(2)} | Avg Rating: {analysis.categoryStats[category].averageRating.toFixed(1)}</p>
+        </div>
+      )}
+
+      <h3 class="font-bold mt-4 mb-2">💰 Price Ranges</h3>
+      <p><strong>Low (&lt;$100):</strong> {analysis.priceRanges.low.length} products</p>
+      <p><strong>Medium ($100-$300):</strong> {analysis.priceRanges.medium.length} products</p>
+      <p><strong>High (&gt;$300):</strong> {analysis.priceRanges.high.length} products</p>
+
+      <h3 class="font-bold mt-4 mb-2">💡 Recommendations</h3>
+      {analysis.recommendations.map(rec =>
+        <p>• {rec}</p>
+      )}
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
+    <h2 class="text-xl font-semibold mb-2">✅ JavaScript Block Execution Summary</h2>
+    <p>All tests demonstrate PureMix's powerful JavaScript execution capabilities within templates:</p>
+    <ul class="list-disc list-inside mt-2">
+      <li><strong>Variables & Math:</strong> Full variable declarations and calculations</li>
+      <li><strong>Control Flow:</strong> While loops, for loops, conditionals</li>
+      <li><strong>Functions:</strong> Function declarations and complex algorithms</li>
+      <li><strong>Data Processing:</strong> Array filtering, mapping, and transformation</li>
+      <li><strong>Complex Logic:</strong> Multi-step analysis and statistics generation</li>
+    </ul>
+  </div>
+</div>

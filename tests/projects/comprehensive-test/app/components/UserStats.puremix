@@ -1,0 +1,226 @@
+<loader>
+  async function loadUserStats(request, actionResult) {
+    console.log('🔍 UserStats loader called');
+    
+    // Simulate fetching user statistics
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    let stats = {
+      totalUsers: 1250,
+      activeUsers: 890,
+      newUsers: 45,
+      avgSessionTime: '12m 34s',
+      bounceRate: 0.23,
+      lastUpdated: new Date().toLocaleTimeString()
+    };
+    
+    // Handle action results
+    if (actionResult?.refreshed) {
+      stats.totalUsers += Math.floor(Math.random() * 10);
+      stats.activeUsers += Math.floor(Math.random() * 5);
+      stats.newUsers += Math.floor(Math.random() * 3);
+      stats.lastUpdated = actionResult.timestamp;
+    }
+    
+    if (actionResult?.alertSent) {
+      stats.alertsSent = (stats.alertsSent || 0) + 1;
+    }
+    
+    return {
+      data: { stats },
+      state: { 
+        canRefresh: true,
+        showAlerts: true,
+        lastRefresh: actionResult?.timestamp || null
+      }
+    };
+  }
+</loader>
+
+<div class="user-stats-card">
+  <div class="stats-header">
+    <h3>👥 User Statistics</h3>
+{loadUserStats.state.canRefresh ? <small>Refreshable</small> : <small>Not refreshable</small>}
+  </div>
+  
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">{loadUserStats.data.stats.totalUsers}</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    
+    <div class="stat-item">
+      <div class="stat-number">{loadUserStats.data.stats.activeUsers}</div>
+      <div class="stat-label">Active Now</div>
+    </div>
+    
+    <div class="stat-item">
+      <div class="stat-number">+{loadUserStats.data.stats.newUsers}</div>
+      <div class="stat-label">New Today</div>
+    </div>
+    
+    <div class="stat-item">
+      <div class="stat-number">{loadUserStats.data.stats.avgSessionTime}</div>
+      <div class="stat-label">Avg Session</div>
+    </div>
+    
+    <div class="stat-item">
+      <div class="stat-number">{
+        const rate = (loadUserStats.data.stats.bounceRate * 100).toFixed(1);
+        __export = { rate };
+      }{rate}%</div>
+      <div class="stat-label">Bounce Rate</div>
+    </div>
+  </div>
+  
+  <div class="stats-actions">
+    <button onclick="UserStats.refreshStats" class="btn-primary">
+      🔄 Refresh Stats
+    </button>
+    <button onclick="UserStats.sendAlert" class="btn-secondary">
+      📢 Send Alert
+    </button>
+  </div>
+  
+  <div class="stats-footer">
+    <small>Updated: {loadUserStats.data.stats.lastUpdated}</small>
+  </div>
+</div>
+
+<script server>
+  async function refreshStats(formData, request) {
+    console.log('🔄 UserStats.refreshStats called for component:', request.componentId);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    return {
+      success: true,
+      refreshed: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'User statistics refreshed successfully'
+    };
+  }
+  
+  async function sendAlert(formData, request) {
+    console.log('📢 UserStats.sendAlert called for component:', request.componentId);
+    
+    // Simulate sending alert
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const alertTypes = ['low_engagement', 'high_traffic', 'system_maintenance'];
+    const randomAlert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+    
+    return {
+      success: true,
+      alertSent: true,
+      alertType: randomAlert,
+      timestamp: new Date().toLocaleTimeString(),
+      message: `Alert sent: ${randomAlert.replace('_', ' ')}`
+    };
+  }
+</script>
+
+<style>
+  .user-stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    margin: 0; /* Remove margin to respect parent container */
+    width: 100%; /* Respect parent width constraints */
+    box-sizing: border-box; /* Include padding in width calculations */
+    min-height: 200px; /* Reasonable minimum height for masonry */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .stats-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .stats-header small {
+    opacity: 0.8;
+    font-size: 12px;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+    flex: 1; /* Take available space in flex container */
+  }
+  
+  .stat-item {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+  }
+  
+  .stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .stats-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-primary {
+    background: rgba(255,255,255,0.2);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+  }
+  
+  .btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.2);
+  }
+  
+  .stats-footer {
+    text-align: center;
+    opacity: 0.7;
+    font-size: 11px;
+  }
+</style>

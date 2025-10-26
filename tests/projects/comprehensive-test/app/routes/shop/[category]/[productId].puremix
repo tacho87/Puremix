@@ -1,0 +1,92 @@
+<layout>main</layout>
+
+<loader>
+  async function loadPage(request) {
+    const { category, productId } = request.params;
+
+    const products = {
+      electronics: {
+        'laptop-pro': { name: 'Laptop Pro', price: 1299, stock: 15 },
+        'phone-x': { name: 'Phone X', price: 899, stock: 42 },
+        'tablet-max': { name: 'Tablet Max', price: 699, stock: 8 }
+      },
+      clothing: {
+        'tshirt-basic': { name: 'Basic T-Shirt', price: 19, stock: 150 },
+        'jeans-slim': { name: 'Slim Fit Jeans', price: 59, stock: 67 },
+        'jacket-winter': { name: 'Winter Jacket', price: 129, stock: 23 }
+      },
+      books: {
+        'javascript-guide': { name: 'JavaScript: The Complete Guide', price: 39, stock: 95 },
+        'python-mastery': { name: 'Python Mastery', price: 45, stock: 73 },
+        'web-patterns': { name: 'Modern Web Patterns', price: 42, stock: 61 }
+      }
+    };
+
+    const product = products[category]?.[productId] || {
+      name: `Product ${productId}`,
+      price: 99,
+      stock: 0
+    };
+
+    return {
+      data: {
+        category: category,
+        productId: productId,
+        product: product,
+        inStock: product.stock > 0,
+        routeType: 'nested-dynamic-params'
+      }
+    };
+  }
+</loader>
+
+<div style="padding: 20px;">
+  <h1>{loadPage.data.product.name}</h1>
+
+  <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+    <h2>Route Testing: Nested Dynamic Parameters</h2>
+    <p><strong>File:</strong> /app/routes/shop/[category]/[productId].puremix</p>
+    <p><strong>Pattern:</strong> /shop/:category/:productId</p>
+    <p><strong>Current Route:</strong> /shop/{loadPage.data.category}/{loadPage.data.productId}</p>
+  </div>
+
+  <div style="margin: 20px 0;">
+    <h3>Product Details</h3>
+    <p><strong>Category:</strong> {loadPage.data.category}</p>
+    <p><strong>Product ID:</strong> {loadPage.data.productId}</p>
+    <p><strong>Price:</strong> ${loadPage.data.product.price}</p>
+    <p><strong>Stock:</strong> {loadPage.data.product.stock} units</p>
+    <p><strong>Status:</strong> {loadPage.data.inStock ? '✅ In Stock' : '❌ Out of Stock'}</p>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <h3>Browse Products by Category:</h3>
+
+    <div style="margin: 15px 0;">
+      <h4>Electronics:</h4>
+      <ul>
+        <li><a href="/shop/electronics/laptop-pro">Laptop Pro ($1,299)</a></li>
+        <li><a href="/shop/electronics/phone-x">Phone X ($899)</a></li>
+        <li><a href="/shop/electronics/tablet-max">Tablet Max ($699)</a></li>
+      </ul>
+    </div>
+
+    <div style="margin: 15px 0;">
+      <h4>Clothing:</h4>
+      <ul>
+        <li><a href="/shop/clothing/tshirt-basic">Basic T-Shirt ($19)</a></li>
+        <li><a href="/shop/clothing/jeans-slim">Slim Fit Jeans ($59)</a></li>
+        <li><a href="/shop/clothing/jacket-winter">Winter Jacket ($129)</a></li>
+      </ul>
+    </div>
+
+    <div style="margin: 15px 0;">
+      <h4>Books:</h4>
+      <ul>
+        <li><a href="/shop/books/javascript-guide">JavaScript Guide ($39)</a></li>
+        <li><a href="/shop/books/python-mastery">Python Mastery ($45)</a></li>
+        <li><a href="/shop/books/web-patterns">Modern Web Patterns ($42)</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

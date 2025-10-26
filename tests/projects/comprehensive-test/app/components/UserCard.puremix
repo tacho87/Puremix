@@ -1,0 +1,246 @@
+<loader>
+  async function loadUserCard(request, actionResult) {
+    // Component gets data the same way as pages - through its own loader
+    // No "props" in PureMix - components are self-contained
+    const user = { 
+      name: 'Test User', 
+      email: 'test@example.com' 
+    };
+    
+    // Handle action results from component-specific actions
+    if (actionResult?.refreshed) {
+      user.lastRefreshed = new Date().toLocaleTimeString();
+    }
+    if (actionResult?.statusUpdated) {
+      user.status = actionResult.newStatus;
+    }
+    if (actionResult?.updated && actionResult.newUser) {
+      Object.assign(user, actionResult.newUser);
+    }
+    
+    // Generate avatar and status
+    const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`;
+    const lastSeen = actionResult?.lastSeen || new Date().toLocaleDateString();
+    const isOnline = Math.random() > 0.3; // Simulate online status
+    
+    return {
+      data: { 
+        user, 
+        avatar, 
+        lastSeen,
+        isOnline,
+        refreshCount: actionResult?.refreshCount || 0,
+        message: actionResult?.message || null
+      },
+      state: { 
+        active: actionResult?.newActive !== undefined ? actionResult.newActive : true,
+        canRefresh: true,
+        showActions: true
+      },
+      loading: false
+    };
+  }
+</loader>
+
+<div class="user-card" style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin: 8px 0; background: white;">
+  {loadUserCard.data.message ? 
+    <div style="background: #d1ecf1; color: #0c5460; padding: 8px; margin-bottom: 12px; border-radius: 4px; font-size: 14px;">
+      ✅ {loadUserCard.data.message}
+    </div>
+  : <div></div>}
+  
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <img src="{loadUserCard.data.avatar}" alt="{loadUserCard.data.user.name}" style="width: 48px; height: 48px; border-radius: 50%;">
+    <div style="flex: 1;">
+      <h3 style="margin: 0; font-size: 16px; color: #333;">{loadUserCard.data.user.name}</h3>
+      <p style="margin: 4px 0; color: #666; font-size: 14px;">{loadUserCard.data.user.email}</p>
+      <small style="color: #888;">Last seen: {loadUserCard.data.lastSeen}</small>
+      {loadUserCard.data.user.lastRefreshed ? 
+        <small style="color: #007bff; display: block;">Refreshed: {loadUserCard.data.user.lastRefreshed}</small>
+      : <div></div>}
+    </div>
+    
+    <!-- Online status indicator -->
+    <div style="text-align: center;">
+      {loadUserCard.data.isOnline ? 
+        <span style="display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; margin-right: 4px;"></span>
+      : 
+        <span style="display: inline-block; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; margin-right: 4px;"></span>
+      }
+      <small style="color: #666;">{loadUserCard.data.isOnline ? 'Online' : 'Offline'}</small>
+    </div>
+  </div>
+  
+  <!-- Status and actions section -->
+  <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; gap: 8px; align-items: center;">
+      {loadUserCard.state.active ? 
+        <span style="background: #22c55e; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">● Active</span>
+      : 
+        <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">● Inactive</span>
+      }
+      
+      {loadUserCard.data.refreshCount > 0 ? 
+        <small style="color: #007bff;">Refreshed {loadUserCard.data.refreshCount} times</small>
+      : <div></div>}
+    </div>
+    
+    <!-- Component-specific actions -->
+    {loadUserCard.state.showActions ? 
+      <div style="display: flex; gap: 8px;">
+        <button onclick="UserCard.UserCard_refreshProfile" 
+                style="padding: 6px 12px; font-size: 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          🔄 Refresh
+        </button>
+        
+        <button onclick="UserCard.UserCard_updateStatus" 
+                data-status="busy"
+                style="padding: 6px 12px; font-size: 12px; background: #f59e0b; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          📊 Set Busy
+        </button>
+        
+        <button onclick="UserCard.UserCard_toggleActive" 
+                style="padding: 6px 12px; font-size: 12px; background: #10b981; color: white; border-radius: 4px; cursor: pointer;">
+          🔄 Toggle
+        </button>
+      </div>
+    : <div></div>}
+  </div>
+  
+  <!-- Form example with auto form data extraction -->
+  <form onsubmit="UserCard.UserCard_updateUserData" style="margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 6px; border: 1px solid #e5e7eb;">
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <input name="name" 
+             value="{loadUserCard.data.user.name}" 
+             placeholder="Update name"
+             style="flex: 1; padding: 4px 8px; font-size: 12px; border: 1px solid #d1d5db; border-radius: 3px;">
+      <input name="email" 
+             value="{loadUserCard.data.user.email}" 
+             placeholder="Update email"
+             style="flex: 1; padding: 4px 8px; font-size: 12px; border: 1px solid #d1d5db; border-radius: 3px;">
+      <button type="submit" 
+              style="padding: 4px 8px; font-size: 12px; background: #6366f1; color: white; border: none; border-radius: 3px; cursor: pointer;">
+        💾 Update
+      </button>
+    </div>
+  </form>
+</div>
+
+<script server>
+  async function refreshProfile(formData, request) {
+    console.log('🔄 UserCard.refreshProfile called for component:', request.componentId);
+    
+    // Simulate fresh data fetch
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    const refreshCount = (request.componentProps?.refreshCount || 0) + 1;
+    
+    return {
+      success: true,
+      refreshed: true,
+      refreshCount,
+      lastSeen: new Date().toLocaleDateString() + ' (refreshed)',
+      message: `Profile refreshed (${refreshCount} times)`,
+      timestamp: new Date().toISOString()
+    };
+  }
+  
+  async function updateStatus(formData, request) {
+    console.log('📊 UserCard.updateStatus called with:', formData);
+    
+    // Get status from formData or use default
+    const status = formData.status || 'busy';
+    
+    return {
+      success: true,
+      statusUpdated: true,
+      newStatus: status,
+      message: `Status updated to ${status}`,
+      timestamp: new Date().toISOString()
+    };
+  }
+  
+  async function toggleActive(formData, request) {
+    console.log('🔄 UserCard.toggleActive called');
+    
+    const currentActive = request.componentProps?.active !== false;
+    
+    return {
+      success: true,
+      toggled: true,
+      newActive: !currentActive,
+      message: `User ${!currentActive ? 'activated' : 'deactivated'}`,
+      timestamp: new Date().toISOString()
+    };
+  }
+  
+  async function updateUserData(formData, request) {
+    console.log('💾 UserCard.updateUserData called with form data:', formData);
+    
+    const { name, email } = formData;
+    
+    // Validate input
+    if (!name || !email) {
+      return {
+        success: false,
+        error: 'Name and email are required',
+        message: 'Error: Name and email are required'
+      };
+    }
+    
+    if (!email.includes('@')) {
+      return {
+        success: false,
+        error: 'Please enter a valid email address',
+        message: 'Error: Please enter a valid email address'
+      };
+    }
+    
+    return {
+      success: true,
+      updated: true,
+      newUser: { name: name.trim(), email: email.trim() },
+      message: `User data updated successfully`,
+      timestamp: new Date().toISOString()
+    };
+  }
+</script>
+
+<script client>
+  // Component initialization
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('🧩 UserCard component initialized');
+    
+    // Set up click handlers with data attributes
+    const statusButton = document.querySelector('[data-status]');
+    if (statusButton) {
+      statusButton.addEventListener('click', function(e) {
+        const status = e.target.getAttribute('data-status');
+        if (window.PureMix && typeof window.PureMix.call === 'function') {
+          window.PureMix.call('updateStatus', { status: status });
+        }
+      });
+    }
+    
+    // Listen for PureMix availability
+    let initAttempts = 0;
+    const checkPureMix = function() {
+      initAttempts++;
+      if (window.PureMix && typeof window.PureMix.call === 'function') {
+        console.log('✅ PureMix client runtime available for UserCard');
+        
+        window.PureMix.on('componentUpdated', function(data) {
+          if (data.name === 'UserCard') {
+            console.log(`✅ UserCard#${data.id} updated:`, data);
+          }
+        });
+      } else if (initAttempts < 10) {
+        setTimeout(checkPureMix, 100);
+      } else {
+        console.warn('⚠️ PureMix client runtime not available for UserCard after 1s');
+      }
+    };
+    
+    setTimeout(checkPureMix, 50);
+  });
+</script>

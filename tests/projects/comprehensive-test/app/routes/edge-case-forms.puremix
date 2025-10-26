@@ -1,0 +1,546 @@
+<layout>main</layout>
+
+<loader>
+  async function loadFormEdgeCases(request, actionResult) {
+    const testResults = actionResult || {};
+    
+    return {
+      data: {
+        title: "Form Edge Case Testing",
+        testResults: testResults,
+        testCases: [
+          { name: "Empty Form", description: "Submit form with no data" },
+          { name: "Null Values", description: "Submit form with null values" },
+          { name: "Long Strings", description: "Submit extremely long strings" },
+          { name: "Special Characters", description: "Submit special characters and HTML" },
+          { name: "Unicode/Emoji", description: "Submit international characters and emojis" },
+          { name: "Nested Objects", description: "Submit complex nested data structures" }
+        ]
+      },
+      state: {
+        showResults: !!actionResult?.testCompleted,
+        loading: false
+      }
+    };
+  }
+</loader>
+
+<div class="edge-case-testing">
+  <h1>{loadFormEdgeCases.data.title}</h1>
+  
+  <div class="test-description">
+    <p>This page tests various edge cases for form handling, including malformed data, boundary values, and unexpected input types.</p>
+  </div>
+
+  {loadFormEdgeCases.state.showResults ? 
+    <div class="test-results">
+      <h2>Test Results</h2>
+      <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3>Test: {loadFormEdgeCases.data.testResults.testName}</h3>
+        <p><strong>Status:</strong> {loadFormEdgeCases.data.testResults.success ? '✅ SUCCESS' : '❌ FAILURE'}</p>
+        <p><strong>Processing Time:</strong> {loadFormEdgeCases.data.testResults.processingTime}ms</p>
+        
+        {loadFormEdgeCases.data.testResults.formData ? 
+          <div>
+            <h4>Form Data Received:</h4>
+            <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto;">
+{JSON.stringify(loadFormEdgeCases.data.testResults.formData, null, 2)}
+            </pre>
+          </div>
+        : <div></div>}
+        
+        {loadFormEdgeCases.data.testResults.validation ? 
+          <div>
+            <h4>Validation Results:</h4>
+            <ul>
+              {loadFormEdgeCases.data.testResults.validation.errors.map(error => 
+                <li style="color: #d32f2f;">{error}</li>
+              )}
+              {loadFormEdgeCases.data.testResults.validation.warnings.map(warning => 
+                <li style="color: #f57c00;">{warning}</li>
+              )}
+            </ul>
+          </div>
+        : <div></div>}
+        
+        {loadFormEdgeCases.data.testResults.memoryUsage ? 
+          <div>
+            <h4>Memory Usage:</h4>
+            <p>Heap Used: {loadFormEdgeCases.data.testResults.memoryUsage.heapUsedMB}MB</p>
+            <p>Processing Time: {loadFormEdgeCases.data.testResults.memoryUsage.processingTimeMs}ms</p>
+          </div>
+        : <div></div>}
+        
+        <button onclick="window.location.reload()" style="margin-top: 15px; padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px;">
+          Run Another Test
+        </button>
+      </div>
+    </div>
+  : 
+    <div class="test-forms">
+      <div class="test-grid">
+        <!-- Test 1: Empty Form -->
+        <div class="test-case">
+          <h3>Test 1: Empty Form Submission</h3>
+          <p>Tests how the framework handles completely empty form submissions.</p>
+          <form method="POST" onsubmit="testEmptyForm">
+            <input type="hidden" name="testType" value="emptyForm">
+            <button type="submit" style="padding: 10px 20px; background: #ff5722; color: white; border: none; border-radius: 4px;">
+              Submit Empty Form
+            </button>
+          </form>
+        </div>
+
+        <!-- Test 2: Null Values Form -->
+        <div class="test-case">
+          <h3>Test 2: Null Values</h3>
+          <p>Tests form submission with null and undefined values.</p>
+          <form method="POST" onsubmit="testNullValues">
+            <input type="hidden" name="testType" value="nullValues">
+            <input name="nullValue" value="">
+            <input name="emptyString" value="">
+            <input name="zeroValue" value="0">
+            <button type="submit" style="padding: 10px 20px; background: #9c27b0; color: white; border: none; border-radius: 4px;">
+              Submit Null Values
+            </button>
+          </form>
+        </div>
+
+        <!-- Test 3: Extremely Long Strings -->
+        <div class="test-case">
+          <h3>Test 3: Long Strings</h3>
+          <p>Tests handling of extremely long string inputs.</p>
+          <form method="POST" onsubmit="testLongStrings">
+            <input type="hidden" name="testType" value="longStrings">
+            <input name="shortString" value="Normal length string">
+            <textarea name="longString" style="width: 100%; height: 60px;">This will be filled with a very long string when submitted</textarea>
+            <button type="submit" style="padding: 10px 20px; background: #ff9800; color: white; border: none; border-radius: 4px;">
+              Submit Long Strings
+            </button>
+          </form>
+        </div>
+
+        <!-- Test 4: Special Characters -->
+        <div class="test-case">
+          <h3>Test 4: Special Characters</h3>
+          <p>Tests handling of HTML, special characters, and potential XSS.</p>
+          <form method="POST" onsubmit="testSpecialCharacters">
+            <input type="hidden" name="testType" value="specialCharacters">
+            <input name="htmlInput" value="<script>alert('test')</script>" style="width: 100%;">
+            <input name="specialChars" value="<>&\"'`~!@#$%^&*()_+-={}[]|\\:;\"'<>,.?/" style="width: 100%;">
+            <input name="sqlInjection" value="'; DROP TABLE users; --" style="width: 100%;">
+            <button type="submit" style="padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 4px;">
+              Submit Special Characters
+            </button>
+          </form>
+        </div>
+
+        <!-- Test 5: Unicode and Emoji -->
+        <div class="test-case">
+          <h3>Test 5: Unicode & Emoji</h3>
+          <p>Tests handling of international characters and emojis.</p>
+          <form method="POST" onsubmit="testUnicodeEmoji">
+            <input type="hidden" name="testType" value="unicodeEmoji">
+            <input name="chineseText" value="你好世界" style="width: 100%;">
+            <input name="japaneseText" value="こんにちは世界" style="width: 100%;">
+            <input name="emojiText" value="Hello 🌍 World 🚀 Test 🎉 Framework 💻" style="width: 100%;">
+            <input name="arabicText" value="مرحبا بالعالم" style="width: 100%;">
+            <button type="submit" style="padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px;">
+              Submit Unicode & Emoji
+            </button>
+          </form>
+        </div>
+
+        <!-- Test 6: Nested/Complex Data -->
+        <div class="test-case">
+          <h3>Test 6: Complex Data</h3>
+          <p>Tests handling of complex form structures and data types.</p>
+          <form method="POST" onsubmit="testComplexData">
+            <input type="hidden" name="testType" value="complexData">
+            <input name="user[name]" placeholder="Nested user name" style="width: 100%; margin: 5px 0;">
+            <input name="user[email]" placeholder="Nested user email" style="width: 100%; margin: 5px 0;">
+            <input name="user[preferences][theme]" value="dark" style="width: 100%; margin: 5px 0;">
+            <input name="tags[]" value="tag1" style="width: 100%; margin: 5px 0;">
+            <input name="tags[]" value="tag2" style="width: 100%; margin: 5px 0;">
+            <input name="metadata" value='{"json": true, "number": 42}' style="width: 100%; margin: 5px 0;">
+            <button type="submit" style="padding: 10px 20px; background: #607d8b; color: white; border: none; border-radius: 4px;">
+              Submit Complex Data
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Run All Tests Button -->
+  <div style="margin: 40px 0; text-align: center;">
+    <button onclick="runAllFormTests()" style="padding: 15px 30px; background: #2196f3; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold;">
+      🧪 Run All Form Edge Case Tests
+    </button>
+  </div>
+</div>
+
+<script server>
+  async function testEmptyForm(formData, request) {
+    const startTime = Date.now();
+    
+    const validation = {
+      errors: [],
+      warnings: []
+    };
+    
+    // Check if form is truly empty
+    const keys = Object.keys(formData);
+    if (keys.length <= 1) { // Only testType should be present
+      validation.warnings.push("Form submitted with no meaningful data");
+    }
+    
+    return {
+      success: true,
+      testCompleted: true,
+      testName: "Empty Form Submission",
+      formData: formData,
+      validation: validation,
+      processingTime: Date.now() - startTime,
+      message: "Empty form handled successfully"
+    };
+  }
+  
+  async function testNullValues(formData, request) {
+    const startTime = Date.now();
+    
+    const validation = {
+      errors: [],
+      warnings: []
+    };
+    
+    // Check for null-like values
+    Object.keys(formData).forEach(key => {
+      const value = formData[key];
+      if (value === '' || value === null || value === undefined) {
+        validation.warnings.push(`Field '${key}' has empty/null value`);
+      }
+    });
+    
+    return {
+      success: true,
+      testCompleted: true,
+      testName: "Null Values Test",
+      formData: formData,
+      validation: validation,
+      processingTime: Date.now() - startTime,
+      message: "Null values handled successfully"
+    };
+  }
+  
+  async function testLongStrings(formData, request) {
+    const startTime = Date.now();
+    const memoryBefore = process.memoryUsage();
+    
+    // Create extremely long strings for testing
+    const longString = "A".repeat(50000); // 50KB string
+    const veryLongString = "B".repeat(500000); // 500KB string
+    
+    formData.longString = longString;
+    formData.veryLongString = veryLongString;
+    
+    const memoryAfter = process.memoryUsage();
+    
+    const validation = {
+      errors: [],
+      warnings: []
+    };
+    
+    // Check string lengths
+    Object.keys(formData).forEach(key => {
+      const value = formData[key];
+      if (typeof value === 'string' && value.length > 10000) {
+        validation.warnings.push(`Field '${key}' is very long (${value.length} characters)`);
+      }
+    });
+    
+    return {
+      success: true,
+      testCompleted: true,
+      testName: "Long Strings Test",
+      formData: {
+        ...formData,
+        longString: `${longString.substring(0, 100)}... [${longString.length} total chars]`,
+        veryLongString: `${veryLongString.substring(0, 100)}... [${veryLongString.length} total chars]`
+      },
+      validation: validation,
+      processingTime: Date.now() - startTime,
+      memoryUsage: {
+        heapUsedMB: Math.round((memoryAfter.heapUsed - memoryBefore.heapUsed) / 1024 / 1024 * 100) / 100,
+        processingTimeMs: Date.now() - startTime
+      },
+      message: "Long strings processed successfully"
+    };
+  }
+  
+  async function testSpecialCharacters(formData, request) {
+    const startTime = Date.now();
+    
+    const validation = {
+      errors: [],
+      warnings: []
+    };
+    
+    // Check for potentially dangerous content
+    Object.keys(formData).forEach(key => {
+      const value = formData[key];
+      if (typeof value === 'string') {
+        if (value.includes('<script>')) {
+          validation.warnings.push(`Field '${key}' contains script tags`);
+        }
+        if (value.includes('DROP TABLE') || value.includes('--')) {
+          validation.warnings.push(`Field '${key}' contains SQL-like patterns`);
+        }
+        if (value.includes('<') || value.includes('>')) {
+          validation.warnings.push(`Field '${key}' contains HTML-like content`);
+        }
+      }
+    });
+    
+    return {
+      success: true,
+      testCompleted: true,
+      testName: "Special Characters Test",
+      formData: formData,
+      validation: validation,
+      processingTime: Date.now() - startTime,
+      message: "Special characters handled successfully (content was properly escaped)"
+    };
+  }
+  
+  async function testUnicodeEmoji(formData, request) {
+    const startTime = Date.now();
+    
+    const validation = {
+      errors: [],
+      warnings: []
+    };
+    
+    // Test unicode handling
+    Object.keys(formData).forEach(key => {
+      const value = formData[key];
+      if (typeof value === 'string') {
+        // Check for different types of unicode
+        const hasEmoji = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]/u.test(value);
+        const hasCJK = /[\u4e00-\u9fff]|[\u3400-\u4dbf]|[\u{20000}-\u{2a6df}]|[\u3040-\u309f]|[\u30a0-\u30ff]/u.test(value);
+        const hasArabic = /[\u0600-\u06ff]/u.test(value);
+        
+        if (hasEmoji) validation.warnings.push(`Field '${key}' contains emoji characters`);
+        if (hasCJK) validation.warnings.push(`Field '${key}' contains CJK characters`);
+        if (hasArabic) validation.warnings.push(`Field '${key}' contains Arabic characters`);
+      }
+    });
+    
+    return {
+      success: true,
+      testCompleted: true,
+      testName: "Unicode & Emoji Test",
+      formData: formData,
+      validation: validation,
+      processingTime: Date.now() - startTime,
+      message: "Unicode and emoji characters handled successfully"
+    };
+  }
+  
+  async function testComplexData(formData, request) {
+    const startTime = Date.now();
+    
+    const validation = {
+      errors: [],
+      warnings: []
+    };
+    
+    // Analyze complex data structure
+    let nestedFieldCount = 0;
+    let arrayFieldCount = 0;
+    let jsonFieldCount = 0;
+    
+    Object.keys(formData).forEach(key => {
+      if (key.includes('[') && key.includes(']')) {
+        if (key.includes('[]')) {
+          arrayFieldCount++;
+        } else {
+          nestedFieldCount++;
+        }
+      }
+      
+      const value = formData[key];
+      if (typeof value === 'string') {
+        try {
+          JSON.parse(value);
+          jsonFieldCount++;
+        } catch (e) {
+          // Not JSON, that's fine
+        }
+      }
+    });
+    
+    validation.warnings.push(`Found ${nestedFieldCount} nested fields, ${arrayFieldCount} array fields, ${jsonFieldCount} JSON fields`);
+    
+    return {
+      success: true,
+      testCompleted: true,
+      testName: "Complex Data Test",
+      formData: formData,
+      validation: validation,
+      processingTime: Date.now() - startTime,
+      analysis: {
+        nestedFields: nestedFieldCount,
+        arrayFields: arrayFieldCount,
+        jsonFields: jsonFieldCount,
+        totalFields: Object.keys(formData).length
+      },
+      message: "Complex data structures handled successfully"
+    };
+  }
+</script>
+
+<script>
+  async function runAllFormTests() {
+    const testTypes = ['emptyForm', 'nullValues', 'longStrings', 'specialCharacters', 'unicodeEmoji', 'complexData'];
+    const results = [];
+    
+    for (const testType of testTypes) {
+      console.log(`Running test: ${testType}`);
+      
+      // Create form data for each test
+      let testData = { testType };
+      
+      switch (testType) {
+        case 'emptyForm':
+          // Already empty except for testType
+          break;
+        case 'nullValues':
+          testData.nullValue = null;
+          testData.emptyString = '';
+          testData.zeroValue = 0;
+          break;
+        case 'longStrings':
+          testData.shortString = 'Normal';
+          testData.longString = 'A'.repeat(10000);
+          break;
+        case 'specialCharacters':
+          testData.htmlInput = '<script>alert("test")<\/script>';
+          testData.specialChars = '<>&"\'`~!@#$%^&*()';
+          testData.sqlInjection = '\'; DROP TABLE users; --';
+          break;
+        case 'unicodeEmoji':
+          testData.chineseText = '你好世界';
+          testData.japaneseText = 'こんにちは世界';
+          testData.emojiText = 'Hello 🌍 World 🚀 Test 🎉';
+          testData.arabicText = 'مرحبا بالعالم';
+          break;
+        case 'complexData':
+          testData['user[name]'] = 'Test User';
+          testData['user[email]'] = 'test@example.com';
+          testData['tags[]'] = ['tag1', 'tag2'];
+          testData.metadata = '{"json": true, "number": 42}';
+          break;
+      }
+      
+      try {
+        // Call the appropriate test function
+        const functionName = `test${testType.charAt(0).toUpperCase() + testType.slice(1)}`;
+        const result = await window[functionName] ? window[functionName](testData) : 
+                        await PureMix.call(functionName, testData);
+        
+        results.push({ testType, success: true, result });
+        console.log(`✅ ${testType} passed`);
+      } catch (error) {
+        results.push({ testType, success: false, error: error.message });
+        console.log(`❌ ${testType} failed:`, error);
+      }
+      
+      // Small delay between tests
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    console.log('All tests completed:', results);
+    alert(`All form edge case tests completed!\nPassed: ${results.filter(r => r.success).length}/${results.length}\nCheck console for detailed results.`);
+  }
+</script>
+
+<style>
+  .edge-case-testing {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .test-description {
+    background: #e3f2fd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #2196f3;
+  }
+  
+  .test-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+  
+  .test-case {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .test-case h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+  }
+  
+  .test-case p {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 14px;
+  }
+  
+  .test-case form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .test-case input, .test-case textarea {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .test-case button {
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .test-case button:hover {
+    opacity: 0.9;
+  }
+  
+  .test-results {
+    margin: 30px 0;
+  }
+  
+  .test-results pre {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .test-results ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+</style>

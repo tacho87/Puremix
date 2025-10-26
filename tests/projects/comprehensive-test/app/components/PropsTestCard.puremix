@@ -1,0 +1,331 @@
+<loader>
+  async function loadPropsTestCard(request, actionResult, props) {
+    console.log('🎯 PropsTestCard loader called with props:', JSON.stringify(props, null, 2));
+    
+    // Use props data if provided, fallback to default
+    const user = props?.user || { 
+      name: 'Default User', 
+      email: 'default@example.com',
+      role: 'guest'
+    };
+    
+    const config = props?.config || {
+      showEmail: true,
+      theme: 'light',
+      actions: ['view']
+    };
+    
+    // Additional data from props
+    const priority = props?.priority || 'normal';
+    const metadata = props?.metadata || null;
+    
+    // Handle action results
+    if (actionResult?.updated) {
+      user.lastUpdated = new Date().toLocaleTimeString();
+    }
+    
+    return {
+      data: { 
+        user,
+        config,
+        priority,
+        metadata,
+        propsReceived: !!props,
+        propCount: props ? Object.keys(props).length : 0
+      },
+      state: { 
+        canEdit: config.actions?.includes('edit'),
+        canDelete: config.actions?.includes('delete'),
+        theme: config.theme
+      }
+    };
+  }
+</loader>
+
+<div class="props-test-card {loadPropsTestCard.state.theme}-theme priority-{loadPropsTestCard.data.priority}">
+  <!-- Props Status Indicator -->
+  <div class="props-status">
+    {loadPropsTestCard.data.propsReceived ? 
+      <span class="props-indicator success">✅ Props: {loadPropsTestCard.data.propCount} received</span>
+    : 
+      <span class="props-indicator default">⚠️ No props - using defaults</span>
+    }
+  </div>
+
+  <!-- User Information -->
+  <div class="user-section">
+    <h3 class="user-name">{loadPropsTestCard.data.user.name}</h3>
+    <p class="user-role">Role: {loadPropsTestCard.data.user.role}</p>
+    
+    {loadPropsTestCard.data.config.showEmail ? <p class="user-email">📧 {loadPropsTestCard.data.user.email}</p> : <p class="user-email-hidden">📧 Email hidden</p>}
+    
+    {loadPropsTestCard.data.user.lastUpdated ? <small class="last-updated">Last updated: {loadPropsTestCard.data.user.lastUpdated} should not be updated</small> : <div>Not updated</div>}
+  </div>
+
+  <!-- Priority Display -->
+  <div class="priority-section">
+    <span class="priority-label">Priority:</span>
+    <span class="priority-value priority-{loadPropsTestCard.data.priority}">
+      {loadPropsTestCard.data.priority.toUpperCase()}
+    </span>
+  </div>
+
+  <!-- Metadata Section -->
+  {loadPropsTestCard.data.metadata ? <div class="metadata-section"><h4>Metadata:</h4><pre class="metadata-content">{JSON.stringify(loadPropsTestCard.data.metadata, null, 2)}</pre></div> : <div class="no-metadata">No metadata provided</div>}
+
+  <!-- Action Buttons -->
+  <div class="actions-section">
+    <button onclick="PropsTestCard.PropsTestCard_viewDetails" class="btn-action view">👁️ View</button>
+    
+    {loadPropsTestCard.state.canEdit ? <button onclick="PropsTestCard.PropsTestCard_editUser" class="btn-action edit">✏️ Edit</button> : <div></div>}
+    
+    {loadPropsTestCard.state.canDelete ? <button onclick="PropsTestCard.PropsTestCard_deleteUser" class="btn-action delete">🗑️ Delete</button> : <div></div>}
+    
+    <button onclick="PropsTestCard.PropsTestCard_refreshData" class="btn-action refresh">🔄 Refresh</button>
+  </div>
+</div>
+
+<script server>
+  async function viewDetails(formData, request) {
+    console.log('👁️ PropsTestCard.viewDetails called');
+    return {
+      success: true,
+      message: 'Viewing user details',
+      action: 'view'
+    };
+  }
+  
+  async function editUser(formData, request) {
+    console.log('✏️ PropsTestCard.editUser called');
+    return {
+      success: true,
+      message: 'User edit mode activated',
+      action: 'edit'
+    };
+  }
+  
+  async function deleteUser(formData, request) {
+    console.log('🗑️ PropsTestCard.deleteUser called');
+    return {
+      success: true,
+      message: 'User deletion confirmed',
+      action: 'delete'
+    };
+  }
+  
+  async function refreshData(formData, request) {
+    console.log('🔄 PropsTestCard.refreshData called');
+    return {
+      success: true,
+      updated: true,
+      message: 'Component data refreshed',
+      timestamp: new Date().toISOString()
+    };
+  }
+</script>
+
+<style>
+  .props-test-card {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .light-theme {
+    background: white;
+    color: #374151;
+  }
+
+  .dark-theme {
+    background: #1f2937;
+    color: #f9fafb;
+    border-color: #4b5563;
+  }
+
+  .priority-high {
+    border-left: 4px solid #ef4444;
+  }
+
+  .priority-medium {
+    border-left: 4px solid #f59e0b;
+  }
+
+  .priority-normal {
+    border-left: 4px solid #10b981;
+  }
+
+  .priority-low {
+    border-left: 4px solid #6b7280;
+  }
+
+  .props-status {
+    background: #f3f4f6;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .dark-theme .props-status {
+    background: #374151;
+  }
+
+  .props-indicator.success {
+    color: #059669;
+    font-weight: 600;
+  }
+
+  .props-indicator.default {
+    color: #d97706;
+    font-weight: 600;
+  }
+
+  .user-section {
+    margin-bottom: 15px;
+  }
+
+  .user-name {
+    margin: 0 0 5px 0;
+    color: #1f2937;
+    font-size: 1.2rem;
+  }
+
+  .dark-theme .user-name {
+    color: #f9fafb;
+  }
+
+  .user-role {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    color: #6366f1;
+  }
+
+  .user-email {
+    margin: 5px 0;
+    color: #4b5563;
+  }
+
+  .user-email-hidden {
+    margin: 5px 0;
+    color: #9ca3af;
+    font-style: italic;
+  }
+
+  .last-updated {
+    color: #059669;
+    font-size: 0.8rem;
+  }
+
+  .priority-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .priority-label {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .priority-value {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+  }
+
+  .priority-value.priority-high { background: #ef4444; }
+  .priority-value.priority-medium { background: #f59e0b; }
+  .priority-value.priority-normal { background: #10b981; }
+  .priority-value.priority-low { background: #6b7280; }
+
+  .metadata-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  .dark-theme .metadata-section {
+    background: #374151;
+    border-color: #4b5563;
+  }
+
+  .metadata-section h4 {
+    margin: 0 0 8px 0;
+    color: #374151;
+  }
+
+  .dark-theme .metadata-section h4 {
+    color: #f9fafb;
+  }
+
+  .metadata-content {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin: 0;
+    background: #f3f4f6;
+    padding: 8px;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+
+  .dark-theme .metadata-content {
+    background: #1f2937;
+    color: #d1d5db;
+  }
+
+  .no-metadata {
+    color: #9ca3af;
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .actions-section {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-action {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-action.view {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn-action.edit {
+    background: #059669;
+    color: white;
+  }
+
+  .btn-action.delete {
+    background: #dc2626;
+    color: white;
+  }
+
+  .btn-action.refresh {
+    background: #6b7280;
+    color: white;
+  }
+
+  .btn-action:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+</style>

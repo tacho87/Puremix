@@ -1,0 +1,126 @@
+<layout>main</layout>
+
+<imports>
+  import ContactForm from '../components/ContactForm.puremix'
+</imports>
+
+<head>
+  <title>Contact Us - PureMix Framework</title>
+  <meta name="description" content="Get in touch with the PureMix team. We'd love to hear from you!">
+</head>
+
+<loader>
+  async function loadContact(request, actionResult) {
+    const contactInfo = {
+      email: 'hello@puremix.dev',
+      github: 'https://github.com/puremix/puremix',
+      twitter: 'https://twitter.com/puremixdev'
+    };
+
+    return {
+      data: { 
+        contactInfo,
+        formSubmitted: actionResult?.success || false,
+        submissionMessage: actionResult?.message || null
+      },
+      state: { 
+        showForm: !actionResult?.success 
+      }
+    };
+  }
+</loader>
+
+<div class="animate-fade-in">
+  <!-- Hero Section -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-6">
+      Get In Touch
+    </h1>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+      Have questions about PureMix? Want to contribute? We'd love to hear from you!
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-8">
+    <!-- Contact Information -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="text-2xl font-semibold text-gray-900">Contact Information</h2>
+      </div>
+      <div class="card-body space-y-6">
+        <div class="flex items-center space-x-4">
+          <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+            <span class="text-primary-600">📧</span>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">Email</h3>
+            <a href="mailto:{loadContact.data.contactInfo.email}" class="text-primary-600 hover:text-primary-700">
+              {loadContact.data.contactInfo.email}
+            </a>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+            <span class="text-primary-600">🐙</span>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">GitHub</h3>
+            <a href="{loadContact.data.contactInfo.github}" target="_blank" class="text-primary-600 hover:text-primary-700">
+              puremix/puremix
+            </a>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+            <span class="text-primary-600">🐦</span>
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">Twitter</h3>
+            <a href="{loadContact.data.contactInfo.twitter}" target="_blank" class="text-primary-600 hover:text-primary-700">
+              @puremixdev
+            </a>
+          </div>
+        </div>
+        
+        <div class="pt-6 border-t border-gray-200">
+          <h3 class="font-medium text-gray-900 mb-2">Office Hours</h3>
+          <p class="text-gray-600 text-sm">
+            Monday - Friday: 9:00 AM - 6:00 PM (PST)<br>
+            We typically respond within 24 hours.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div>
+      {loadContact.data.formSubmitted ? 
+        <div class="card">
+          <div class="card-body text-center py-12">
+            <div class="text-6xl mb-4">✅</div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h2>
+            <p class="text-gray-600 mb-6">{loadContact.data.submissionMessage}</p>
+            <form onsubmit="resetForm">
+              <button type="submit" class="btn-primary">
+                Send Another Message
+              </button>
+            </form>
+          </div>
+        </div>
+      : 
+        <ContactForm />
+      }
+    </div>
+  </div>
+</div>
+
+<script server>
+  async function resetForm(formData, request) {
+    return {
+      success: false,
+      message: null
+    };
+  }
+</script>

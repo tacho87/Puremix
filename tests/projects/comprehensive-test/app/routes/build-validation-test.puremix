@@ -1,0 +1,1176 @@
+<layout>main</layout>
+
+<head>
+  <title>Production Build Validation Test</title>
+</head>
+
+<loader>
+  async function loadBuildValidation(request, actionResult) {
+    // Environment information
+    const environment = {
+      nodeEnv: process.env.NODE_ENV || 'development',
+      nodeVersion: process.version,
+      platform: process.platform,
+      architecture: process.arch,
+      memoryUsage: process.memoryUsage(),
+      uptime: process.uptime()
+    };
+
+    // Build validation checklist
+    const validationChecks = [
+      {
+        id: 1,
+        category: "Build Process",
+        name: "npm run build",
+        description: "Production build completes without errors",
+        status: "pending",
+        critical: true,
+        tested: false
+      },
+      {
+        id: 2,
+        category: "Build Process",
+        name: "TypeScript Compilation",
+        description: "All TypeScript files compile successfully",
+        status: "pending",
+        critical: true,
+        tested: false
+      },
+      {
+        id: 3,
+        category: "Build Process",
+        name: "Bundle Size",
+        description: "Client bundle size is within acceptable limits",
+        status: "pending",
+        critical: false,
+        tested: false
+      },
+      {
+        id: 4,
+        category: "Performance",
+        name: "Page Load Time",
+        description: "Initial page load completes under 3 seconds",
+        status: "pending",
+        critical: true,
+        tested: false
+      },
+      {
+        id: 5,
+        category: "Performance",
+        name: "Server Response Time",
+        description: "Average response time under 200ms",
+        status: "pending",
+        critical: true,
+        tested: false
+      },
+      {
+        id: 6,
+        category: "Performance",
+        name: "Memory Usage",
+        description: "Memory consumption stays under 512MB",
+        status: "pending",
+        critical: false,
+        tested: false
+      },
+      {
+        id: 7,
+        category: "Assets",
+        name: "Static Asset Generation",
+        description: "All static assets properly generated",
+        status: "pending",
+        critical: true,
+        tested: false
+      },
+      {
+        id: 8,
+        category: "Assets",
+        name: "Asset Compression",
+        description: "Assets are minified and compressed",
+        status: "pending",
+        critical: false,
+        tested: false
+      },
+      {
+        id: 9,
+        category: "Dependencies",
+        name: "Production Dependencies",
+        description: "Only production dependencies included",
+        status: "pending",
+        critical: true,
+        tested: false
+      },
+      {
+        id: 10,
+        category: "Dependencies",
+        name: "Security Audit",
+        description: "No critical security vulnerabilities",
+        status: "pending",
+        critical: true,
+        tested: false
+      },
+      {
+        id: 11,
+        category: "Python",
+        name: "Python Integration",
+        description: "Python modules available in production",
+        status: "pending",
+        critical: false,
+        tested: false
+      },
+      {
+        id: 12,
+        category: "Python",
+        name: "Python Dependencies",
+        description: "Required Python packages installed",
+        status: "pending",
+        critical: false,
+        tested: false
+      }
+    ];
+
+    // Performance metrics (simulated)
+    const performanceMetrics = {
+      serverResponseTime: Math.floor(Math.random() * 150) + 50, // 50-200ms
+      pageLoadTime: Math.floor(Math.random() * 2000) + 500, // 500-2500ms
+      bundleSize: Math.floor(Math.random() * 500) + 200, // 200-700KB
+      memoryUsage: Math.floor(environment.memoryUsage.heapUsed / 1024 / 1024), // MB
+      cpuUsage: Math.floor(Math.random() * 30) + 10 // 10-40%
+    };
+
+    // Handle validation test results
+    let testResult = null;
+    if (actionResult?.testCompleted) {
+      testResult = {
+        checkId: actionResult.checkId,
+        checkName: actionResult.checkName,
+        passed: actionResult.passed,
+        message: actionResult.message,
+        details: actionResult.details,
+        timestamp: actionResult.timestamp
+      };
+
+      // Update check status
+      const check = validationChecks.find(c => c.id === actionResult.checkId);
+      if (check) {
+        check.tested = true;
+        check.status = actionResult.passed ? "passed" : "failed";
+      }
+    }
+
+    // Calculate statistics
+    const totalChecks = validationChecks.length;
+    const testedChecks = validationChecks.filter(c => c.tested).length;
+    const passedChecks = validationChecks.filter(c => c.status === "passed").length;
+    const failedChecks = validationChecks.filter(c => c.status === "failed").length;
+    const criticalChecks = validationChecks.filter(c => c.critical).length;
+
+    return {
+      data: {
+        environment,
+        validationChecks,
+        performanceMetrics,
+        testResult,
+        stats: {
+          totalChecks,
+          testedChecks,
+          passedChecks,
+          failedChecks,
+          criticalChecks,
+          completionPercentage: Math.floor((testedChecks / totalChecks) * 100)
+        }
+      },
+      state: {
+        showEnvironmentDetails: true,
+        showPerformanceMetrics: true
+      }
+    };
+  }
+</loader>
+
+<div class="build-validation-suite">
+  <header class="test-header">
+    <h1>🏗️ Production Build Validation Test</h1>
+    <p class="subtitle">Comprehensive testing of build process, performance, and deployment readiness</p>
+
+    <div class="build-stats">
+      <div class="stat-card">
+        <span class="stat-value">{loadBuildValidation.data.stats.totalChecks}</span>
+        <span class="stat-label">Total Checks</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadBuildValidation.data.stats.testedChecks}</span>
+        <span class="stat-label">Tested</span>
+      </div>
+      <div class="stat-card success">
+        <span class="stat-value">{loadBuildValidation.data.stats.passedChecks}</span>
+        <span class="stat-label">Passed</span>
+      </div>
+      <div class="stat-card error">
+        <span class="stat-value">{loadBuildValidation.data.stats.failedChecks}</span>
+        <span class="stat-label">Failed</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadBuildValidation.data.stats.completionPercentage}%</span>
+        <span class="stat-label">Complete</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Test Result Panel (if test was executed) -->
+  {loadBuildValidation.data.testResult ?
+    <section class="test-result-panel" data-passed="{loadBuildValidation.data.testResult.passed}">
+      <div class="result-header">
+        <h2>{loadBuildValidation.data.testResult.passed ? '✅' : '❌'} {loadBuildValidation.data.testResult.checkName}</h2>
+        <span class="result-badge" data-passed="{loadBuildValidation.data.testResult.passed}">
+          {loadBuildValidation.data.testResult.passed ? 'PASSED' : 'FAILED'}
+        </span>
+      </div>
+
+      <div class="result-content">
+        <p class="result-message">{loadBuildValidation.data.testResult.message}</p>
+
+        {loadBuildValidation.data.testResult.details ?
+          <div class="result-details">
+            <h4>Test Details:</h4>
+            <pre>{JSON.stringify(loadBuildValidation.data.testResult.details, null, 2)}</pre>
+          </div>
+        : <div></div>}
+
+        <div class="result-meta">
+          <strong>Tested at:</strong> {loadBuildValidation.data.testResult.timestamp}
+        </div>
+      </div>
+    </section>
+  : <div></div>}
+
+  <!-- Environment Information -->
+  <section class="environment-info">
+    <h2>🖥️ Environment Information</h2>
+
+    <div class="env-grid">
+      <div class="env-card">
+        <h3>Runtime Environment</h3>
+        <div class="env-list">
+          <div class="env-item">
+            <strong>NODE_ENV:</strong>
+            <span class="env-badge" data-env="{loadBuildValidation.data.environment.nodeEnv}">
+              {loadBuildValidation.data.environment.nodeEnv}
+            </span>
+          </div>
+          <div class="env-item">
+            <strong>Node.js Version:</strong>
+            <span class="code-value">{loadBuildValidation.data.environment.nodeVersion}</span>
+          </div>
+          <div class="env-item">
+            <strong>Platform:</strong>
+            <span class="code-value">{loadBuildValidation.data.environment.platform}</span>
+          </div>
+          <div class="env-item">
+            <strong>Architecture:</strong>
+            <span class="code-value">{loadBuildValidation.data.environment.architecture}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="env-card">
+        <h3>Server Performance</h3>
+        <div class="env-list">
+          <div class="env-item">
+            <strong>Uptime:</strong>
+            <span class="code-value">{Math.floor(loadBuildValidation.data.environment.uptime)} seconds</span>
+          </div>
+          <div class="env-item">
+            <strong>Heap Used:</strong>
+            <span class="code-value">{Math.floor(loadBuildValidation.data.environment.memoryUsage.heapUsed / 1024 / 1024)} MB</span>
+          </div>
+          <div class="env-item">
+            <strong>Heap Total:</strong>
+            <span class="code-value">{Math.floor(loadBuildValidation.data.environment.memoryUsage.heapTotal / 1024 / 1024)} MB</span>
+          </div>
+          <div class="env-item">
+            <strong>External:</strong>
+            <span class="code-value">{Math.floor(loadBuildValidation.data.environment.memoryUsage.external / 1024 / 1024)} MB</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Metrics -->
+  <section class="performance-metrics">
+    <h2>📊 Performance Metrics</h2>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">⚡</div>
+        <div class="metric-value">{loadBuildValidation.data.performanceMetrics.serverResponseTime}ms</div>
+        <div class="metric-label">Server Response Time</div>
+        <div class="metric-status" data-status="{loadBuildValidation.data.performanceMetrics.serverResponseTime < 200 ? 'good' : 'warning'}">
+          {loadBuildValidation.data.performanceMetrics.serverResponseTime < 200 ? '✅ Excellent' : '⚠️ Needs Improvement'}
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">🚀</div>
+        <div class="metric-value">{loadBuildValidation.data.performanceMetrics.pageLoadTime}ms</div>
+        <div class="metric-label">Page Load Time</div>
+        <div class="metric-status" data-status="{loadBuildValidation.data.performanceMetrics.pageLoadTime < 3000 ? 'good' : 'warning'}">
+          {loadBuildValidation.data.performanceMetrics.pageLoadTime < 3000 ? '✅ Fast' : '⚠️ Slow'}
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">📦</div>
+        <div class="metric-value">{loadBuildValidation.data.performanceMetrics.bundleSize}KB</div>
+        <div class="metric-label">Bundle Size</div>
+        <div class="metric-status" data-status="{loadBuildValidation.data.performanceMetrics.bundleSize < 500 ? 'good' : 'warning'}">
+          {loadBuildValidation.data.performanceMetrics.bundleSize < 500 ? '✅ Optimized' : '⚠️ Large'}
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">💾</div>
+        <div class="metric-value">{loadBuildValidation.data.performanceMetrics.memoryUsage}MB</div>
+        <div class="metric-label">Memory Usage</div>
+        <div class="metric-status" data-status="{loadBuildValidation.data.performanceMetrics.memoryUsage < 512 ? 'good' : 'warning'}">
+          {loadBuildValidation.data.performanceMetrics.memoryUsage < 512 ? '✅ Normal' : '⚠️ High'}
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">🔧</div>
+        <div class="metric-value">{loadBuildValidation.data.performanceMetrics.cpuUsage}%</div>
+        <div class="metric-label">CPU Usage</div>
+        <div class="metric-status" data-status="{loadBuildValidation.data.performanceMetrics.cpuUsage < 50 ? 'good' : 'warning'}">
+          {loadBuildValidation.data.performanceMetrics.cpuUsage < 50 ? '✅ Low' : '⚠️ High'}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Validation Checks -->
+  <section class="validation-checks">
+    <h2>✅ Build Validation Checklist</h2>
+
+    {Object.keys(loadBuildValidation.data.validationChecks.reduce((acc, check) => {
+      if (!acc[check.category]) acc[check.category] = [];
+      acc[check.category].push(check);
+      return acc;
+    }, {})).map(category =>
+      <div class="category-section">
+        <h3>{category}</h3>
+        <div class="checks-grid">
+          {loadBuildValidation.data.validationChecks.filter(c => c.category === category).map(check =>
+            <div class="check-card" data-status="{check.status}" data-critical="{check.critical}">
+              <div class="check-header">
+                <h4>{check.name}</h4>
+                <div class="check-badges">
+                  {check.critical ?
+                    <span class="critical-badge">CRITICAL</span>
+                  : <div></div>}
+                  <span class="status-badge" data-status="{check.status}">
+                    {check.status === 'passed' ? '✅ Passed' : check.status === 'failed' ? '❌ Failed' : '⏳ Pending'}
+                  </span>
+                </div>
+              </div>
+
+              <p class="check-description">{check.description}</p>
+
+              <form method="POST" data-action="runValidationCheck" class="check-form">
+                <input type="hidden" name="checkId" value="{check.id}">
+                <input type="hidden" name="checkName" value="{check.name}">
+                <input type="hidden" name="category" value="{check.category}">
+
+                <button type="submit" class="validate-button" disabled="{check.tested}">
+                  {check.tested ? '✓ Tested' : '🧪 Run Check'}
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </section>
+
+  <!-- Build Commands Reference -->
+  <section class="build-commands">
+    <h2>📟 Build Commands Reference</h2>
+
+    <div class="commands-grid">
+      <div class="command-card">
+        <h3>Development Build</h3>
+        <code class="command">npm run dev</code>
+        <p>Start development server with hot reload</p>
+      </div>
+
+      <div class="command-card">
+        <h3>Production Build</h3>
+        <code class="command">npm run build</code>
+        <p>Create optimized production build</p>
+      </div>
+
+      <div class="command-card">
+        <h3>Production Start</h3>
+        <code class="command">npm run start</code>
+        <p>Start production server</p>
+      </div>
+
+      <div class="command-card">
+        <h3>TypeScript Check</h3>
+        <code class="command">npx tsc --noEmit</code>
+        <p>Validate TypeScript without building</p>
+      </div>
+
+      <div class="command-card">
+        <h3>Security Audit</h3>
+        <code class="command">npm audit</code>
+        <p>Check for security vulnerabilities</p>
+      </div>
+
+      <div class="command-card">
+        <h3>Dependency Check</h3>
+        <code class="command">npm list --prod</code>
+        <p>List production dependencies</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deployment Checklist -->
+  <section class="deployment-checklist">
+    <h2>🚀 Production Deployment Checklist</h2>
+
+    <div class="checklist-grid">
+      <div class="checklist-group">
+        <h3>Pre-Deployment</h3>
+        <ul>
+          <li>✅ All tests passing</li>
+          <li>✅ TypeScript compilation successful</li>
+          <li>✅ Security audit clean</li>
+          <li>✅ Environment variables configured</li>
+          <li>✅ Database migrations ready</li>
+        </ul>
+      </div>
+
+      <div class="checklist-group">
+        <h3>Build Process</h3>
+        <ul>
+          <li>✅ Production build completes</li>
+          <li>✅ Assets minified and compressed</li>
+          <li>✅ Source maps generated</li>
+          <li>✅ Bundle size acceptable</li>
+          <li>✅ No console errors or warnings</li>
+        </ul>
+      </div>
+
+      <div class="checklist-group">
+        <h3>Post-Deployment</h3>
+        <ul>
+          <li>✅ Health check endpoints responding</li>
+          <li>✅ Performance metrics normal</li>
+          <li>✅ Error tracking active</li>
+          <li>✅ Logging configured</li>
+          <li>✅ Monitoring alerts set up</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Navigation -->
+  <footer class="test-footer">
+    <a href="/error-handling-test" class="back-link">← Error Handling Test</a>
+    <a href="/" class="home-link">🏠 Home</a>
+    <a href="/database-integration-test" class="next-link">Database Integration Test →</a>
+  </footer>
+</div>
+
+<script server>
+  async function runValidationCheck(formData, request) {
+    const { checkId, checkName, category } = formData;
+
+    console.log('🔍 Running validation check:', checkName);
+
+    // Simulate running different validation checks
+    let passed = true;
+    let message = '';
+    let details = {};
+
+    switch(parseInt(checkId)) {
+      case 1: // npm run build
+        passed = true;
+        message = 'Build process completed successfully without errors';
+        details = {
+          buildTime: '12.3s',
+          outputFiles: 45,
+          errors: 0,
+          warnings: 0
+        };
+        break;
+
+      case 2: // TypeScript Compilation
+        passed = true;
+        message = 'TypeScript compilation successful with no errors';
+        details = {
+          filesCompiled: 128,
+          errors: 0,
+          warnings: 2,
+          duration: '8.7s'
+        };
+        break;
+
+      case 3: // Bundle Size
+        passed = Math.random() > 0.3;
+        const bundleSize = passed ? 456 : 782;
+        message = passed
+          ? `Bundle size (${bundleSize}KB) is within acceptable limits`
+          : `Bundle size (${bundleSize}KB) exceeds recommended limit of 500KB`;
+        details = {
+          clientBundle: bundleSize,
+          vendorBundle: 234,
+          total: bundleSize + 234,
+          compressed: Math.floor((bundleSize + 234) * 0.3)
+        };
+        break;
+
+      case 4: // Page Load Time
+        passed = Math.random() > 0.2;
+        const loadTime = passed ? 1.8 : 3.5;
+        message = passed
+          ? `Page load time (${loadTime}s) meets performance requirements`
+          : `Page load time (${loadTime}s) exceeds 3 second threshold`;
+        details = {
+          loadTime: `${loadTime}s`,
+          domReady: `${loadTime * 0.6}s`,
+          interactive: `${loadTime * 0.8}s`,
+          complete: `${loadTime}s`
+        };
+        break;
+
+      case 5: // Server Response Time
+        passed = true;
+        message = 'Average server response time is excellent';
+        details = {
+          average: '145ms',
+          p50: '120ms',
+          p95: '280ms',
+          p99: '450ms'
+        };
+        break;
+
+      case 6: // Memory Usage
+        passed = true;
+        message = 'Memory consumption is within normal limits';
+        details = {
+          heapUsed: '384MB',
+          heapTotal: '512MB',
+          external: '12MB',
+          rss: '456MB'
+        };
+        break;
+
+      case 7: // Static Asset Generation
+        passed = true;
+        message = 'All static assets generated successfully';
+        details = {
+          images: 34,
+          stylesheets: 12,
+          scripts: 28,
+          fonts: 6,
+          total: 80
+        };
+        break;
+
+      case 8: // Asset Compression
+        passed = true;
+        message = 'Assets are properly minified and compressed';
+        details = {
+          originalSize: '2.3MB',
+          compressedSize: '680KB',
+          compressionRatio: '70%',
+          format: 'gzip'
+        };
+        break;
+
+      case 9: // Production Dependencies
+        passed = true;
+        message = 'Only production dependencies are included in build';
+        details = {
+          production: 23,
+          development: 0,
+          optional: 2,
+          total: 25
+        };
+        break;
+
+      case 10: // Security Audit
+        passed = Math.random() > 0.4;
+        message = passed
+          ? 'No critical security vulnerabilities found'
+          : 'Found 2 moderate security vulnerabilities';
+        details = {
+          critical: 0,
+          high: 0,
+          moderate: passed ? 0 : 2,
+          low: 3,
+          info: 5
+        };
+        break;
+
+      case 11: // Python Integration
+        passed = true;
+        message = 'Python integration is available in production build';
+        details = {
+          pythonVersion: '3.13.6',
+          modulesDiscovered: 6,
+          functionsAvailable: 22,
+          status: 'operational'
+        };
+        break;
+
+      case 12: // Python Dependencies
+        passed = Math.random() > 0.3;
+        message = passed
+          ? 'All required Python packages are installed'
+          : 'Missing Python packages: pandas, numpy';
+        details = {
+          required: ['pandas', 'numpy', 'requests'],
+          installed: passed ? ['pandas', 'numpy', 'requests'] : ['requests'],
+          missing: passed ? [] : ['pandas', 'numpy']
+        };
+        break;
+
+      default:
+        passed = true;
+        message = 'Validation check completed';
+        details = {};
+    }
+
+    console.log(passed ? '✅ Check passed' : '❌ Check failed');
+
+    return {
+      success: true,
+      testCompleted: true,
+      checkId: parseInt(checkId),
+      checkName: checkName,
+      category: category,
+      passed: passed,
+      message: message,
+      details: details,
+      timestamp: new Date().toISOString()
+    };
+  }
+</script>
+
+<style>
+  .build-validation-suite {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .test-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px;
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    border-radius: 12px;
+    color: white;
+  }
+
+  .test-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0 0 30px 0;
+  }
+
+  .build-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 25px;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    min-width: 100px;
+  }
+
+  .stat-card.success {
+    background: rgba(40, 167, 69, 0.3);
+  }
+
+  .stat-card.error {
+    background: rgba(220, 53, 69, 0.3);
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  .test-result-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .test-result-panel[data-passed="true"] {
+    border-left: 6px solid #28a745;
+  }
+
+  .test-result-panel[data-passed="false"] {
+    border-left: 6px solid #dc3545;
+  }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .result-header h2 {
+    margin: 0;
+    color: #333;
+  }
+
+  .result-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .result-badge[data-passed="true"] {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .result-badge[data-passed="false"] {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .result-message {
+    font-size: 1.1rem;
+    color: #495057;
+    margin-bottom: 20px;
+  }
+
+  .result-details {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .result-details h4 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .result-details pre {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0 0 0;
+    font-size: 0.9rem;
+  }
+
+  .result-meta {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+
+  .environment-info {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .environment-info h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .env-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .env-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .env-card h3 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .env-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .env-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+  }
+
+  .env-item strong {
+    color: #6c757d;
+  }
+
+  .env-item code,
+  .code-value {
+    background: #f1f3f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: monospace;
+  }
+
+  .env-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .env-badge[data-env="production"] {
+    background: #28a745;
+    color: white;
+  }
+
+  .env-badge[data-env="development"] {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .performance-metrics {
+    margin-bottom: 40px;
+  }
+
+  .performance-metrics h2 {
+    color: #333;
+    margin-bottom: 25px;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .metric-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .metric-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  .metric-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  .metric-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+  }
+
+  .metric-status {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  .metric-status[data-status="good"] {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .metric-status[data-status="warning"] {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .validation-checks {
+    margin-bottom: 40px;
+  }
+
+  .validation-checks h2 {
+    color: #333;
+    margin-bottom: 30px;
+  }
+
+  .category-section {
+    margin-bottom: 30px;
+  }
+
+  .category-section h3 {
+    color: #495057;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  .checks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+  }
+
+  .check-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #6c757d;
+  }
+
+  .check-card[data-status="passed"] {
+    border-left-color: #28a745;
+  }
+
+  .check-card[data-status="failed"] {
+    border-left-color: #dc3545;
+  }
+
+  .check-card[data-critical="true"] {
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+  }
+
+  .check-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .check-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    flex: 1;
+  }
+
+  .check-badges {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .critical-badge {
+    background: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .status-badge[data-status="passed"] {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-badge[data-status="failed"] {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-badge[data-status="pending"] {
+    background: #e2e3e5;
+    color: #6c757d;
+  }
+
+  .check-description {
+    color: #6c757d;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .check-form {
+    margin-top: 15px;
+  }
+
+  .validate-button {
+    width: 100%;
+    padding: 10px;
+    background: #4ecdc4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .validate-button:hover:not(:disabled) {
+    background: #3fb8b0;
+  }
+
+  .validate-button:disabled {
+    background: #e2e3e5;
+    color: #6c757d;
+    cursor: not-allowed;
+  }
+
+  .build-commands {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+  }
+
+  .build-commands h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .commands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .command-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #4ecdc4;
+  }
+
+  .command-card h3 {
+    margin-top: 0;
+    color: #495057;
+    font-size: 1rem;
+  }
+
+  .command-card .command {
+    display: block;
+    background: #f1f3f5;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #495057;
+  }
+
+  .command-card p {
+    color: #6c757d;
+    margin: 10px 0 0 0;
+    font-size: 0.9rem;
+  }
+
+  .deployment-checklist {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .deployment-checklist h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+  }
+
+  .checklist-group h3 {
+    color: #495057;
+    margin-bottom: 15px;
+  }
+
+  .checklist-group ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .checklist-group li {
+    margin-bottom: 10px;
+    color: #155724;
+    line-height: 1.6;
+  }
+
+  .test-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+  }
+
+  .test-footer a {
+    color: #4ecdc4;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .test-footer a:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,63 @@
+<loader>
+  async function loadFeatureCard(request, actionResult, props) {
+    const feature = props?.feature || {
+      id: 0,
+      title: 'Default Feature',
+      description: 'This is a default feature description.',
+      icon: '📦',
+      color: 'gray'
+    };
+    
+    const colorClasses = {
+      blue: 'bg-blue-50 text-blue-600 border-blue-200',
+      green: 'bg-green-50 text-green-600 border-green-200', 
+      yellow: 'bg-yellow-50 text-yellow-600 border-yellow-200',
+      purple: 'bg-purple-50 text-purple-600 border-purple-200',
+      gray: 'bg-gray-50 text-gray-600 border-gray-200'
+    };
+    
+    return {
+      data: { 
+        feature,
+        colorClass: colorClasses[feature.color] || colorClasses.gray,
+        isHighlighted: actionResult?.highlighted === feature.id
+      },
+      state: { 
+        canHighlight: true 
+      }
+    };
+  }
+</loader>
+
+<div class="card hover:shadow-lg transition-shadow duration-200 {loadFeatureCard.data.isHighlighted ? 'ring-2 ring-primary-500 ring-opacity-50' : ''}">
+  <div class="card-body text-center">
+    <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg border-2 {loadFeatureCard.data.colorClass} mb-4">
+      <span class="text-2xl">{loadFeatureCard.data.feature.icon}</span>
+    </div>
+    
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+      {loadFeatureCard.data.feature.title}
+    </h3>
+    
+    <p class="text-gray-600 mb-4 text-sm">
+      {loadFeatureCard.data.feature.description}
+    </p>
+    
+    {loadFeatureCard.state.canHighlight ? 
+      <button onclick="FeatureCard.FeatureCard_highlight" class="btn-outline text-sm w-full">
+        {loadFeatureCard.data.isHighlighted ? '✨ Highlighted!' : '👆 Highlight'}
+      </button>
+    : <div></div>}
+  </div>
+</div>
+
+<script server>
+  async function highlight(formData, request) {
+    // In a real app, you might save this preference to a database
+    return {
+      success: true,
+      highlighted: Math.floor(Math.random() * 4) + 1, // Random highlight for demo
+      message: 'Feature highlighted!'
+    };
+  }
+</script>

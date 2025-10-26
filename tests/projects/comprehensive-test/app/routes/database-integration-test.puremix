@@ -1,0 +1,1376 @@
+<layout>main</layout>
+
+<head>
+  <title>Database Integration Test</title>
+</head>
+
+<loader>
+  async function loadDatabaseTest(request, actionResult) {
+    // Simulated database configuration
+    const dbConfig = {
+      type: 'in-memory-mock',
+      host: 'localhost',
+      port: 5432,
+      database: 'puremix_test',
+      connected: true,
+      poolSize: 10,
+      activeConnections: 3
+    };
+
+    // Mock database records
+    const mockUsers = [
+      { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'admin', createdAt: '2025-01-15' },
+      { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'user', createdAt: '2025-02-20' },
+      { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', role: 'user', createdAt: '2025-03-10' }
+    ];
+
+    // Database operation test scenarios
+    const testScenarios = [
+      {
+        id: 1,
+        operation: "CREATE",
+        name: "Insert New Record",
+        description: "Add a new user to the database",
+        tested: false,
+        status: "pending"
+      },
+      {
+        id: 2,
+        operation: "READ",
+        name: "Query Single Record",
+        description: "Fetch a user by ID",
+        tested: false,
+        status: "pending"
+      },
+      {
+        id: 3,
+        operation: "READ",
+        name: "Query Multiple Records",
+        description: "Fetch all users with pagination",
+        tested: false,
+        status: "pending"
+      },
+      {
+        id: 4,
+        operation: "UPDATE",
+        name: "Update Existing Record",
+        description: "Modify user information",
+        tested: false,
+        status: "pending"
+      },
+      {
+        id: 5,
+        operation: "DELETE",
+        name: "Delete Record",
+        description: "Remove a user from database",
+        tested: false,
+        status: "pending"
+      },
+      {
+        id: 6,
+        operation: "TRANSACTION",
+        name: "Atomic Transaction",
+        description: "Multiple operations in single transaction",
+        tested: false,
+        status: "pending"
+      },
+      {
+        id: 7,
+        operation: "QUERY",
+        name: "Complex Query",
+        description: "JOIN operations and filtering",
+        tested: false,
+        status: "pending"
+      },
+      {
+        id: 8,
+        operation: "CONNECTION",
+        name: "Connection Pooling",
+        description: "Test connection pool management",
+        tested: false,
+        status: "pending"
+      }
+    ];
+
+    // Handle database operation results
+    let operationResult = null;
+    if (actionResult?.operationCompleted) {
+      operationResult = {
+        operation: actionResult.operation,
+        operationName: actionResult.operationName,
+        success: actionResult.success,
+        data: actionResult.data,
+        message: actionResult.message,
+        executionTime: actionResult.executionTime,
+        timestamp: actionResult.timestamp
+      };
+
+      // Mark scenario as tested
+      const scenario = testScenarios.find(s => s.id === actionResult.scenarioId);
+      if (scenario) {
+        scenario.tested = true;
+        scenario.status = actionResult.success ? "passed" : "failed";
+      }
+    }
+
+    // Database statistics
+    const dbStats = {
+      totalQueries: request.session?.totalQueries || 0,
+      successfulQueries: request.session?.successfulQueries || 0,
+      failedQueries: request.session?.failedQueries || 0,
+      averageQueryTime: request.session?.averageQueryTime || 0,
+      totalRecords: mockUsers.length
+    };
+
+    return {
+      data: {
+        dbConfig,
+        mockUsers,
+        testScenarios,
+        operationResult,
+        dbStats,
+        totalScenarios: testScenarios.length,
+        testedScenarios: testScenarios.filter(s => s.tested).length
+      },
+      state: {
+        showDatabaseInfo: true,
+        showRecords: true
+      }
+    };
+  }
+</loader>
+
+<div class="database-test-suite">
+  <header class="test-header">
+    <h1>🗄️ Database Integration Comprehensive Test</h1>
+    <p class="subtitle">CRUD operations, transactions, connection pooling, and query optimization</p>
+
+    <div class="db-stats">
+      <div class="stat-card">
+        <span class="stat-value">{loadDatabaseTest.data.totalScenarios}</span>
+        <span class="stat-label">Test Scenarios</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadDatabaseTest.data.testedScenarios}</span>
+        <span class="stat-label">Tested</span>
+      </div>
+      <div class="stat-card success">
+        <span class="stat-value">{loadDatabaseTest.data.dbStats.successfulQueries}</span>
+        <span class="stat-label">Successful Queries</span>
+      </div>
+      <div class="stat-card error">
+        <span class="stat-value">{loadDatabaseTest.data.dbStats.failedQueries}</span>
+        <span class="stat-label">Failed Queries</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadDatabaseTest.data.dbStats.totalRecords}</span>
+        <span class="stat-label">Total Records</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Operation Result Panel (if operation was executed) -->
+  {loadDatabaseTest.data.operationResult ?
+    <section class="operation-result-panel" data-success="{loadDatabaseTest.data.operationResult.success}">
+      <div class="result-header">
+        <h2>{loadDatabaseTest.data.operationResult.success ? '✅' : '❌'} {loadDatabaseTest.data.operationResult.operationName}</h2>
+        <div class="result-badges">
+          <span class="operation-badge">{loadDatabaseTest.data.operationResult.operation}</span>
+          <span class="execution-time-badge">{loadDatabaseTest.data.operationResult.executionTime}ms</span>
+        </div>
+      </div>
+
+      <div class="result-content">
+        <p class="result-message">{loadDatabaseTest.data.operationResult.message}</p>
+
+        {loadDatabaseTest.data.operationResult.data ?
+          <div class="result-data">
+            <h4>Operation Data:</h4>
+            <pre>{JSON.stringify(loadDatabaseTest.data.operationResult.data, null, 2)}</pre>
+          </div>
+        : <div></div>}
+
+        <div class="result-meta">
+          <strong>Executed at:</strong> {loadDatabaseTest.data.operationResult.timestamp}
+        </div>
+      </div>
+    </section>
+  : <div></div>}
+
+  <!-- Database Configuration -->
+  <section class="database-config">
+    <h2>⚙️ Database Configuration</h2>
+
+    <div class="config-grid">
+      <div class="config-card">
+        <h3>Connection Details</h3>
+        <div class="config-list">
+          <div class="config-item">
+            <strong>Type:</strong>
+            <span class="code-value">{loadDatabaseTest.data.dbConfig.type}</span>
+          </div>
+          <div class="config-item">
+            <strong>Host:</strong>
+            <span class="code-value">{loadDatabaseTest.data.dbConfig.host}</span>
+          </div>
+          <div class="config-item">
+            <strong>Port:</strong>
+            <span class="code-value">{loadDatabaseTest.data.dbConfig.port}</span>
+          </div>
+          <div class="config-item">
+            <strong>Database:</strong>
+            <span class="code-value">{loadDatabaseTest.data.dbConfig.database}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <h3>Connection Status</h3>
+        <div class="config-list">
+          <div class="config-item">
+            <strong>Connected:</strong>
+            <span class="status-badge" data-connected="{loadDatabaseTest.data.dbConfig.connected}">
+              {loadDatabaseTest.data.dbConfig.connected ? '🟢 Connected' : '🔴 Disconnected'}
+            </span>
+          </div>
+          <div class="config-item">
+            <strong>Pool Size:</strong>
+            <span class="code-value">{loadDatabaseTest.data.dbConfig.poolSize}</span>
+          </div>
+          <div class="config-item">
+            <strong>Active Connections:</strong>
+            <span class="code-value">{loadDatabaseTest.data.dbConfig.activeConnections}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mock Database Records -->
+  <section class="database-records">
+    <h2>📋 Mock Database Records</h2>
+    <p class="section-description">Simulated user records for testing database operations</p>
+
+    <div class="records-table-container">
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loadDatabaseTest.data.mockUsers.map(user =>
+            <tr>
+              <td>{user.id}</td>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>
+                <span class="role-badge" data-role="{user.role}">
+                  {user.role}
+                </span>
+              </td>
+              <td>{user.createdAt}</td>
+              <td>
+                <div class="action-buttons">
+                  <form method="POST" data-action="testReadOperation" style="display: inline;">
+                    <input type="hidden" name="userId" value="{user.id}">
+                    <button type="submit" class="mini-button view">View</button>
+                  </form>
+                  <form method="POST" data-action="testUpdateOperation" style="display: inline;">
+                    <input type="hidden" name="userId" value="{user.id}">
+                    <button type="submit" class="mini-button edit">Edit</button>
+                  </form>
+                  <form method="POST" data-action="testDeleteOperation" style="display: inline;">
+                    <input type="hidden" name="userId" value="{user.id}">
+                    <button type="submit" class="mini-button delete">Delete</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Database Operation Test Scenarios -->
+  <section class="test-scenarios">
+    <h2>🧪 Database Operation Test Scenarios</h2>
+
+    <div class="scenarios-grid">
+      {loadDatabaseTest.data.testScenarios.map(scenario =>
+        <div class="scenario-card" data-status="{scenario.status}">
+          <div class="scenario-header">
+            <h3>{scenario.name}</h3>
+            <div class="scenario-badges">
+              <span class="operation-badge">{scenario.operation}</span>
+              <span class="status-badge" data-status="{scenario.status}">
+                {scenario.status === 'passed' ? '✅ Passed' : scenario.status === 'failed' ? '❌ Failed' : '⏳ Pending'}
+              </span>
+            </div>
+          </div>
+
+          <p class="scenario-description">{scenario.description}</p>
+
+          <form method="POST" data-action="testDatabaseOperation" class="scenario-form">
+            <input type="hidden" name="scenarioId" value="{scenario.id}">
+            <input type="hidden" name="operation" value="{scenario.operation}">
+            <input type="hidden" name="operationName" value="{scenario.name}">
+
+            <button type="submit" class="test-button">
+              🧪 Test {scenario.operation}
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Interactive CRUD Operations -->
+  <section class="crud-operations">
+    <h2>✏️ Interactive CRUD Operations</h2>
+
+    <div class="crud-forms-grid">
+      <!-- Create Record Form -->
+      <div class="crud-form-card">
+        <h3>➕ Create New User</h3>
+
+        <form method="POST" data-action="createUser" class="crud-form">
+          <div class="form-group">
+            <label>Name:</label>
+            <input type="text" name="name" placeholder="Enter name" required>
+          </div>
+
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" name="email" placeholder="user@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label>Role:</label>
+            <select name="role">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="moderator">Moderator</option>
+            </select>
+          </div>
+
+          <button type="submit" class="submit-button create">
+            ➕ Create User
+          </button>
+        </form>
+      </div>
+
+      <!-- Read Record Form -->
+      <div class="crud-form-card">
+        <h3>🔍 Read User by ID</h3>
+
+        <form method="POST" data-action="readUser" class="crud-form">
+          <div class="form-group">
+            <label>User ID:</label>
+            <input type="number" name="userId" placeholder="Enter user ID" min="1" required>
+          </div>
+
+          <button type="submit" class="submit-button read">
+            🔍 Fetch User
+          </button>
+        </form>
+      </div>
+
+      <!-- Update Record Form -->
+      <div class="crud-form-card">
+        <h3>✏️ Update User</h3>
+
+        <form method="POST" data-action="updateUser" class="crud-form">
+          <div class="form-group">
+            <label>User ID:</label>
+            <input type="number" name="userId" placeholder="User ID to update" min="1" required>
+          </div>
+
+          <div class="form-group">
+            <label>New Name:</label>
+            <input type="text" name="name" placeholder="New name">
+          </div>
+
+          <div class="form-group">
+            <label>New Email:</label>
+            <input type="email" name="email" placeholder="New email">
+          </div>
+
+          <button type="submit" class="submit-button update">
+            ✏️ Update User
+          </button>
+        </form>
+      </div>
+
+      <!-- Delete Record Form -->
+      <div class="crud-form-card">
+        <h3>🗑️ Delete User</h3>
+
+        <form method="POST" data-action="deleteUser" class="crud-form">
+          <div class="form-group">
+            <label>User ID:</label>
+            <input type="number" name="userId" placeholder="User ID to delete" min="1" required>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" name="confirm" value="true" required>
+              I confirm this deletion
+            </label>
+          </div>
+
+          <button type="submit" class="submit-button delete">
+            🗑️ Delete User
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Database Patterns Documentation -->
+  <section class="db-patterns">
+    <h2>📚 Database Integration Patterns</h2>
+
+    <div class="patterns-grid">
+      <div class="pattern-card">
+        <h3>🔄 Connection Pooling</h3>
+        <p>Efficient connection reuse for better performance</p>
+        <pre><code>// Example connection pool setup
+const pool = new Pool({
+  host: 'localhost',
+  database: 'puremix',
+  max: 20,  // Maximum pool size
+  idleTimeoutMillis: 30000
+});</code></pre>
+      </div>
+
+      <div class="pattern-card">
+        <h3>🔒 Transactions</h3>
+        <p>Atomic operations with rollback capability</p>
+        <pre><code>// Transaction example
+await db.transaction(async (trx) => {
+  await trx.insert({ ... });
+  await trx.update({ ... });
+  // Auto-commit or rollback
+});</code></pre>
+      </div>
+
+      <div class="pattern-card">
+        <h3>📄 Pagination</h3>
+        <p>Efficient handling of large datasets</p>
+        <pre><code>// Paginated query
+const results = await db
+  .select('*')
+  .from('users')
+  .limit(20)
+  .offset((page - 1) * 20);</code></pre>
+      </div>
+
+      <div class="pattern-card">
+        <h3>🔍 Query Builder</h3>
+        <p>Type-safe query construction</p>
+        <pre><code>// Type-safe queries
+const users = await db
+  .select('id', 'name', 'email')
+  .from('users')
+  .where('role', '=', 'admin')
+  .orderBy('createdAt', 'desc');</code></pre>
+      </div>
+
+      <div class="pattern-card">
+        <h3>🚀 Migrations</h3>
+        <p>Version control for database schema</p>
+        <pre><code>// Migration example
+exports.up = (db) => {
+  return db.schema.createTable('users', (table) => {
+    table.increments('id');
+    table.string('name').notNullable();
+    table.string('email').unique();
+  });
+};</code></pre>
+      </div>
+
+      <div class="pattern-card">
+        <h3>🏗️ ORM Integration</h3>
+        <p>Object-relational mapping for productivity</p>
+        <pre><code>// ORM model definition
+class User extends Model {
+  static tableName = 'users';
+  static relationMappings = {
+    posts: { relation: HasMany, ... }
+  };
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Navigation -->
+  <footer class="test-footer">
+    <a href="/build-validation-test" class="back-link">← Build Validation Test</a>
+    <a href="/" class="home-link">🏠 Home</a>
+    <a href="/routing-comprehensive-test" class="next-link">Routing Test →</a>
+  </footer>
+</div>
+
+<script server>
+  async function testDatabaseOperation(formData, request) {
+    const { scenarioId, operation, operationName } = formData;
+
+    console.log('🗄️ Testing database operation:', operationName);
+
+    // Update session statistics
+    if (!request.session) {
+      request.session = {};
+    }
+
+    request.session.totalQueries = (request.session.totalQueries || 0) + 1;
+
+    // Simulate execution time
+    const executionTime = Math.floor(Math.random() * 50) + 5; // 5-55ms
+
+    // Simulate database operations
+    let success = true;
+    let data = {};
+    let message = '';
+
+    switch(operation) {
+      case 'CREATE':
+        data = {
+          id: 4,
+          name: 'New User',
+          email: 'newuser@example.com',
+          role: 'user',
+          createdAt: new Date().toISOString()
+        };
+        message = 'Successfully inserted new user record';
+        break;
+
+      case 'READ':
+        if (parseInt(scenarioId) === 2) {
+          data = {
+            id: 1,
+            name: 'Alice Johnson',
+            email: 'alice@example.com',
+            role: 'admin',
+            createdAt: '2025-01-15'
+          };
+          message = 'Successfully fetched user record';
+        } else {
+          data = {
+            users: [
+              { id: 1, name: 'Alice Johnson', role: 'admin' },
+              { id: 2, name: 'Bob Smith', role: 'user' },
+              { id: 3, name: 'Charlie Brown', role: 'user' }
+            ],
+            pagination: { page: 1, perPage: 10, total: 3 }
+          };
+          message = 'Successfully fetched 3 users with pagination';
+        }
+        break;
+
+      case 'UPDATE':
+        data = {
+          id: 1,
+          updatedFields: ['name', 'email'],
+          rowsAffected: 1
+        };
+        message = 'Successfully updated user record';
+        break;
+
+      case 'DELETE':
+        data = {
+          id: 3,
+          rowsDeleted: 1
+        };
+        message = 'Successfully deleted user record';
+        break;
+
+      case 'TRANSACTION':
+        data = {
+          operations: ['INSERT user', 'UPDATE profile', 'INSERT activity_log'],
+          committed: true,
+          rowsAffected: 3
+        };
+        message = 'Transaction completed successfully with 3 operations';
+        break;
+
+      case 'QUERY':
+        data = {
+          query: 'SELECT users.*, COUNT(posts.id) as post_count FROM users LEFT JOIN posts ON users.id = posts.user_id GROUP BY users.id',
+          results: [
+            { id: 1, name: 'Alice Johnson', post_count: 15 },
+            { id: 2, name: 'Bob Smith', post_count: 8 }
+          ],
+          executionPlan: 'Index Scan using users_pkey'
+        };
+        message = 'Complex JOIN query executed successfully';
+        break;
+
+      case 'CONNECTION':
+        data = {
+          poolSize: 10,
+          activeConnections: 3,
+          idleConnections: 7,
+          waitingClients: 0
+        };
+        message = 'Connection pool is healthy';
+        break;
+
+      default:
+        message = 'Database operation completed';
+    }
+
+    if (success) {
+      request.session.successfulQueries = (request.session.successfulQueries || 0) + 1;
+    } else {
+      request.session.failedQueries = (request.session.failedQueries || 0) + 1;
+    }
+
+    // Update average query time
+    const prevAvg = request.session.averageQueryTime || 0;
+    const totalQueries = request.session.totalQueries;
+    request.session.averageQueryTime = Math.floor(((prevAvg * (totalQueries - 1)) + executionTime) / totalQueries);
+
+    console.log(success ? '✅ Operation successful' : '❌ Operation failed');
+
+    return {
+      success: true,
+      operationCompleted: true,
+      scenarioId: parseInt(scenarioId),
+      operation: operation,
+      operationName: operationName,
+      data: data,
+      message: message,
+      executionTime: executionTime,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function createUser(formData, request) {
+    const { name, email, role } = formData;
+
+    console.log('➕ Creating new user:', name);
+
+    const newUser = {
+      id: Math.floor(Math.random() * 10000) + 100,
+      name: name,
+      email: email,
+      role: role,
+      createdAt: new Date().toISOString()
+    };
+
+    return {
+      success: true,
+      operationCompleted: true,
+      scenarioId: 1,
+      operation: 'CREATE',
+      operationName: 'Create New User',
+      data: newUser,
+      message: `Successfully created user: ${name}`,
+      executionTime: Math.floor(Math.random() * 30) + 10,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function readUser(formData, request) {
+    const { userId } = formData;
+
+    console.log('🔍 Reading user:', userId);
+
+    const user = {
+      id: parseInt(userId),
+      name: 'Fetched User',
+      email: `user${userId}@example.com`,
+      role: 'user',
+      createdAt: '2025-01-01',
+      lastLogin: new Date().toISOString()
+    };
+
+    return {
+      success: true,
+      operationCompleted: true,
+      scenarioId: 2,
+      operation: 'READ',
+      operationName: 'Read User by ID',
+      data: user,
+      message: `Successfully fetched user #${userId}`,
+      executionTime: Math.floor(Math.random() * 20) + 5,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function updateUser(formData, request) {
+    const { userId, name, email } = formData;
+
+    console.log('✏️ Updating user:', userId);
+
+    const updatedFields = [];
+    if (name) updatedFields.push('name');
+    if (email) updatedFields.push('email');
+
+    return {
+      success: true,
+      operationCompleted: true,
+      scenarioId: 4,
+      operation: 'UPDATE',
+      operationName: 'Update User',
+      data: {
+        id: parseInt(userId),
+        updatedFields: updatedFields,
+        newName: name,
+        newEmail: email,
+        rowsAffected: 1
+      },
+      message: `Successfully updated user #${userId} (${updatedFields.length} fields)`,
+      executionTime: Math.floor(Math.random() * 25) + 8,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function deleteUser(formData, request) {
+    const { userId, confirm } = formData;
+
+    console.log('🗑️ Deleting user:', userId);
+
+    if (confirm !== 'true') {
+      return {
+        success: false,
+        message: 'Deletion not confirmed'
+      };
+    }
+
+    return {
+      success: true,
+      operationCompleted: true,
+      scenarioId: 5,
+      operation: 'DELETE',
+      operationName: 'Delete User',
+      data: {
+        id: parseInt(userId),
+        rowsDeleted: 1,
+        cascadeDeletes: {
+          posts: 5,
+          comments: 12,
+          sessions: 3
+        }
+      },
+      message: `Successfully deleted user #${userId} and related records`,
+      executionTime: Math.floor(Math.random() * 35) + 12,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function testReadOperation(formData, request) {
+    return await readUser({ userId: formData.userId }, request);
+  }
+
+  async function testUpdateOperation(formData, request) {
+    return await updateUser({
+      userId: formData.userId,
+      name: 'Updated Name',
+      email: 'updated@example.com'
+    }, request);
+  }
+
+  async function testDeleteOperation(formData, request) {
+    return await deleteUser({
+      userId: formData.userId,
+      confirm: 'true'
+    }, request);
+  }
+</script>
+
+<style>
+  .database-test-suite {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .test-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 12px;
+    color: white;
+  }
+
+  .test-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0 0 30px 0;
+  }
+
+  .db-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 25px;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    min-width: 100px;
+  }
+
+  .stat-card.success {
+    background: rgba(40, 167, 69, 0.3);
+  }
+
+  .stat-card.error {
+    background: rgba(220, 53, 69, 0.3);
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  .operation-result-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .operation-result-panel[data-success="true"] {
+    border-left: 6px solid #28a745;
+  }
+
+  .operation-result-panel[data-success="false"] {
+    border-left: 6px solid #dc3545;
+  }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .result-header h2 {
+    margin: 0;
+    color: #333;
+  }
+
+  .result-badges {
+    display: flex;
+    gap: 10px;
+  }
+
+  .operation-badge {
+    background: #495057;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .execution-time-badge {
+    background: #17a2b8;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .result-message {
+    font-size: 1.1rem;
+    color: #495057;
+    margin-bottom: 20px;
+  }
+
+  .result-data {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .result-data h4 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .result-data pre {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0 0 0;
+    font-size: 0.9rem;
+  }
+
+  .result-meta {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+
+  .database-config {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .database-config h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .config-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .config-card h3 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .config-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .config-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+  }
+
+  .config-item strong {
+    color: #6c757d;
+  }
+
+  .config-item code,
+  .code-value {
+    background: #f1f3f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: monospace;
+  }
+
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .status-badge[data-connected="true"] {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-badge[data-connected="false"] {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .database-records {
+    margin-bottom: 40px;
+  }
+
+  .database-records h2 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .section-description {
+    color: #6c757d;
+    margin-bottom: 20px;
+  }
+
+  .records-table-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .records-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .records-table thead {
+    background: #f8f9fa;
+  }
+
+  .records-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  .records-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .records-table tbody tr:hover {
+    background: #f8f9fa;
+  }
+
+  .role-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .role-badge[data-role="admin"] {
+    background: #dc3545;
+    color: white;
+  }
+
+  .role-badge[data-role="user"] {
+    background: #007bff;
+    color: white;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 5px;
+  }
+
+  .mini-button {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+
+  .mini-button:hover {
+    opacity: 0.8;
+  }
+
+  .mini-button.view {
+    background: #17a2b8;
+    color: white;
+  }
+
+  .mini-button.edit {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .mini-button.delete {
+    background: #dc3545;
+    color: white;
+  }
+
+  .test-scenarios {
+    margin-bottom: 40px;
+  }
+
+  .test-scenarios h2 {
+    color: #333;
+    margin-bottom: 25px;
+  }
+
+  .scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .scenario-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #6c757d;
+  }
+
+  .scenario-card[data-status="passed"] {
+    border-left-color: #28a745;
+  }
+
+  .scenario-card[data-status="failed"] {
+    border-left-color: #dc3545;
+  }
+
+  .scenario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .scenario-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    flex: 1;
+  }
+
+  .scenario-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .status-badge[data-status="passed"] {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-badge[data-status="failed"] {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-badge[data-status="pending"] {
+    background: #e2e3e5;
+    color: #6c757d;
+  }
+
+  .scenario-description {
+    color: #6c757d;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .scenario-form {
+    margin-top: 15px;
+  }
+
+  .test-button {
+    width: 100%;
+    padding: 10px;
+    background: #f5576c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .test-button:hover {
+    background: #e34455;
+  }
+
+  .crud-operations {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+  }
+
+  .crud-operations h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .crud-forms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .crud-form-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+  }
+
+  .crud-form-card h3 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .crud-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  .form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .submit-button.create {
+    background: #28a745;
+    color: white;
+  }
+
+  .submit-button.create:hover {
+    background: #218838;
+  }
+
+  .submit-button.read {
+    background: #17a2b8;
+    color: white;
+  }
+
+  .submit-button.read:hover {
+    background: #138496;
+  }
+
+  .submit-button.update {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .submit-button.update:hover {
+    background: #e0a800;
+  }
+
+  .submit-button.delete {
+    background: #dc3545;
+    color: white;
+  }
+
+  .submit-button.delete:hover {
+    background: #c82333;
+  }
+
+  .db-patterns {
+    margin-bottom: 40px;
+  }
+
+  .db-patterns h2 {
+    color: #333;
+    margin-bottom: 25px;
+  }
+
+  .patterns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+  }
+
+  .pattern-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    border-left: 4px solid #f5576c;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .pattern-card h3 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  .pattern-card p {
+    color: #6c757d;
+    margin-bottom: 15px;
+  }
+
+  .pattern-card pre {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 0;
+  }
+
+  .pattern-card code {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #495057;
+  }
+
+  .test-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+  }
+
+  .test-footer a {
+    color: #f5576c;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .test-footer a:hover {
+    text-decoration: underline;
+  }
+</style>

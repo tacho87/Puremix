@@ -1,0 +1,99 @@
+<layout>main</layout>
+
+<loader>
+  async function loadPage(request, actionResult) {
+    try {
+      console.log('🔍 Testing native Python function calls...');
+
+      // Test 1: Call validate_data directly like a JavaScript function
+      validationResult = await validate_data({
+        user_id: 12345,
+        email: 'test@example.com',
+        data_source: 'native-call-test'
+      });
+
+      console.log('✅ Native validate_data result:', validationResult);
+
+      return {
+        data: {
+          title: 'Native Python Function Calls - SUCCESS!',
+          timestamp: new Date().toISOString(),
+          tests: {
+            validation: validationResult
+          },
+          status: 'Native Python calls working!'
+        }
+      };
+
+    } catch (error) {
+      console.error('❌ Native Python call error:', error);
+      return {
+        data: {
+          title: 'Native Python Function Calls - ERROR',
+          error: error.message,
+          status: 'Failed to call Python functions natively'
+        }
+      };
+    }
+  }
+</loader>
+
+<div class="container mx-auto p-8">
+  <h1 class="text-3xl font-bold mb-6">{loadPage.data.title}</h1>
+
+  <div class="bg-blue-50 p-6 rounded-lg mb-6">
+    <h2 class="text-xl font-semibold mb-4">🎯 Test Goal</h2>
+    <p class="text-gray-700">
+      This test demonstrates <strong>native JavaScript-style Python function calls</strong> where Python functions
+      are available globally and can be called directly like: <code>await validate_data({})</code>
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    {loadPage.data.tests ?
+      <>
+        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+          <h3 class="font-semibold text-green-800 mb-2">✅ Data Validation</h3>
+          <pre class="text-sm text-green-700 bg-green-100 p-2 rounded overflow-auto">
+{JSON.stringify(loadPage.data.tests.validation, null, 2)}
+          </pre>
+        </div>
+
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <h3 class="font-semibold text-blue-800 mb-2">✅ Text Processing</h3>
+          <pre class="text-sm text-blue-700 bg-blue-100 p-2 rounded overflow-auto">
+{JSON.stringify(loadPage.data.tests.textProcessing, null, 2)}
+          </pre>
+        </div>
+
+        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+          <h3 class="font-semibold text-purple-800 mb-2">✅ User Creation</h3>
+          <pre class="text-sm text-purple-700 bg-purple-100 p-2 rounded overflow-auto">
+{JSON.stringify(loadPage.data.tests.userCreation, null, 2)}
+          </pre>
+        </div>
+      </>
+      :
+      <div class="bg-red-50 p-4 rounded-lg border border-red-200 col-span-3">
+        <h3 class="font-semibold text-red-800 mb-2">❌ Error</h3>
+        <p class="text-red-700">{loadPage.data.error}</p>
+      </div>
+    }
+  </div>
+
+  <div class="bg-gray-50 p-6 rounded-lg">
+    <h2 class="text-xl font-semibold mb-4">📋 Implementation Status</h2>
+    <p class="text-gray-700 mb-2">Status: <span class="font-mono bg-gray-200 px-2 py-1 rounded">{loadPage.data.status}</span></p>
+    <p class="text-gray-700 mb-4">Timestamp: <span class="font-mono bg-gray-200 px-2 py-1 rounded">{loadPage.data.timestamp}</span></p>
+
+    <div class="text-sm text-gray-600">
+      <h3 class="font-semibold mb-2">🔧 Technical Implementation:</h3>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>Global Python functions registered in PureMixEngine.globalPythonFunctions</li>
+        <li>FileParser injects global Python functions into compilation context</li>
+        <li>Python functions callable directly without imports: <code>await functionName({})</code></li>
+        <li>Process pool architecture with seamless JavaScript/Python interop</li>
+      </ul>
+    </div>
+  </div>
+</div>

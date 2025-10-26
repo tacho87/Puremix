@@ -1,0 +1,80 @@
+<loader>
+  async function loadWelcomeCard(request, actionResult, props) {
+    const message = props?.message || 'Welcome to PureMix!';
+    const isNewVisitor = props?.isNewVisitor || false;
+    const stats = props?.stats || { visitors: 0, components: 0, routes: 0 };
+    
+    return {
+      data: { 
+        message, 
+        isNewVisitor, 
+        stats,
+        currentTime: new Date().toLocaleTimeString(),
+        lastRefresh: actionResult?.refreshed ? new Date().toLocaleTimeString() : null
+      },
+      state: { 
+        canRefresh: true,
+        showStats: true 
+      }
+    };
+  }
+</loader>
+
+<div class="card animate-fade-in">
+  <div class="card-header">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-semibold text-gray-900">
+        {loadWelcomeCard.data.isNewVisitor ? '👋 ' : '🎉 '}{loadWelcomeCard.data.message}
+      </h2>
+      
+      {loadWelcomeCard.state.canRefresh ? 
+        <button onclick="WelcomeCard.WelcomeCard_refresh" class="btn-secondary text-sm">
+          🔄 Refresh
+        </button>
+      : <div></div>}
+    </div>
+    
+    {loadWelcomeCard.data.isNewVisitor ? 
+      <p class="text-sm text-primary-600 mt-2">
+        🎊 First time here? You're in for a treat!
+      </p>
+    : <div></div>}
+  </div>
+  
+  <div class="card-body">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+      <div class="text-center p-4 bg-blue-50 rounded-lg">
+        <div class="text-2xl font-bold text-blue-600">{loadWelcomeCard.data.stats.visitors}</div>
+        <div class="text-sm text-gray-600">Visitors</div>
+      </div>
+      
+      <div class="text-center p-4 bg-green-50 rounded-lg">
+        <div class="text-2xl font-bold text-green-600">{loadWelcomeCard.data.stats.components}</div>
+        <div class="text-sm text-gray-600">Components</div>
+      </div>
+      
+      <div class="text-center p-4 bg-purple-50 rounded-lg">
+        <div class="text-2xl font-bold text-purple-600">{loadWelcomeCard.data.stats.routes}</div>
+        <div class="text-sm text-gray-600">Routes</div>
+      </div>
+    </div>
+    
+    <div class="flex items-center justify-between text-sm text-gray-500">
+      <span>Current time: {loadWelcomeCard.data.currentTime}</span>
+      
+      {loadWelcomeCard.data.lastRefresh ? 
+        <span class="text-green-600">Last refresh: {loadWelcomeCard.data.lastRefresh}</span>
+      : <div></div>}
+    </div>
+  </div>
+</div>
+
+<script server>
+  async function refresh(formData, request) {
+    return {
+      success: true,
+      refreshed: true,
+      message: 'Component refreshed successfully!'
+    };
+  }
+</script>

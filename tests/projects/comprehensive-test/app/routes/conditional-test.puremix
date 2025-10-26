@@ -1,0 +1,44 @@
+<layout>main</layout>
+
+<loader>
+  async function loadConditionalTest(request) {
+    return {
+      data: {
+        user: { name: "Test User", id: 123 },
+        message: "Test message"
+      },
+      state: {
+        showSuccess: true
+      }
+    };
+  }
+</loader>
+
+<div class="container mx-auto p-8">
+  <h1 class="text-3xl font-bold mb-6">Conditional Colon Test</h1>
+
+  <div class="bg-gray-100 p-4 mb-6">
+    <h2>Test Case: Colon in HTML Text Content</h2>
+
+    <!-- This should work - simple conditional -->
+    <p>Simple test: {loadConditionalTest.state.showSuccess ? <span class="text-green-500">Success</span> : <span class="text-red-500">Failed</span>}</p>
+
+    <!-- This is the problematic one - with ID # in HTML text -->
+    <p>Complex test: {loadConditionalTest.state.showSuccess ?
+      <div class="success-response">
+        <h4>✅ Update Successful!</h4>
+        <p>{loadConditionalTest.data.message}</p>
+        <small>Updated user: {loadConditionalTest.data.user.name} (ID #{loadConditionalTest.data.user.id})</small>
+      </div> : <span>Failed</span>
+    }</p>
+
+    <!-- Test without ID # to see if that's the issue -->
+    <p>Without ID: {loadConditionalTest.state.showSuccess ?
+      <div class="success-response">
+        <h4>✅ Update Successful!</h4>
+        <p>{loadConditionalTest.data.message}</p>
+        <small>Updated user: {loadConditionalTest.data.user.name} (User {loadConditionalTest.data.user.id})</small>
+      </div> : <span>Failed</span>
+    }</p>
+  </div>
+</div>

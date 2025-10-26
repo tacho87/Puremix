@@ -1,0 +1,119 @@
+<layout>main</layout>
+
+<imports>
+  import SimpleCard from '../components/SimpleCard.puremix'
+</imports>
+
+<head>
+  <title>PureMix Minimal Template</title>
+  <meta name="description" content="A clean, minimal starter template for PureMix applications">
+</head>
+
+<loader>
+  async function loadHome(request, actionResult) {
+    const features = [
+      'Clean HTML and CSS',
+      'Component Architecture', 
+      'Server-Side Rendering',
+      'Zero Dependencies'
+    ];
+
+    return {
+      data: { 
+        features,
+        welcomeMessage: 'Welcome to PureMix!',
+        clickCount: actionResult?.count || 0
+      },
+      state: { 
+        ready: true 
+      }
+    };
+  }
+</loader>
+
+<div class="fade-in">
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge">
+      ✨ Zero Dependencies
+    </div>
+    <h1>PureMix Minimal</h1>
+    <p>A clean, simple starter template with no dependencies.<br>
+    <span class="hero-highlight">Ultra-lightweight • Lightning-fast • Production-ready</span></p>
+    <form onsubmit="incrementCounter" class="mt-3">
+      <button type="submit" class="btn btn-primary btn-glow">
+        🚀 Get Started ({loadHome.data.clickCount} clicks)
+      </button>
+    </form>
+  </div>
+
+  <!-- Welcome Card -->
+  <div class="mb-4">
+    <SimpleCard 
+      title="Welcome to PureMix"
+      message={loadHome.data.welcomeMessage}
+      showFeatures={true}
+      features={loadHome.data.features}
+    />
+  </div>
+
+  <!-- Features Grid -->
+  <div class="grid grid-2">
+    <div class="card feature-card">
+      <div class="feature-icon simple">🎯</div>
+      <div class="card-header">
+        <h3 class="card-title">Simple & Clean</h3>
+      </div>
+      <p>This template uses plain CSS and HTML with no external dependencies. Perfect for learning PureMix or building lightweight applications.</p>
+    </div>
+
+    <div class="card feature-card">
+      <div class="feature-icon fast">⚡</div>
+      <div class="card-header">
+        <h3 class="card-title">Fast & Minimal</h3>
+      </div>
+      <p>Minimal footprint with maximum performance. Load times are lightning fast with this clean foundation.</p>
+    </div>
+
+    <div class="card feature-card">
+      <div class="feature-icon component">🧩</div>
+      <div class="card-header">
+        <h3 class="card-title">Component Ready</h3>
+      </div>
+      <p>Includes component architecture examples. Build reusable components with props and server actions.</p>
+    </div>
+
+    <div class="card feature-card">
+      <div class="feature-icon responsive">📱</div>
+      <div class="card-header">
+        <h3 class="card-title">Responsive</h3>
+      </div>
+      <p>Mobile-first design with clean responsive layouts. Works great on all devices out of the box.</p>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="card text-center mt-5">
+    <h3>Ready to Build Something?</h3>
+    <p class="text-muted mb-3">Start customizing this template to create your own PureMix application.</p>
+    <div>
+      <a href="/about" class="btn btn-outline mr-2">Learn More</a>
+      <a href="/contact" class="btn btn-primary">Contact Us</a>
+    </div>
+  </div>
+</div>
+
+<script server>
+  async function incrementCounter(formData, request) {
+    const currentCount = request.session?.clickCount || 0;
+    const newCount = currentCount + 1;
+    
+    request.session.clickCount = newCount;
+    
+    return {
+      success: true,
+      count: newCount,
+      message: `Button clicked ${newCount} times!`
+    };
+  }
+</script>

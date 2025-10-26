@@ -1,0 +1,217 @@
+<layout>main</layout>
+
+<imports>
+  import { validate_data, process_data } from '../lib/data_processor'
+  import { get_user_profile, authenticate_user } from '../controllers/user_controller'
+  import { format_text, validate_email } from '../lib/utils/string_helpers'
+</imports>
+
+<loader>
+  async function loadSeamlessPythonTest(request) {
+    try {
+      // Test seamless Python imports - these should work like JavaScript functions!
+
+      // Test data processing
+      const testData = [
+        { name: 'Alice', email: 'alice@example.com', score: 95 },
+        { name: 'Bob', email: 'bob@example.com', score: 87 }
+      ];
+
+      const processedData = await process_data(testData);
+
+      // Test data validation
+      const validationRules = ['required_fields', 'email_format', 'score_range'];
+      const validationResult = await validate_data(testData, validationRules);
+
+      // Test user profile
+      const userProfile = await get_user_profile(123);
+
+      // Test string formatting
+      const formattedText = await format_text('hello world', {
+        uppercase: true,
+        trim: true
+      });
+
+      // Test email validation
+      const emailValidation = await validate_email('test@example.com');
+
+      return {
+        data: {
+          processedData,
+          validationResult,
+          userProfile,
+          formattedText,
+          emailValidation,
+          testPassed: true
+        }
+      };
+    } catch (error) {
+      console.error('Seamless Python test error:', error);
+      return {
+        data: {
+          error: error.message,
+          testPassed: false
+        }
+      };
+    }
+  }
+</loader>
+
+<div class="seamless-python-test">
+  <div class="header">
+    <h1>🐍 Seamless Python Import Test</h1>
+    <p class="subtitle">Testing true language-agnostic programming</p>
+  </div>
+
+  {loadSeamlessPythonTest.data.testPassed ?
+    <div class="success-section">
+      <h2>✅ Python Imports Working Seamlessly!</h2>
+
+      <div class="test-results">
+        <div class="result-card">
+          <h3>📊 Data Processing Result</h3>
+          <pre>{JSON.stringify(loadSeamlessPythonTest.data.processedData, null, 2)}</pre>
+        </div>
+
+        <div class="result-card">
+          <h3>✅ Data Validation Result</h3>
+          <pre>{JSON.stringify(loadSeamlessPythonTest.data.validationResult, null, 2)}</pre>
+        </div>
+
+        <div class="result-card">
+          <h3>👤 User Profile Result</h3>
+          <pre>{JSON.stringify(loadSeamlessPythonTest.data.userProfile, null, 2)}</pre>
+        </div>
+
+        <div class="result-card">
+          <h3>🔤 Text Formatting Result</h3>
+          <pre>{JSON.stringify(loadSeamlessPythonTest.data.formattedText, null, 2)}</pre>
+        </div>
+
+        <div class="result-card">
+          <h3>📧 Email Validation Result</h3>
+          <pre>{JSON.stringify(loadSeamlessPythonTest.data.emailValidation, null, 2)}</pre>
+        </div>
+      </div>
+
+      <div class="import-demonstration">
+        <h2>🚀 Import Syntax Used</h2>
+        <pre><code>import { validate_data, process_data } from '../lib/data_processor'
+import { get_user_profile, authenticate_user } from '../controllers/user_controller'
+import { format_text, validate_email } from '../lib/utils/string_helpers'
+
+// Then use them like regular JavaScript functions:
+const result = await validate_data(testData, rules);
+const profile = await get_user_profile(userId);
+const formatted = await format_text(text, options);</code></pre>
+      </div>
+    </div>
+  :
+    <div class="error-section">
+      <h2>❌ Python Import Test Failed</h2>
+      <div class="error-details">
+        <pre>{loadSeamlessPythonTest.data.error}</pre>
+      </div>
+    </div>
+  }
+</div>
+
+<style>
+.seamless-python-test {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: system-ui, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  color: #2d5016;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 1.2em;
+}
+
+.success-section {
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+  border: 2px solid #4caf50;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.error-section {
+  background: linear-gradient(135deg, #ffeaea 0%, #fff5f5 100%);
+  border: 2px solid #f44336;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.test-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.result-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.result-card h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.result-card pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 12px;
+  overflow-x: auto;
+  margin: 10px 0 0 0;
+}
+
+.import-demonstration {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.import-demonstration h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.import-demonstration pre {
+  background: #282c34;
+  color: #abb2bf;
+  border-radius: 4px;
+  padding: 20px;
+  font-size: 14px;
+  overflow-x: auto;
+}
+
+.error-details pre {
+  background: #2d1b1b;
+  color: #ff6b6b;
+  border-radius: 4px;
+  padding: 20px;
+  font-size: 14px;
+}
+</style>

@@ -1,0 +1,255 @@
+#!/usr/bin/env node
+
+import { Command } from 'commander';
+import { createProject } from './create.js';
+import { buildProject } from './build.js';
+import { devServer } from './dev.js';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Get package version
+const packagePath = path.join(__dirname, '../package.json');
+const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+
+const program = new Command();
+
+program
+  .name('puremix')
+  .description('PureMix Framework CLI - HTML-first full-stack development with Python integration')
+  .version(packageJson.version);
+
+// Create command
+program
+  .command('create <project-name>')
+  .description('Create a new PureMix project')
+  .option('-t, --template <template>', 'Project template (basic, landing-page, portfolio, ecommerce)', 'basic')
+  .option('-p, --package-manager <manager>', 'Package manager (npm, yarn)', 'npm')
+  .option('--skip-install', 'Skip dependency installation')
+  .option('--typescript', 'Use TypeScript configuration')
+  .action(async (projectName, options) => {
+    try {
+      await createProject(projectName, options);
+    } catch (error) {
+      console.error('❌ Project creation failed:', error.message);
+      process.exit(1);
+    }
+  });
+
+// Dev command
+program
+  .command('dev')
+  .description('Start development server with hot reload')
+  .option('-p, --port <port>', 'Server port', '3000')
+  .option('-h, --host <host>', 'Server host', 'localhost')
+  .option('--no-hot-reload', 'Disable hot reload')
+  .option('--python-timeout <ms>', 'Python execution timeout in ms', '30000')
+  .action(async (options) => {
+    try {
+      await devServer(options);
+    } catch (error) {
+      console.error('❌ Dev server failed:', error.message);
+      process.exit(1);
+    }
+  });
+
+// Build command
+program
+  .command('build')
+  .description('Build project for production')
+  .option('-o, --output <dir>', 'Output directory', 'dist')
+  .option('--clean', 'Clean output directory before build')
+  .option('--analyze', 'Analyze bundle size')
+  .action(async (options) => {
+    try {
+      await buildProject(options);
+    } catch (error) {
+      console.error('❌ Build failed:', error.message);
+      process.exit(1);
+    }
+  });
+
+// Start command (for production)
+program
+  .command('start')
+  .description('Start production server')
+  .option('-p, --port <port>', 'Server port', process.env.PORT || '3000')
+  .option('-h, --host <host>', 'Server host', '0.0.0.0')
+  .action(async (options) => {
+    try {
+      // Set production environment
+      process.env.NODE_ENV = 'production';
+      
+      // Import and start the PureMix engine
+      const PureMixEngine = (await import('../lib/puremix-engine.js')).default;
+      
+      const engine = new PureMixEngine({
+        port: parseInt(options.port),
+        host: options.host,
+        isDev: false,
+        hotReload: false
+      });
+      
+      await engine.start();
+      
+      // Graceful shutdown
+      process.on('SIGTERM', () => engine.stop());
+      process.on('SIGINT', () => engine.stop());
+      
+    } catch (error) {
+      console.error('❌ Production server failed:', error.message);
+      process.exit(1);
+    }
+  });
+
+// Info command
+program
+  .command('info')
+  .description('Display environment and project information')
+  .action(async () => {
+    console.log('\\n🚀 PureMix Framework Information\\n');
+    console.log(`Framework Version: ${packageJson.version}`);
+    console.log(`Node.js Version: ${process.version}`);
+    console.log(`Platform: ${process.platform} ${process.arch}`);
+    console.log(`Working Directory: ${process.cwd()}`);
+    
+    // Check if in PureMix project
+    const configExists = fs.existsSync('puremix.config.js');
+    const packageExists = fs.existsSync('package.json');
+    
+    if (configExists || packageExists) {
+      console.log('\\n📁 Project Information:');
+      
+      if (packageExists) {
+        const projectPackage = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+        console.log(`  Project Name: ${projectPackage.name}`);
+        console.log(`  Version: ${projectPackage.version}`);
+      }
+      
+      if (configExists) {
+        console.log('  ✓ PureMix configuration found');
+      }
+      
+      // Check for app directory
+      if (fs.existsSync('app')) {
+        const routesDir = path.join('app', 'routes');
+        if (fs.existsSync(routesDir)) {
+          const routes = fs.readdirSync(routesDir)
+            .filter(file => file.endsWith('.puremix'))
+            .length;
+          console.log(`  Routes: ${routes} .puremix files`);
+        }
+      }
+    } else {
+      console.log('\\n📁 Not in a PureMix project directory');
+    }
+    
+    // Python check
+    try {
+      const { execSync } = await import('child_process');
+      const pythonVersion = execSync('python3 --version', { stdio: 'pipe' }).toString().trim();
+      console.log(\`\\n🐍 Python: \${pythonVersion}\`);
+    } catch {
+      console.log('\\n🐍 Python: Not available (install Python 3.8+ for Python integration)');
+    }
+    
+    console.log('\\n📚 Documentation: https://puremix.dev/docs');
+    console.log('🐛 Issues: https://github.com/puremix/puremix/issues\\n');
+  });
+
+// Doctor command - health check
+program
+  .command('doctor')
+  .description('Check system requirements and project health')
+  .action(async () => {
+    console.log('🏥 PureMix Health Check\\n');
+    
+    let issues = 0;
+    
+    // Node.js version check
+    const nodeVersion = process.version;
+    const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
+    
+    if (majorVersion >= 22) {
+      console.log(\`✅ Node.js \${nodeVersion} (OK)\`);
+    } else {
+      console.log(\`❌ Node.js \${nodeVersion} (Requires 22.0.0 or higher)\`);
+      issues++;
+    }
+    
+    // Python check
+    try {
+      const { execSync } = await import('child_process');
+      const pythonVersion = execSync('python3 --version', { stdio: 'pipe' }).toString().trim();
+      const pythonMatch = pythonVersion.match(/Python (\\d+)\\.(\\d+)/);
+      
+      if (pythonMatch) {
+        const major = parseInt(pythonMatch[1]);
+        const minor = parseInt(pythonMatch[2]);
+        
+        if (major >= 3 && (major > 3 || minor >= 8)) {
+          console.log(\`✅ \${pythonVersion} (OK)\`);
+        } else {
+          console.log(\`⚠️  \${pythonVersion} (Recommend 3.8+ for full Python support)\`);
+        }
+      }
+    } catch {
+      console.log('⚠️  Python not found (Optional: install for Python integration)');
+    }
+    
+    // Project structure check
+    if (fs.existsSync('app')) {
+      console.log('✅ App directory exists');
+      
+      if (fs.existsSync('app/routes')) {
+        console.log('✅ Routes directory exists');
+      } else {
+        console.log('❌ Routes directory missing (required)');
+        issues++;
+      }
+      
+      if (fs.existsSync('app/public')) {
+        console.log('✅ Public directory exists');
+      } else {
+        console.log('⚠️  Public directory missing (recommended)');
+      }
+    } else {
+      console.log('❌ App directory missing (run puremix create <name>)');
+      issues++;
+    }
+    
+    // Package.json check
+    if (fs.existsSync('package.json')) {
+      console.log('✅ package.json exists');
+      
+      const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+      if (pkg.dependencies && pkg.dependencies.puremix) {
+        console.log('✅ PureMix dependency found');
+      } else {
+        console.log('⚠️  PureMix not found in dependencies');
+      }
+    }
+    
+    console.log(\`\\n🏥 Health Check Complete: \${issues === 0 ? '✅ All good!' : \`❌ \${issues} issue(s) found\`}\`);
+    
+    if (issues > 0) {
+      process.exit(1);
+    }
+  });
+
+// Handle unknown commands
+program.on('command:*', function (operands) {
+  console.error(\`❌ Unknown command: \${operands[0]}\`);
+  console.log('💡 Run \`puremix --help\` for available commands');
+  process.exit(1);
+});
+
+// Show help if no command provided
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}
+
+program.parse();

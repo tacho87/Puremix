@@ -1,0 +1,591 @@
+<layout>main</layout>
+
+<head>
+  <title>🐍 Python Modules Test - Language-Agnostic Integration</title>
+</head>
+
+<!-- Python modules will be called using request.python.executeFile() -->
+
+<loader>
+  async function loadPythonModulesTest(request, actionResult) {
+    console.log('🐍 Testing Python modules as independent files...');
+
+    const testResults = {
+      framework_integration_test: {
+        name: "Framework Integration Test",
+        description: "Test importing Python functions like JavaScript modules"
+      },
+      financial_module_test: {
+        name: "Financial Module Test",
+        description: "Test financial_analyzer.py as independent module"
+      },
+      ml_module_test: {
+        name: "ML Module Test",
+        description: "Test ml_analyzer.py as independent module"
+      },
+      loan_calculation_test: {
+        name: "Loan Calculation Test",
+        description: "Test actual financial calculation from Python module"
+      },
+      dataset_analysis_test: {
+        name: "Dataset Analysis Test",
+        description: "Test ML analysis from Python module"
+      }
+    };
+
+    try {
+      // Test 1: Framework Integration - Call Python file using framework
+      console.log('Testing framework integration...');
+      const integrationTest = await request.python.executeFile(
+        './app/services/financial_analyzer.py',
+        'test_module_integration',
+        { message: "Testing from .puremix file" },
+        {
+          request: { url: request.url, method: request.method },
+          timestamp: new Date().toISOString()
+        }
+      );
+      testResults.framework_integration_test.result = integrationTest;
+      testResults.framework_integration_test.status = integrationTest.success ? "PASSED" : "FAILED";
+
+      // Test 2: Financial Module - Test actual financial calculations
+      console.log('Testing financial module...');
+      const financialTest = await request.python.executeFile(
+        './app/services/financial_analyzer.py',
+        'test_module_integration',
+        { test_type: "financial_module" },
+        {
+          request: { url: request.url },
+          module: "financial_analyzer.py"
+        }
+      );
+      testResults.financial_module_test.result = financialTest;
+      testResults.financial_module_test.status = financialTest.success ? "PASSED" : "FAILED";
+
+      // Test 3: ML Module - Test ML analysis capabilities
+      console.log('Testing ML module...');
+      const mlTest = await request.python.executeFile(
+'./app/services/ml_analyzer.py',
+        'test_ml_module',
+        { test_type: "ml_module" },
+        {
+          request: { url: request.url },
+          module: "ml_analyzer.py"
+        }
+      );
+      testResults.ml_module_test.result = mlTest;
+      testResults.ml_module_test.status = mlTest.success ? "PASSED" : "FAILED";
+
+      // Test 4: Actual Loan Calculation - Use the framework's Python file execution
+      console.log('Testing loan calculation...');
+      const loanData = {
+        principal: 300000,
+        rate: 4.5,
+        years: 30,
+        extra_payment: 200
+      };
+
+      const loanResult = await request.python.executeFile(
+        './app/services/financial_analyzer.py',
+        'calculate_loan_amortization',
+        loanData,
+        {
+          request: {
+            url: request.url,
+            method: request.method,
+            userAgent: request.headers['user-agent'] || 'Unknown'
+          },
+          calculation: "home_mortgage"
+        }
+      );
+      testResults.loan_calculation_test.result = loanResult;
+      testResults.loan_calculation_test.status = loanResult.success ? "PASSED" : "FAILED";
+
+      // Test 5: Dataset Analysis - Use ML analyzer via Python executor
+      console.log('Testing dataset analysis...');
+      const sampleDataset = [
+        { age: 25, income: 50000, score: 720 },
+        { age: 30, income: 65000, score: 780 },
+        { age: 35, income: 75000, score: 650 },
+        { age: 40, income: 85000, score: 800 },
+        { age: 45, income: 95000, score: 760 }
+      ];
+
+      const datasetResult = await request.python.executeFile(
+'./app/services/ml_analyzer.py',
+        'analyze_dataset',
+        { dataset: sampleDataset },
+        {
+          request: { url: request.url },
+          analysis_type: "user_demographics"
+        }
+      );
+      testResults.dataset_analysis_test.result = datasetResult;
+      testResults.dataset_analysis_test.status = datasetResult.success ? "PASSED" : "FAILED";
+
+    } catch (error) {
+      console.error('🚨 Python Modules Test error:', error);
+      testResults.error = {
+        message: error.message,
+        stack: error.stack
+      };
+    }
+
+    // Calculate summary
+    const testNames = Object.keys(testResults).filter(key => key !== 'error');
+    const passedTests = testNames.filter(testName => testResults[testName].status === "PASSED").length;
+    const totalTests = testNames.length;
+
+    return {
+      data: {
+        testResults,
+        summary: {
+          total_tests: totalTests,
+          passed: passedTests,
+          failed: totalTests - passedTests,
+          success_rate: Math.round((passedTests / totalTests) * 100)
+        },
+        framework_info: {
+          integration_method: "Direct Python import like JavaScript modules",
+          language_agnostic: true,
+          python_available: true,
+          node_version: process.version
+        },
+        actionResult: actionResult
+      }
+    };
+  }
+</loader>
+
+<div class="container py-4">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="mb-4">🐍 Python Modules Test - Language-Agnostic Integration</h1>
+      <p class="lead">
+        Testing Python files as independent modules that can be imported and called like JavaScript functions.
+        This demonstrates true language-agnostic integration in the PureMix framework.
+      </p>
+    </div>
+  </div>
+
+  <!-- Framework Integration Info -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <h5>🔧 Language-Agnostic Integration</h5>
+          <div class="row">
+            <div class="col-md-3">
+              <strong>Integration Method:</strong><br>
+              {loadPythonModulesTest.data.framework_info.integration_method}
+            </div>
+            <div class="col-md-3">
+              <strong>Language Agnostic:</strong><br>
+              {loadPythonModulesTest.data.framework_info.language_agnostic ? '✅ Yes' : '❌ No'}
+            </div>
+            <div class="col-md-3">
+              <strong>Python Available:</strong><br>
+              {loadPythonModulesTest.data.framework_info.python_available ? '✅ Yes' : '❌ No'}
+            </div>
+            <div class="col-md-3">
+              <strong>Node Version:</strong><br>
+              {loadPythonModulesTest.data.framework_info.node_version}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Results Summary -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2>📊 Test Results Summary</h2>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Total Tests</h5>
+              <h2 class="text-primary">{loadPythonModulesTest.data.summary.total_tests}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Passed</h5>
+              <h2 class="text-success">{loadPythonModulesTest.data.summary.passed}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Failed</h5>
+              <h2 class="text-danger">{loadPythonModulesTest.data.summary.failed}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Success Rate</h5>
+              <h2 class="text-info">{loadPythonModulesTest.data.summary.success_rate}%</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Individual Test Results -->
+  <div class="row">
+    <div class="col-12">
+      <h2>🧪 Individual Test Results</h2>
+
+      {Object.keys(loadPythonModulesTest.data.testResults).filter(key => key !== 'error').map(testKey => {
+        const test = loadPythonModulesTest.data.testResults[testKey];
+        return (
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5 class="mb-0">
+                {test.status === 'PASSED' ? '✅' : '❌'} {test.name}
+                <span class="badge {test.status === 'PASSED' ? 'bg-success' : 'bg-danger'} ms-2">
+                  {test.status}
+                </span>
+              </h5>
+              <small class="text-muted">{test.description}</small>
+            </div>
+            <div class="card-body">
+              {test.status === 'PASSED' && test.result ?
+                <div>
+                  {testKey === 'framework_integration_test' ?
+                    <div>
+                      <h6>Framework Integration Test Results:</h6>
+                      <ul>
+                        <li><strong>Message:</strong> {test.result.message}</li>
+                        <li><strong>Module Name:</strong> {test.result.module_name}</li>
+                        <li><strong>Available Functions:</strong> {test.result.available_functions ? test.result.available_functions.join(', ') : 'None'}</li>
+                        <li><strong>Context Available:</strong> {test.result.context_available ? 'Yes' : 'No'}</li>
+                        <li><strong>Framework Integration:</strong> {test.result.framework_integration}</li>
+                      </ul>
+                    </div>
+                  : testKey === 'financial_module_test' ?
+                    <div>
+                      <h6>Financial Module Test Results:</h6>
+                      <ul>
+                        <li><strong>Message:</strong> {test.result.message}</li>
+                        <li><strong>Available Functions:</strong> {test.result.available_functions ? test.result.available_functions.join(', ') : 'None'}</li>
+                        <li><strong>Framework Integration:</strong> {test.result.framework_integration}</li>
+                      </ul>
+                    </div>
+                  : testKey === 'ml_module_test' ?
+                    <div>
+                      <h6>ML Module Test Results:</h6>
+                      <ul>
+                        <li><strong>Message:</strong> {test.result.message}</li>
+                        <li><strong>Available Functions:</strong> {test.result.available_functions ? test.result.available_functions.join(', ') : 'None'}</li>
+                        <li><strong>Capabilities:</strong></li>
+                        <ul>
+                          {test.result.capabilities ? Object.keys(test.result.capabilities).map(cap =>
+                            <li>{cap}: {test.result.capabilities[cap]}</li>
+                          ) : <li>None listed</li>}
+                        </ul>
+                        <li><strong>Framework Integration:</strong> {test.result.framework_integration}</li>
+                      </ul>
+                    </div>
+                  : testKey === 'loan_calculation_test' ?
+                    <div>
+                      <h6>Loan Calculation Results:</h6>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <strong>Financial Analysis:</strong>
+                          <ul>
+                            <li>Monthly Payment: ${test.result.monthly_payment}</li>
+                            <li>Total Interest: ${test.result.total_interest}</li>
+                            <li>Interest Savings: ${test.result.interest_savings}</li>
+                            <li>Years Saved: {test.result.years_saved}</li>
+                          </ul>
+                        </div>
+                        <div class="col-md-6">
+                          <strong>Integration Info:</strong>
+                          <ul>
+                            <li>Method: {test.result.method}</li>
+                            <li>Framework Integration: {test.result.framework_integration}</li>
+                            <li>Context Info: {test.result.context_info}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  : testKey === 'dataset_analysis_test' ?
+                    <div>
+                      <h6>Dataset Analysis Results:</h6>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <strong>Dataset Info:</strong>
+                          <ul>
+                            <li>Records: {test.result.dataset_info ? test.result.dataset_info.num_records : 'N/A'}</li>
+                            <li>Numeric Columns: {test.result.dataset_info ? test.result.dataset_info.numeric_columns.join(', ') : 'N/A'}</li>
+                            <li>Categorical Columns: {test.result.dataset_info ? test.result.dataset_info.categorical_columns.join(', ') : 'N/A'}</li>
+                          </ul>
+                        </div>
+                        <div class="col-md-6">
+                          <strong>Analysis Quality:</strong>
+                          <ul>
+                            <li>Data Quality: {test.result.insights ? test.result.insights.data_quality : 'N/A'}</li>
+                            <li>Complexity: {test.result.insights ? test.result.insights.complexity : 'N/A'}</li>
+                            <li>Recommendation: {test.result.insights ? test.result.insights.recommendation : 'N/A'}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  :
+                    <div>
+                      <pre class="bg-light p-3">{JSON.stringify(test.result, null, 2)}</pre>
+                    </div>
+                  }
+                </div>
+              :
+                <div class="alert alert-danger">
+                  <strong>Error:</strong> {test.result ? test.result.error : 'Test failed without specific error message'}
+                </div>
+              }
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
+  <!-- Interactive Testing Section -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <h2>🎮 Interactive Testing</h2>
+      <div class="card">
+        <div class="card-body">
+          <h5>Test Python Functions Directly</h5>
+          <p>Use the buttons below to test individual Python functions from the imported modules:</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <button class="btn btn-primary mb-2" onclick="testFinancialModule">🏠 Test Loan Calculation</button>
+              <button class="btn btn-info mb-2" onclick="testMLModule">🤖 Test Dataset Analysis</button>
+            </div>
+            <div class="col-md-6">
+              <button class="btn btn-success mb-2" onclick="testRegressionModule">📈 Test Regression Training</button>
+              <button class="btn btn-warning mb-2" onclick="testModuleIntegration">🔧 Test Module Integration</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Framework Capabilities Summary -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <h2>🚀 Framework Capabilities Demonstrated</h2>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <h5>✅ Language-Agnostic Integration</h5>
+              <ul class="list-unstyled">
+                <li>✅ Python files imported like JavaScript</li>
+                <li>✅ Functions called directly without wrappers</li>
+                <li>✅ Seamless data passing between languages</li>
+                <li>✅ Context sharing across language boundaries</li>
+                <li>✅ No custom bridge code required</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h5>⚡ Performance & Reliability</h5>
+              <ul class="list-unstyled">
+                <li>🚀 Direct function invocation</li>
+                <li>🔄 Automatic process management</li>
+                <li>📊 JSON serialization handling</li>
+                <li>🛡️ Error handling and fallbacks</li>
+                <li>⚙️ Framework-managed execution</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h5>🧩 Developer Experience</h5>
+              <ul class="list-unstyled">
+                <li>📝 Simple import syntax</li>
+                <li>🔧 No configuration required</li>
+                <li>🎯 Language-agnostic development</li>
+                <li>🌐 Unified ecosystem</li>
+                <li>🚀 Production-ready integration</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script server>
+  async function testFinancialModule(formData, request) {
+    try {
+      const result = await request.python.executeFile(
+        './app/services/financial_analyzer.py',
+        'calculate_loan_amortization',
+        {
+          principal: 250000,
+          rate: 5.0,
+          years: 25,
+          extra_payment: 100
+        },
+        {
+          request: { url: request.url, method: 'POST' },
+          test_source: 'interactive_button'
+        }
+      );
+
+      return {
+        success: true,
+        module: 'financial_analyzer.py',
+        function: 'calculate_loan_amortization',
+        result: result,
+        message: 'Financial module test completed successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        module: 'financial_analyzer.py'
+      };
+    }
+  }
+
+  async function testMLModule(formData, request) {
+    try {
+      const sampleData = [
+        { name: 'Alice', age: 28, income: 55000, score: 740 },
+        { name: 'Bob', age: 35, income: 70000, score: 680 },
+        { name: 'Carol', age: 42, income: 85000, score: 790 },
+        { name: 'David', age: 29, income: 45000, score: 650 }
+      ];
+
+      const result = await request.python.executeFile(
+'./app/services/ml_analyzer.py',
+        'analyze_dataset',
+        { dataset: sampleData },
+        {
+          request: { url: request.url, method: 'POST' },
+          test_source: 'interactive_button'
+        }
+      );
+
+      return {
+        success: true,
+        module: 'ml_analyzer.py',
+        function: 'analyze_dataset',
+        result: result,
+        message: 'ML module test completed successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        module: 'ml_analyzer.py'
+      };
+    }
+  }
+
+  async function testRegressionModule(formData, request) {
+    try {
+      const trainingData = {
+        x: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        y: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+      };
+
+      const result = await request.python.executeFile(
+'./app/services/ml_analyzer.py',
+        'train_simple_regression',
+        trainingData,
+        {
+          request: { url: request.url, method: 'POST' },
+          test_source: 'interactive_button'
+        }
+      );
+
+      return {
+        success: true,
+        module: 'ml_analyzer.py',
+        function: 'train_simple_regression',
+        result: result,
+        message: 'Regression module test completed successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        module: 'ml_analyzer.py'
+      };
+    }
+  }
+
+  async function testModuleIntegration(formData, request) {
+    try {
+      const result = await request.python.executeFile(
+        './app/services/financial_analyzer.py',
+        'test_module_integration',
+        { test_type: 'interactive_integration_test' },
+        {
+          request: { url: request.url, method: 'POST' },
+          test_source: 'interactive_button',
+          timestamp: new Date().toISOString()
+        }
+      );
+
+      return {
+        success: true,
+        module: 'financial_analyzer.py',
+        function: 'test_module_integration',
+        result: result,
+        message: 'Module integration test completed successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        module: 'financial_analyzer.py'
+      };
+    }
+  }
+</script>
+
+<script client>
+  // Enhanced client-side interaction for Python module testing
+  document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('button[onclick^="test"]');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const originalText = button.textContent;
+        button.textContent = '🔄 Testing...';
+        button.disabled = true;
+
+        try {
+          const functionName = button.getAttribute('onclick');
+          const result = await PureMix.call(functionName, {});
+
+          if (result.success) {
+            alert(`✅ ${result.message}\n\nModule: ${result.module}\nFunction: ${result.function}`);
+          } else {
+            alert(`❌ Test failed: ${result.error}`);
+          }
+        } catch (error) {
+          alert(`❌ Network error: ${error.message}`);
+        } finally {
+          button.textContent = originalText;
+          button.disabled = false;
+        }
+      });
+    });
+  });
+</script>

@@ -1,0 +1,470 @@
+<loader>
+  async function loadActivityFeed(request, actionResult) {
+    console.log('📊 ActivityFeed loader called');
+    
+    // Simulate activity data fetch
+    await new Promise(resolve => setTimeout(resolve, 90));
+    
+    let activities = [
+      { id: 1, user: 'Alice Johnson', action: 'created', target: 'new product', timestamp: '2 minutes ago', avatar: 'A', type: 'create' },
+      { id: 2, user: 'Bob Smith', action: 'updated', target: 'user profile', timestamp: '5 minutes ago', avatar: 'B', type: 'update' },
+      { id: 3, user: 'Carol Davis', action: 'deleted', target: 'old report', timestamp: '8 minutes ago', avatar: 'C', type: 'delete' },
+      { id: 4, user: 'David Wilson', action: 'logged in', target: 'admin panel', timestamp: '12 minutes ago', avatar: 'D', type: 'login' },
+      { id: 5, user: 'Eve Brown', action: 'exported', target: 'user data', timestamp: '18 minutes ago', avatar: 'E', type: 'export' },
+      { id: 6, user: 'Frank Miller', action: 'uploaded', target: '3 files', timestamp: '25 minutes ago', avatar: 'F', type: 'upload' }
+    ];
+    
+    // Handle action results
+    if (actionResult?.activityAdded) {
+      activities.unshift({
+        id: Date.now(),
+        user: 'System Admin',
+        action: actionResult.newActivity.action,
+        target: actionResult.newActivity.target,
+        timestamp: 'just now',
+        avatar: 'S',
+        type: actionResult.newActivity.type
+      });
+    }
+    
+    if (actionResult?.filtered) {
+      const filterType = actionResult.filterType;
+      if (filterType !== 'all') {
+        activities = activities.filter(a => a.type === filterType);
+      }
+    }
+    
+    if (actionResult?.cleared) {
+      activities = [];
+    }
+    
+    return {
+      data: { 
+        activities,
+        totalCount: activities.length,
+        lastUpdated: new Date().toLocaleTimeString()
+      },
+      state: { 
+        hasActivities: activities.length > 0,
+        canClear: activities.length > 0,
+        currentFilter: actionResult?.filterType || 'all'
+      }
+    };
+  }
+</loader>
+
+<div class="activity-feed">
+  <div class="feed-header">
+    <h3>📊 Activity Feed</h3>
+    <div class="activity-count">
+      {loadActivityFeed.data.totalCount} activities
+    </div>
+  </div>
+  
+  <div class="feed-controls">
+    <form onsubmit="ActivityFeed.filterActivities" class="filter-form">
+      <select name="filterType" value="{loadActivityFeed.state.currentFilter}">
+        <option value="all">All Activities</option>
+        <option value="create">Create</option>
+        <option value="update">Update</option>
+        <option value="delete">Delete</option>
+        <option value="login">Login</option>
+        <option value="export">Export</option>
+        <option value="upload">Upload</option>
+      </select>
+      <button type="submit" class="btn-filter">🔍 Filter</button>
+    </form>
+    
+    <div class="control-buttons">
+      <button onclick="ActivityFeed.refreshFeed" class="btn-refresh">🔄 Refresh</button>
+      <button onclick="ActivityFeed.clearActivities" 
+              class="btn-clear {loadActivityFeed.state.canClear ? '' : 'disabled'}">
+        🗑️ Clear
+      </button>
+    </div>
+  </div>
+  
+  <form onsubmit="ActivityFeed.addActivity" class="add-activity-form">
+    <h4>Add Test Activity</h4>
+    <div class="form-grid">
+      <select name="action" required>
+        <option value="">Select Action</option>
+        <option value="created">Created</option>
+        <option value="updated">Updated</option>
+        <option value="deleted">Deleted</option>
+        <option value="viewed">Viewed</option>
+        <option value="downloaded">Downloaded</option>
+      </select>
+      <input name="target" placeholder="Target (e.g., 'user account')" required>
+      <select name="type" required>
+        <option value="">Type</option>
+        <option value="create">Create</option>
+        <option value="update">Update</option>
+        <option value="delete">Delete</option>
+        <option value="view">View</option>
+        <option value="download">Download</option>
+      </select>
+      <button type="submit" class="btn-add">➕ Add</button>
+    </div>
+  </form>
+  
+  <div class="activities-list">
+    {loadActivityFeed.state.hasActivities ? 
+      <div class="activity-items">
+        {loadActivityFeed.data.activities.map(activity => 
+          <div class="activity-item {activity.type}">
+            <div class="activity-avatar {activity.type}">
+              {activity.avatar}
+            </div>
+            <div class="activity-content">
+              <div class="activity-text">
+                <strong>{activity.user}</strong> {activity.action} <em>{activity.target}</em>
+              </div>
+              <div class="activity-time">{activity.timestamp}</div>
+            </div>
+            <div class="activity-type-badge">
+              {activity.type}
+            </div>
+          </div>
+        )}
+      </div>
+    : 
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">No activities to display</div>
+        <div class="empty-subtext">Activities will appear here as they happen</div>
+      </div>
+    }
+  </div>
+  
+  <div class="feed-footer">
+    <small>Last updated: {loadActivityFeed.data.lastUpdated}</small>
+  </div>
+</div>
+
+<script server>
+  async function filterActivities(formData, request) {
+    console.log('🔍 ActivityFeed.filterActivities called:', formData);
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    return {
+      success: true,
+      filtered: true,
+      filterType: formData.filterType,
+      timestamp: new Date().toLocaleTimeString(),
+      message: `Filtered activities by: ${formData.filterType}`
+    };
+  }
+  
+  async function addActivity(formData, request) {
+    console.log('➕ ActivityFeed.addActivity called:', formData);
+    
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    return {
+      success: true,
+      activityAdded: true,
+      newActivity: {
+        action: formData.action,
+        target: formData.target,
+        type: formData.type
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'New activity added to feed'
+    };
+  }
+  
+  async function refreshFeed(formData, request) {
+    console.log('🔄 ActivityFeed.refreshFeed called');
+    
+    await new Promise(resolve => setTimeout(resolve, 250));
+    
+    return {
+      success: true,
+      refreshed: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Activity feed refreshed'
+    };
+  }
+  
+  async function clearActivities(formData, request) {
+    console.log('🗑️ ActivityFeed.clearActivities called');
+    
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    return {
+      success: true,
+      cleared: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'All activities cleared'
+    };
+  }
+</script>
+
+<style>
+  .activity-feed {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  
+  .feed-header {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .feed-header h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  .activity-count {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  
+  .feed-controls {
+    padding: 12px;
+    background: #fef3c7;
+    border-bottom: 1px solid #fbbf24;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .filter-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .filter-form select {
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .btn-filter, .btn-refresh, .btn-clear {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-filter {
+    background: #3b82f6;
+    color: white;
+  }
+  
+  .control-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-refresh {
+    background: #10b981;
+    color: white;
+  }
+  
+  .btn-clear {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .btn-clear.disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  .add-activity-form {
+    padding: 16px;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .add-activity-form h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #374151;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .form-grid select, .form-grid input {
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .btn-add {
+    background: #059669;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .activities-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .activity-items {
+    padding: 8px;
+  }
+  
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin: 4px 0;
+    border-radius: 8px;
+    background: #f8fafc;
+    border-left: 4px solid #e2e8f0;
+    transition: all 0.2s;
+  }
+  
+  .activity-item:hover {
+    background: #f1f5f9;
+    transform: translateX(2px);
+  }
+  
+  .activity-item.create {
+    border-left-color: #10b981;
+  }
+  
+  .activity-item.update {
+    border-left-color: #3b82f6;
+  }
+  
+  .activity-item.delete {
+    border-left-color: #ef4444;
+  }
+  
+  .activity-item.login {
+    border-left-color: #8b5cf6;
+  }
+  
+  .activity-item.export {
+    border-left-color: #f59e0b;
+  }
+  
+  .activity-item.upload {
+    border-left-color: #06b6d4;
+  }
+  
+  .activity-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .activity-avatar.create {
+    background: #10b981;
+  }
+  
+  .activity-avatar.update {
+    background: #3b82f6;
+  }
+  
+  .activity-avatar.delete {
+    background: #ef4444;
+  }
+  
+  .activity-avatar.login {
+    background: #8b5cf6;
+  }
+  
+  .activity-avatar.export {
+    background: #f59e0b;
+  }
+  
+  .activity-avatar.upload {
+    background: #06b6d4;
+  }
+  
+  .activity-content {
+    flex: 1;
+  }
+  
+  .activity-text {
+    font-size: 14px;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+  
+  .activity-time {
+    font-size: 12px;
+    color: #6b7280;
+  }
+  
+  .activity-type-badge {
+    background: #e5e7eb;
+    color: #6b7280;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+  }
+  
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  
+  .empty-text {
+    font-size: 18px;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+  
+  .empty-subtext {
+    color: #6b7280;
+    font-size: 14px;
+  }
+  
+  .feed-footer {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .feed-footer small {
+    color: #64748b;
+    font-size: 11px;
+  }
+</style>

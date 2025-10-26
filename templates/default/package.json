@@ -1,0 +1,18 @@
+{
+  "name": "puremix-app",
+  "version": "1.0.0",
+  "description": "PureMix application - default template",
+  "type": "module",
+  "scripts": {
+    "dev": "puremix dev",
+    "build": "puremix build",
+    "start": "puremix start",
+    "doctor": "puremix doctor"
+  },
+  "keywords": ["puremix", "framework", "ssr"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puremix": "latest"
+  }
+}

@@ -1,0 +1,882 @@
+<layout>main</layout>
+
+<head>
+  <title>Routing System Comprehensive Test</title>
+</head>
+
+<loader>
+  async function loadRoutingTest(request, actionResult) {
+    // Extract all routing information
+    const routeInfo = {
+      path: request.path || '/',
+      method: request.method || 'GET',
+      params: request.params || {},
+      query: request.query || {},
+      headers: {
+        userAgent: request.headers?.['user-agent'] || 'Unknown',
+        host: request.headers?.host || 'Unknown'
+      },
+      baseUrl: request.baseUrl || '',
+      originalUrl: request.originalUrl || ''
+    };
+
+    // Test data for various routing scenarios
+    const routingScenarios = [
+      {
+        id: 1,
+        name: "Simple Static Route",
+        pattern: "/routing-comprehensive-test",
+        example: "/routing-comprehensive-test",
+        description: "Basic static route with no parameters",
+        tested: true,
+        status: "current"
+      },
+      {
+        id: 2,
+        name: "Dynamic Single Parameter",
+        pattern: "/users/[id]",
+        example: "/users/123",
+        description: "Single dynamic parameter extracted as request.params.id",
+        tested: false,
+        status: "available"
+      },
+      {
+        id: 3,
+        name: "Multiple Dynamic Parameters",
+        pattern: "/blog/[category]/[slug]",
+        example: "/blog/tech/ai-revolution",
+        description: "Multiple dynamic segments: category and slug",
+        tested: false,
+        status: "available"
+      },
+      {
+        id: 4,
+        name: "Catch-All Route",
+        pattern: "/docs/[...path]",
+        example: "/docs/api/users/create",
+        description: "Catch-all route capturing multiple path segments",
+        tested: false,
+        status: "available"
+      },
+      {
+        id: 5,
+        name: "Nested Dynamic Routes",
+        pattern: "/users/[userId]/posts/[postId]",
+        example: "/users/456/posts/789",
+        description: "Deeply nested dynamic parameters",
+        tested: false,
+        status: "available"
+      },
+      {
+        id: 6,
+        name: "Query String Parameters",
+        pattern: "/search?q=term&filter=active&page=1",
+        example: "/routing-comprehensive-test?category=tech&sort=date&limit=10",
+        description: "URL query parameters accessible via request.query",
+        tested: Object.keys(request.query || {}).length > 0,
+        status: Object.keys(request.query || {}).length > 0 ? "active" : "available"
+      },
+      {
+        id: 7,
+        name: "Route + Query Combination",
+        pattern: "/products/[id]?variant=color&size=large",
+        example: "/products/123?variant=blue&size=xl",
+        description: "Dynamic route parameters combined with query strings",
+        tested: false,
+        status: "available"
+      }
+    ];
+
+    // Simulate testing a specific route scenario if action result exists
+    let testResult = null;
+    if (actionResult?.scenarioTested) {
+      testResult = {
+        scenarioId: actionResult.scenarioId,
+        scenarioName: actionResult.scenarioName,
+        success: actionResult.success,
+        extractedData: actionResult.extractedData,
+        message: actionResult.message
+      };
+    }
+
+    return {
+      data: {
+        routeInfo,
+        scenarios: routingScenarios,
+        testResult,
+        totalScenarios: routingScenarios.length,
+        testedScenarios: routingScenarios.filter(s => s.tested).length
+      },
+      state: {
+        showDetails: true,
+        activeTest: testResult ? testResult.scenarioId : null
+      }
+    };
+  }
+</loader>
+
+<div class="routing-test-suite">
+  <header class="test-header">
+    <h1>🛣️ Routing System Comprehensive Test</h1>
+    <p class="subtitle">File-based routing with dynamic parameters, catch-all routes, and query strings</p>
+
+    <div class="test-stats">
+      <div class="stat-card">
+        <span class="stat-value">{loadRoutingTest.data.totalScenarios}</span>
+        <span class="stat-label">Total Scenarios</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadRoutingTest.data.testedScenarios}</span>
+        <span class="stat-label">Currently Active</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{loadRoutingTest.data.routeInfo.method}</span>
+        <span class="stat-label">HTTP Method</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Current Route Information Panel -->
+  <section class="route-info-panel">
+    <h2>📍 Current Route Information</h2>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <strong>Path:</strong>
+        <span class="code-value">{loadRoutingTest.data.routeInfo.path}</span>
+      </div>
+      <div class="info-item">
+        <strong>Method:</strong>
+        <span class="code-value">{loadRoutingTest.data.routeInfo.method}</span>
+      </div>
+      <div class="info-item">
+        <strong>Base URL:</strong>
+        <span class="code-value">{loadRoutingTest.data.routeInfo.baseUrl || 'N/A'}</span>
+      </div>
+      <div class="info-item">
+        <strong>Original URL:</strong>
+        <span class="code-value">{loadRoutingTest.data.routeInfo.originalUrl}</span>
+      </div>
+    </div>
+
+    <!-- Route Parameters (if any) -->
+    {Object.keys(loadRoutingTest.data.routeInfo.params).length > 0 ?
+      <div class="params-section">
+        <h3>🎯 Route Parameters (request.params)</h3>
+        <div class="params-grid">
+          {Object.keys(loadRoutingTest.data.routeInfo.params).map(key =>
+            <div class="param-item">
+              <span class="param-key">{key}:</span>
+              <span class="param-value">{loadRoutingTest.data.routeInfo.params[key]}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    :
+      <div class="no-params">
+        <p>ℹ️ No route parameters in current request</p>
+      </div>
+    }
+
+    <!-- Query String Parameters (if any) -->
+    {Object.keys(loadRoutingTest.data.routeInfo.query).length > 0 ?
+      <div class="query-section">
+        <h3>🔍 Query String Parameters (request.query)</h3>
+        <div class="query-grid">
+          {Object.keys(loadRoutingTest.data.routeInfo.query).map(key =>
+            <div class="query-item">
+              <span class="query-key">{key}:</span>
+              <span class="query-value">{loadRoutingTest.data.routeInfo.query[key]}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    :
+      <div class="no-query">
+        <p>ℹ️ No query string parameters in current request</p>
+        <p class="hint">Try adding ?category=tech&sort=date&limit=10 to the URL</p>
+      </div>
+    }
+  </section>
+
+  <!-- Test Result Panel (if action was executed) -->
+  {loadRoutingTest.data.testResult ?
+    <section class="test-result-panel success">
+      <h2>✅ Test Result</h2>
+      <div class="result-content">
+        <h3>{loadRoutingTest.data.testResult.scenarioName}</h3>
+        <p><strong>Status:</strong> {loadRoutingTest.data.testResult.success ? '✅ Success' : '❌ Failed'}</p>
+        <p><strong>Message:</strong> {loadRoutingTest.data.testResult.message}</p>
+
+        {loadRoutingTest.data.testResult.extractedData ?
+          <div class="extracted-data">
+            <h4>Extracted Route Data:</h4>
+            <pre>{JSON.stringify(loadRoutingTest.data.testResult.extractedData, null, 2)}</pre>
+          </div>
+        : <div></div>}
+      </div>
+    </section>
+  : <div></div>}
+
+  <!-- Routing Test Scenarios -->
+  <section class="test-scenarios">
+    <h2>🧪 Routing Test Scenarios</h2>
+    <p class="section-description">Click "Test Route" to simulate each routing pattern</p>
+
+    <div class="scenarios-grid">
+      {loadRoutingTest.data.scenarios.map(scenario =>
+        <div class="scenario-card">
+          <div class="scenario-header">
+            <h3>{scenario.name}</h3>
+            <span class="scenario-badge" data-status="{scenario.status}">{scenario.status}</span>
+          </div>
+
+          <div class="scenario-details">
+            <p class="scenario-description">{scenario.description}</p>
+
+            <div class="scenario-info">
+              <div class="info-row">
+                <strong>Pattern:</strong>
+                <span class="code-value">{scenario.pattern}</span>
+              </div>
+              <div class="info-row">
+                <strong>Example:</strong>
+                <span class="code-value">{scenario.example}</span>
+              </div>
+            </div>
+
+            <form method="POST" data-action="testRouteScenario" class="test-form">
+              <input type="hidden" name="scenarioId" value="{scenario.id}">
+              <input type="hidden" name="scenarioName" value="{scenario.name}">
+              <input type="hidden" name="pattern" value="{scenario.pattern}">
+              <input type="hidden" name="example" value="{scenario.example}">
+
+              <button type="submit" class="test-button">
+                🧪 Test Route
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Interactive Query String Tester -->
+  <section class="query-tester">
+    <h2>🔍 Interactive Query String Tester</h2>
+    <p>Test query string parameter extraction in real-time</p>
+
+    <form method="GET" action="/routing-comprehensive-test" class="query-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category:</label>
+          <input type="text" name="category" placeholder="e.g., technology" value="{loadRoutingTest.data.routeInfo.query.category || ''}">
+        </div>
+
+        <div class="form-group">
+          <label>Sort By:</label>
+          <select name="sort">
+            <option value="date" selected="{loadRoutingTest.data.routeInfo.query.sort === 'date'}">Date</option>
+            <option value="title" selected="{loadRoutingTest.data.routeInfo.query.sort === 'title'}">Title</option>
+            <option value="popularity" selected="{loadRoutingTest.data.routeInfo.query.sort === 'popularity'}">Popularity</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Limit:</label>
+          <input type="number" name="limit" placeholder="10" value="{loadRoutingTest.data.routeInfo.query.limit || ''}">
+        </div>
+
+        <div class="form-group">
+          <label>Page:</label>
+          <input type="number" name="page" placeholder="1" value="{loadRoutingTest.data.routeInfo.query.page || ''}">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-button">
+        🚀 Test Query Parameters
+      </button>
+    </form>
+  </section>
+
+  <!-- Documentation Section -->
+  <section class="documentation">
+    <h2>📚 Routing System Documentation</h2>
+
+    <div class="doc-section">
+      <h3>File-Based Routing</h3>
+      <p>PureMix uses file structure to automatically generate routes:</p>
+      <ul>
+        <li><code>app/routes/index.puremix</code> → <code>/</code></li>
+        <li><code>app/routes/about.puremix</code> → <code>/about</code></li>
+        <li><code>app/routes/users/[id].puremix</code> → <code>/users/:id</code></li>
+        <li><code>app/routes/docs/[...path].puremix</code> → <code>/docs/*</code></li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <h3>Dynamic Parameters</h3>
+      <p>Access route parameters via <code>request.params</code>:</p>
+      <pre><code>// File: app/routes/users/[id].puremix
+// URL: /users/123
+const userId = request.params.id; // "123"</code></pre>
+    </div>
+
+    <div class="doc-section">
+      <h3>Query Strings</h3>
+      <p>Access query parameters via <code>request.query</code>:</p>
+      <pre><code>// URL: /search?q=test&filter=active
+const searchTerm = request.query.q;      // "test"
+const filter = request.query.filter;     // "active"</code></pre>
+    </div>
+
+    <div class="doc-section">
+      <h3>Catch-All Routes</h3>
+      <p>Handle multiple path segments with <code>[...param]</code>:</p>
+      <pre><code>// File: app/routes/docs/[...path].puremix
+// URL: /docs/api/users/create
+const pathSegments = request.params.path; // ["api", "users", "create"]</code></pre>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <footer class="test-footer">
+    <a href="/" class="back-link">← Back to Home</a>
+    <div class="footer-links">
+      <a href="/auth-flow-test">Authentication Test →</a>
+      <a href="/error-handling-test">Error Handling Test →</a>
+      <a href="/build-validation-test">Build Validation →</a>
+    </div>
+  </footer>
+</div>
+
+<script server>
+  async function testRouteScenario(formData, request) {
+    const { scenarioId, scenarioName, pattern, example } = formData;
+
+    console.log('🧪 Testing route scenario:', scenarioName);
+
+    // Simulate route parameter extraction based on scenario
+    let extractedData = {};
+
+    switch(parseInt(scenarioId)) {
+      case 2: // Single dynamic parameter
+        extractedData = {
+          id: "123",
+          example: "request.params.id = '123'",
+          pattern: "/users/:id"
+        };
+        break;
+
+      case 3: // Multiple dynamic parameters
+        extractedData = {
+          category: "tech",
+          slug: "ai-revolution",
+          example: "request.params = { category: 'tech', slug: 'ai-revolution' }",
+          pattern: "/blog/:category/:slug"
+        };
+        break;
+
+      case 4: // Catch-all route
+        extractedData = {
+          path: ["api", "users", "create"],
+          example: "request.params.path = ['api', 'users', 'create']",
+          pattern: "/docs/*"
+        };
+        break;
+
+      case 5: // Nested dynamic routes
+        extractedData = {
+          userId: "456",
+          postId: "789",
+          example: "request.params = { userId: '456', postId: '789' }",
+          pattern: "/users/:userId/posts/:postId"
+        };
+        break;
+
+      case 6: // Query string parameters
+        extractedData = {
+          category: "tech",
+          sort: "date",
+          limit: "10",
+          example: "request.query = { category: 'tech', sort: 'date', limit: '10' }",
+          pattern: "?category=tech&sort=date&limit=10"
+        };
+        break;
+
+      case 7: // Route + Query combination
+        extractedData = {
+          id: "123",
+          variant: "blue",
+          size: "xl",
+          example: "request.params.id = '123', request.query = { variant: 'blue', size: 'xl' }",
+          pattern: "/products/:id?variant=blue&size=xl"
+        };
+        break;
+
+      default:
+        extractedData = {
+          example: "Static route - no parameters to extract",
+          pattern: pattern
+        };
+    }
+
+    return {
+      success: true,
+      scenarioTested: true,
+      scenarioId: parseInt(scenarioId),
+      scenarioName: scenarioName,
+      extractedData: extractedData,
+      message: `Successfully simulated ${scenarioName}. In a real implementation, these parameters would be extracted from the URL automatically.`,
+      timestamp: new Date().toISOString()
+    };
+  }
+</script>
+
+<style>
+  .routing-test-suite {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .test-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+  }
+
+  .test-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0 0 30px 0;
+  }
+
+  .test-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 25px;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  .route-info-panel {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 4px solid #667eea;
+  }
+
+  .route-info-panel h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+
+  .info-item {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+
+  .info-item strong {
+    display: block;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+
+  .info-item code,
+  .code-value {
+    display: block;
+    background: #f1f3f5;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: monospace;
+    color: #495057;
+    word-break: break-all;
+  }
+
+  .params-section, .query-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #667eea;
+  }
+
+  .params-section h3, .query-section h3 {
+    margin-top: 0;
+    color: #667eea;
+  }
+
+  .params-grid, .query-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+  }
+
+  .param-item, .query-item {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+  }
+
+  .param-key, .query-key {
+    font-weight: 600;
+    color: #495057;
+    margin-right: 8px;
+  }
+
+  .param-value, .query-value {
+    color: #667eea;
+    font-family: monospace;
+    font-size: 0.95rem;
+  }
+
+  .no-params, .no-query {
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 15px;
+    border-left: 4px solid #ffc107;
+  }
+
+  .hint {
+    font-size: 0.9rem;
+    color: #856404;
+    margin-top: 5px;
+  }
+
+  .test-result-panel {
+    background: #d4edda;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+  }
+
+  .test-result-panel h2 {
+    margin-top: 0;
+    color: #155724;
+  }
+
+  .result-content h3 {
+    color: #155724;
+    margin-bottom: 15px;
+  }
+
+  .extracted-data {
+    margin-top: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+  }
+
+  .extracted-data pre {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 10px 0 0 0;
+  }
+
+  .test-scenarios {
+    margin-bottom: 40px;
+  }
+
+  .test-scenarios h2 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .section-description {
+    color: #666;
+    margin-bottom: 25px;
+  }
+
+  .scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+  }
+
+  .scenario-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .scenario-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .scenario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .scenario-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+  }
+
+  .scenario-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .scenario-badge[data-status="current"] {
+    background: #667eea;
+    color: white;
+  }
+
+  .scenario-badge[data-status="active"] {
+    background: #28a745;
+    color: white;
+  }
+
+  .scenario-badge[data-status="available"] {
+    background: #6c757d;
+    color: white;
+  }
+
+  .scenario-description {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .scenario-info {
+    margin-bottom: 15px;
+  }
+
+  .info-row {
+    margin-bottom: 8px;
+  }
+
+  .info-row strong {
+    color: #495057;
+    margin-right: 8px;
+  }
+
+  .info-row code,
+  .info-row .code-value {
+    background: #f1f3f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    font-family: monospace;
+    color: #667eea;
+  }
+
+  .test-form {
+    margin-top: 15px;
+  }
+
+  .test-button {
+    width: 100%;
+    padding: 10px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .test-button:hover {
+    background: #5568d3;
+  }
+
+  .query-tester {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 40px;
+  }
+
+  .query-tester h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .query-form {
+    margin-top: 20px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 12px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .submit-button:hover {
+    background: #218838;
+  }
+
+  .documentation {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+  }
+
+  .documentation h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .doc-section {
+    margin-bottom: 25px;
+  }
+
+  .doc-section h3 {
+    color: #495057;
+    margin-bottom: 10px;
+  }
+
+  .doc-section ul {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .doc-section li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .doc-section pre {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+    overflow-x: auto;
+    margin: 10px 0;
+  }
+
+  .doc-section code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #495057;
+  }
+
+  .test-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+
+  .back-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .footer-links a:hover {
+    text-decoration: underline;
+  }
+</style>

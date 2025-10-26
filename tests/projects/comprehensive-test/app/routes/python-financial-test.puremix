@@ -1,0 +1,911 @@
+<layout>main</layout>
+
+
+<imports>
+  import { validateFinancialData } from '../controllers/financial-validator.js'
+  import { analyze_custom_loan, calculate_loan_comparison } from '../services/advanced_financial_calculator'
+</imports>
+
+
+<loader>
+  async function loadFinancialAnalysis(request, actionResult) {
+    // Default loan scenarios for testing
+    testScenarios = [
+      {
+        name: "Typical Home Mortgage",
+        principal: 350000,
+        rate: 4.25,
+        years: 30,
+        extraPayment: 200,
+        type: "mortgage"
+      },
+      {
+        name: "Car Loan",
+        principal: 45000,
+        rate: 6.5,
+        years: 5,
+        extraPayment: 100,
+        type: "auto"
+      },
+      {
+        name: "Personal Loan",
+        principal: 25000,
+        rate: 12.8,
+        years: 3,
+        extraPayment: 50,
+        type: "personal"
+      }
+    ];
+
+    // Show custom calculation result if coming from action
+    if (actionResult && actionResult.success && actionResult.analysis) {
+      return {
+        data: {
+          scenarios: testScenarios,
+          customAnalysis: actionResult.analysis,
+          showCustomResult: true
+        },
+        state: {
+          analysisComplete: true,
+          message: actionResult.message
+        }
+      };
+    }
+
+    // Run comprehensive analysis of all scenarios
+    try {
+      console.log('🔍 LOADER DEBUG: About to call calculate_loan_comparison with scenarios:', testScenarios);
+      comprehensiveAnalysis = await calculate_loan_comparison(testScenarios);
+      console.log('✅ LOADER DEBUG: calculate_loan_comparison returned:', comprehensiveAnalysis);
+    } catch (error) {
+      console.error('❌ LOADER DEBUG: calculate_loan_comparison failed:', error.message);
+      console.error('❌ LOADER DEBUG: Full error object:', error);
+      comprehensiveAnalysis = { success: false, error: error.message };
+    }
+
+    return {
+      data: {
+        scenarios: testScenarios,
+        analysis: comprehensiveAnalysis,
+        hasError: !comprehensiveAnalysis.success,
+        errorMessage: comprehensiveAnalysis.error
+      },
+      state: {
+        showCustomResult: false,
+        analysisReady: comprehensiveAnalysis.success
+      }
+    };
+  }
+</loader>
+
+<div class="financial-test-suite">
+  <h1>🧮 Python Financial Analysis Test Suite</h1>
+  <p class="subtitle">Comprehensive testing of pandas, numpy, embeddings, and ML-style financial calculations</p>
+
+  {loadFinancialAnalysis.data.hasError ?
+    <div class="error-panel">
+      <h3>❌ Python Analysis Failed</h3>
+      <p><strong>Error:</strong> {loadFinancialAnalysis.data.errorMessage}</p>
+      <p>This test requires Python with pandas and numpy installed.</p>
+    </div>
+  : ""}
+  
+    <div class="analysis-container">
+
+      <!-- Custom Analysis Result (if coming from form submission) -->
+      {loadFinancialAnalysis.data.customAnalysis  ?
+        <div class="custom-result-panel">
+          <h2>✅ Custom Analysis Complete</h2>
+          <p>{loadFinancialAnalysis.state.message}</p>
+
+          <div class="custom-analysis-grid">
+            <div class="metric-card primary">
+              <h4>Monthly Payment</h4>
+              <div class="big-value">${loadFinancialAnalysis.data.customAnalysis.basic_metrics.monthly_payment}</div>
+            </div>
+            <div class="metric-card success">
+              <h4>Total Interest</h4>
+              <div class="big-value">${loadFinancialAnalysis.data.customAnalysis.basic_metrics.total_interest}</div>
+            </div>
+            <div class="metric-card info">
+              <h4>Years Saved</h4>
+              <div class="big-value">{loadFinancialAnalysis.data.customAnalysis.extra_payment_impact.years_saved}</div>
+            </div>
+            <div class="metric-card warning">
+              <h4>Risk Level</h4>
+              <div class="big-value risk-{loadFinancialAnalysis.data.customAnalysis.risk_assessment.level.toLowerCase()}">{loadFinancialAnalysis.data.customAnalysis.risk_assessment.level}</div>
+            </div>
+          </div>
+        </div>
+      : ''}
+
+      <!-- Test Scenarios Overview -->
+      <div class="scenarios-overview">
+        <h2>📊 Default Test Scenarios</h2>
+        <div class="scenarios-grid">
+          {loadFinancialAnalysis.data.scenarios.map(scenario =>
+            <div class="scenario-card">
+              <h4>{scenario.name}</h4>
+              <div class="scenario-details">
+                <p><strong>Amount:</strong> ${scenario.principal}</p>
+                <p><strong>Rate:</strong> {scenario.rate}%</p>
+                <p><strong>Term:</strong> {scenario.years} years</p>
+                <p><strong>Extra Payment:</strong> ${scenario.extraPayment}/month</p>
+                <p><strong>Type:</strong> {scenario.type}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <!-- Analysis Results -->
+      {loadFinancialAnalysis.state.analysisReady ?
+        <div class="analysis-results">
+          <h2>🔬 Loan Analysis Results</h2>
+          {loadFinancialAnalysis.data.analysis.detailed_analyses ?
+            loadFinancialAnalysis.data.analysis.detailed_analyses.map(loan =>
+              <div class="loan-analysis-panel">
+                <h3>📈 {loan.name}</h3>
+                <div class="analysis-metrics">
+                  <p>Monthly Payment: ${loan.analysis.basic_metrics.monthly_payment}</p>
+                  <p>Total Interest: ${loan.analysis.basic_metrics.total_interest}</p>
+                  <p>Risk Level: {loan.analysis.risk_assessment.level}</p>
+                </div>
+              </div>
+            )
+          : ''}
+        </div>
+      : ''}
+
+      <!-- Comparative Analysis -->
+      {loadFinancialAnalysis.state.analysisReady && loadFinancialAnalysis.data.analysis.best_options ?
+        <div class="comparative-analysis">
+          <h2>⚖️ Loan Comparison</h2>
+
+          <div class="comparison-highlights">
+            <div class="highlight-card best">
+              <h4>🏆 Lowest Total Cost</h4>
+              <p>{loadFinancialAnalysis.data.analysis.best_options.lowest_total_cost.name}</p>
+              <small>${loadFinancialAnalysis.data.analysis.best_options.lowest_total_cost.total_cost}</small>
+            </div>
+            <div class="highlight-card efficiency">
+              <h4>💰 Lowest Monthly Payment</h4>
+              <p>{loadFinancialAnalysis.data.analysis.best_options.lowest_monthly_payment.name}</p>
+              <small>${loadFinancialAnalysis.data.analysis.best_options.lowest_monthly_payment.monthly_payment}</small>
+            </div>
+            <div class="highlight-card risk">
+              <h4>⚠️ Lowest Risk</h4>
+              <p>{loadFinancialAnalysis.data.analysis.best_options.lowest_risk.name}</p>
+              <small>Risk Score: {loadFinancialAnalysis.data.analysis.best_options.lowest_risk.risk_score}</small>
+            </div>
+          </div>
+
+          <div class="portfolio-metrics">
+            <h4>📊 Portfolio Summary</h4>
+            <div class="portfolio-grid">
+              <div class="portfolio-metric">
+                <label>Average Total Cost</label>
+                <span>${loadFinancialAnalysis.data.analysis.summary_stats.avg_total_cost}</span>
+              </div>
+              <div class="portfolio-metric">
+                <label>Average Monthly Payment</label>
+                <span>${loadFinancialAnalysis.data.analysis.summary_stats.avg_monthly}</span>
+              </div>
+              <div class="portfolio-metric">
+                <label>Average Risk Score</label>
+                <span>{loadFinancialAnalysis.data.analysis.summary_stats.avg_risk}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      : ''}
+
+
+    </div>
+  
+
+  <!-- Custom Calculation Form -->
+  <div class="custom-calculator">
+    <h2>🧮 Custom Loan Analysis</h2>
+    <p>Test with your own parameters to validate Python integration</p>
+
+    <form onsubmit="calculateCustomLoan" class="calculator-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Loan Name</label>
+          <input type="text" name="name" value="Custom Loan" required>
+        </div>
+        <div class="form-group">
+          <label>Principal Amount ($)</label>
+          <input type="number" name="principal" value="250000" min="1000" max="10000000" step="1000" required>
+        </div>
+        <div class="form-group">
+          <label>Interest Rate (%)</label>
+          <input type="number" name="rate" value="5.25" min="0.1" max="50" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label>Loan Term (years)</label>
+          <input type="number" name="years" value="25" min="1" max="50" step="1" required>
+        </div>
+        <div class="form-group">
+          <label>Extra Monthly Payment ($)</label>
+          <input type="number" name="extraPayment" value="150" min="0" max="10000" step="10">
+        </div>
+        <div class="form-group">
+          <label>Loan Type</label>
+          <select name="type" required>
+            <option value="mortgage">Mortgage</option>
+            <option value="auto">Auto Loan</option>
+            <option value="personal">Personal Loan</option>
+            <option value="business">Business Loan</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-calculate">🔬 Analyze with Python + ML</button>
+    </form>
+  </div>
+</div>
+
+<script server>
+  async function calculateCustomLoan(formData, request) {
+    try {
+      // Debug formData received by server function
+      console.log('🔬 SERVER FUNCTION DEBUG - formData type:', typeof formData);
+      console.log('🔬 SERVER FUNCTION DEBUG - formData value:', formData);
+      console.log('🔬 SERVER FUNCTION DEBUG - formData.principal (raw):', formData.principal);
+      console.log('🔬 SERVER FUNCTION DEBUG - formData.principal type:', typeof formData.principal);
+
+      // Extract and validate form data
+      let loanData = {
+        name: formData.name || 'Custom Loan',
+        principal:formData.principal || 0,
+        rate: formData.rate|| 0,
+        years: formData.years || 0,
+        extraPayment:formData.extraPayment|| 0,
+        type: formData.type || 'other'
+      };
+
+      console.log('🔬 PARSED DATA DEBUG - loanData.principal:', loanData.principal);
+      console.log('🔬 BEFORE PYTHON CALL - Full loanData object:', JSON.stringify(loanData, null, 2));
+
+      // Call Python analysis function
+      customAnalysis = await analyze_custom_loan(loanData);
+
+      if (!customAnalysis || !customAnalysis.success) {
+        return {
+          error: customAnalysis && customAnalysis.error ? customAnalysis.error : 'Python analysis failed'
+        };
+      }
+
+      return {
+        success: true,
+        analysis: customAnalysis,
+        message: `Analysis complete for ${loanData.name}`
+      };
+
+    } catch (error) {
+      return {
+        error: `Server error: ${error.message}`
+      };
+    }
+  }
+</script>
+
+
+<style>
+.financial-test-suite {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+.subtitle {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.error-panel {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border: 1px solid #f5c6cb;
+  border-radius: 12px;
+  padding: 2rem;
+  color: #721c24;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.custom-result-panel {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  border-left: 4px solid #28a745;
+}
+
+.custom-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.scenarios-overview {
+  margin: 3rem 0;
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.scenario-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scenario-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.scenario-card h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.scenario-details p {
+  margin: 0.5rem 0;
+  color: #5a6c7d;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  border-left: 4px solid;
+}
+
+.metric-card.primary { border-left-color: #007bff; }
+.metric-card.success { border-left-color: #28a745; }
+.metric-card.info { border-left-color: #17a2b8; }
+.metric-card.warning { border-left-color: #ffc107; }
+
+.metric-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.big-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.loan-analysis-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.loan-analysis-panel h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+.analysis-metrics {
+  margin: 1.5rem 0;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.metric-item label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.metric-item .value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.value.success { color: #28a745; }
+.value.info { color: #17a2b8; }
+.value.warning { color: #ffc107; }
+
+.risk-low { color: #28a745; }
+.risk-moderate { color: #ffc107; }
+.risk-high { color: #dc3545; }
+
+.embeddings-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #6f42c1;
+}
+
+.embeddings-section h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.embedding-vector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.vector-component {
+  background: #e9ecef;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.85rem;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s ease;
+}
+
+.vector-component:hover {
+  background: #6f42c1;
+  color: white;
+  transform: scale(1.05);
+}
+
+.categorical-features {
+  margin-top: 1rem;
+}
+
+.category-tag {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  margin: 0.2rem;
+}
+
+.schedule-section {
+  margin: 2rem 0;
+}
+
+.schedule-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+  margin: 1rem 0;
+}
+
+.schedule-header, .schedule-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 2fr 1fr;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.schedule-header {
+  background: #f8f9fa;
+  font-weight: bold;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.schedule-row:hover {
+  background: #f8f9fa;
+}
+
+.schedule-row:last-child {
+  border-bottom: none;
+}
+
+.comparative-analysis {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+}
+
+.comparison-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.highlight-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  border-left: 4px solid;
+}
+
+.highlight-card.best { border-left-color: #28a745; }
+.highlight-card.risk { border-left-color: #dc3545; }
+.highlight-card.efficiency { border-left-color: #007bff; }
+
+.highlight-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+}
+
+.highlight-card p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #495057;
+  margin: 0.5rem 0;
+}
+
+.highlight-card small {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.portfolio-metrics {
+  margin: 2rem 0;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.portfolio-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.portfolio-metric label {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.portfolio-metric span {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.portfolio-embeddings {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-left: 4px solid #6f42c1;
+}
+
+.portfolio-vector-display {
+  margin: 1.5rem 0;
+}
+
+.portfolio-vector {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.vector-item {
+  display: grid;
+  grid-template-columns: 80px 80px 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.vector-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.vector-value {
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.vector-bar {
+  height: 6px;
+  background: linear-gradient(90deg, #6f42c1, #007bff);
+  border-radius: 3px;
+  min-width: 2px;
+}
+
+.portfolio-distribution {
+  margin: 2rem 0;
+}
+
+.distribution-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.distribution-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #007bff;
+  color: white;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.type-name {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.metadata-section {
+  margin: 3rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.metadata-item {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 4px;
+  border-left: 3px solid #17a2b8;
+  font-size: 0.9rem;
+}
+
+.metadata-item strong {
+  color: #2c3e50;
+}
+
+.custom-calculator {
+  margin: 4rem 0;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-left: 4px solid #28a745;
+}
+
+.custom-calculator h2 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+}
+
+.custom-calculator p {
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+.calculator-form {
+  margin: 1.5rem 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-group input, .form-group select {
+  padding: 0.75rem;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+.btn-calculate {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.5rem;
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-calculate:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40,167,69,0.3);
+}
+
+.btn-calculate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .financial-test-suite {
+    padding: 1rem;
+  }
+
+  .scenarios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-row {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-header, .schedule-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .comparison-highlights {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vector-item {
+    grid-template-columns: 60px 60px 1fr;
+  }
+}
+
+/* Animation for dynamic elements */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loan-analysis-panel, .comparative-analysis, .portfolio-embeddings {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.scenario-card {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.scenario-card:nth-child(2) { animation-delay: 0.1s; }
+.scenario-card:nth-child(3) { animation-delay: 0.2s; }
+.scenario-card:nth-child(4) { animation-delay: 0.3s; }
+
+/* Hover effects for interactive elements */
+.metric-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.vector-component:hover {
+  cursor: pointer;
+}
+
+.category-tag:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+/* AJAX Result Styling */
+.ajax-result {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+  background: #f8f9fa;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.ajax-result.success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  border-left-color: #28a745;
+}
+
+.ajax-result h3 {
+  margin: 0 0 1rem 0;
+  color: #155724;
+  font-size: 1.2rem;
+}
+
+.ajax-result p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.ajax-result strong {
+  color: #0d4419;
+}
+</style>

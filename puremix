@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# PureMix CLI Launcher
+# This script runs the PureMix CLI with Node.js 24+ native TypeScript support
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Run the CLI with native TypeScript support (Node.js 24+)
+exec node "$SCRIPT_DIR/cli/puremix.ts" "$@"

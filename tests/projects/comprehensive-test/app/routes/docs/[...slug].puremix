@@ -1,0 +1,51 @@
+<layout>main</layout>
+
+<loader>
+  async function loadPage(request) {
+    // Catch-all routes receive the full path as '0' parameter in Express
+    const slug = request.params[0] || '';
+    const pathSegments = slug.split('/').filter(s => s);
+
+    return {
+      data: {
+        slug: slug,
+        segments: pathSegments,
+        depth: pathSegments.length,
+        routeType: 'catch-all'
+      }
+    };
+  }
+</loader>
+
+<div style="padding: 20px;">
+  <h1>Documentation: {loadPage.data.slug || 'Home'}</h1>
+
+  <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0;">
+    <h2>Route Testing: Catch-All [...slug]</h2>
+    <p><strong>File:</strong> /app/routes/docs/[...slug].puremix</p>
+    <p><strong>Pattern:</strong> /docs/* (catches all paths under /docs/)</p>
+    <p><strong>Current Slug:</strong> {loadPage.data.slug}</p>
+    <p><strong>Path Depth:</strong> {loadPage.data.depth} levels</p>
+  </div>
+
+  <div style="margin: 20px 0;">
+    <h3>Path Segments:</h3>
+    {loadPage.data.segments.length > 0 ?
+      <ul>
+        {loadPage.data.segments.map(segment => <li>{segment}</li>)}
+      </ul>
+    :
+      <p><em>No path segments (root /docs/)</em></p>
+    }
+  </div>
+
+  <div style="margin-top: 30px;">
+    <h3>Test Different Paths:</h3>
+    <ul>
+      <li><a href="/docs/getting-started">Single level: /docs/getting-started</a></li>
+      <li><a href="/docs/api/reference">Two levels: /docs/api/reference</a></li>
+      <li><a href="/docs/guides/advanced/authentication">Three levels: /docs/guides/advanced/authentication</a></li>
+      <li><a href="/docs/v2/api/users/create">Four levels: /docs/v2/api/users/create</a></li>
+    </ul>
+  </div>
+</div>

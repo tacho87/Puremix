@@ -1,0 +1,389 @@
+<layout>main</layout>
+
+<loader>
+  async function loadPythonScriptTest(request) {
+    return {
+      data: {
+        message: "Python Script Tag Test Page",
+        testData: [
+          { name: "Alice", score: 95, subject: "Math" },
+          { name: "Bob", score: 87, subject: "Science" },
+          { name: "Charlie", score: 92, subject: "History" }
+        ]
+      }
+    };
+  }
+</loader>
+
+<div class="python-script-test-container">
+  <h1>🐍 Python Script Tag Test</h1>
+  <p>Testing inline Python functions using <code>&lt;script server lang="python"&gt;</code></p>
+
+  <div class="test-section">
+    <h2>Test Data Analysis</h2>
+    <div class="test-data">
+      {loadPythonScriptTest.data.testData.map(item =>
+        <div class="student-card">
+          <h3>{item.name}</h3>
+          <p>Subject: {item.subject}</p>
+          <p>Score: {item.score}</p>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <div class="action-section">
+    <h2>Python Analysis Actions</h2>
+
+    <form onsubmit="analyze_scores" class="test-form">
+      <button type="submit" class="btn-primary">📊 Analyze Scores with Python</button>
+    </form>
+
+    <form onsubmit="calculate_statistics" class="test-form">
+      <button type="submit" class="btn-secondary">📈 Calculate Statistics</button>
+    </form>
+
+    <form onsubmit="generate_report" class="test-form">
+      <button type="submit" class="btn-success">📋 Generate Report</button>
+    </form>
+
+    <div id="results" class="results-container">
+      <!-- Results will be displayed here -->
+    </div>
+  </div>
+</div>
+
+<script server lang="python">
+def analyze_scores(data, js_context=None):
+    """
+    Analyze student scores using pandas-like operations
+    Tests basic Python functionality in script tags
+    """
+    import sys
+
+    # Test data processing
+    students = [
+        {"name": "Alice", "score": 95, "subject": "Math"},
+        {"name": "Bob", "score": 87, "subject": "Science"},
+        {"name": "Charlie", "score": 92, "subject": "History"}
+    ]
+
+    # Basic statistical analysis
+    scores = [student["score"] for student in students]
+    average_score = sum(scores) / len(scores)
+    max_score = max(scores)
+    min_score = min(scores)
+
+    # Find top performer
+    top_student = max(students, key=lambda x: x["score"])
+
+    return {
+        "success": True,
+        "analysis": {
+            "total_students": len(students),
+            "average_score": round(average_score, 2),
+            "max_score": max_score,
+            "min_score": min_score,
+            "top_student": top_student,
+            "python_version": sys.version,
+            "message": f"Analysis complete! Average score: {average_score:.1f}"
+        }
+    }
+
+def calculate_statistics(data, js_context=None):
+    """
+    Advanced statistical calculations
+    Tests more complex Python operations
+    """
+    import math
+
+    scores = [95, 87, 92]  # Sample data
+    n = len(scores)
+    mean = sum(scores) / n
+
+    # Calculate standard deviation
+    variance = sum((x - mean) ** 2 for x in scores) / n
+    std_dev = math.sqrt(variance)
+
+    # Calculate median
+    sorted_scores = sorted(scores)
+    median = sorted_scores[n // 2] if n % 2 == 1 else (sorted_scores[n//2-1] + sorted_scores[n//2]) / 2
+
+    return {
+        "success": True,
+        "statistics": {
+            "count": n,
+            "mean": round(mean, 2),
+            "median": median,
+            "std_deviation": round(std_dev, 2),
+            "variance": round(variance, 2),
+            "range": max(scores) - min(scores)
+        },
+        "message": f"Statistics calculated: Mean={mean:.1f}, StdDev={std_dev:.2f}"
+    }
+
+def generate_report(data, js_context=None):
+    """
+    Generate a comprehensive report
+    Tests string formatting and data structures
+    """
+    students = [
+        {"name": "Alice", "score": 95, "subject": "Math", "grade": "A"},
+        {"name": "Bob", "score": 87, "subject": "Science", "grade": "B+"},
+        {"name": "Charlie", "score": 92, "subject": "History", "grade": "A-"}
+    ]
+
+    # Generate report sections
+    report_lines = [
+        "📊 STUDENT PERFORMANCE REPORT",
+        "=" * 35,
+        ""
+    ]
+
+    for i, student in enumerate(students, 1):
+        report_lines.extend([
+            f"{i}. {student['name']}",
+            f"   Subject: {student['subject']}",
+            f"   Score: {student['score']}/100",
+            f"   Grade: {student['grade']}",
+            ""
+        ])
+
+    # Summary statistics
+    total_score = sum(s["score"] for s in students)
+    avg_score = total_score / len(students)
+
+    report_lines.extend([
+        "SUMMARY:",
+        f"Total Students: {len(students)}",
+        f"Average Score: {avg_score:.1f}",
+        f"Total Points: {total_score}",
+    ])
+
+    return {
+        "success": True,
+        "report": {
+            "title": "Student Performance Report",
+            "content": "\n".join(report_lines),
+            "summary": {
+                "total_students": len(students),
+                "average_score": round(avg_score, 1),
+                "total_points": total_score
+            }
+        },
+        "message": "Report generated successfully!"
+    }
+</script>
+
+<script>
+// Client-side JavaScript to handle responses and display results
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🐍 Python Script Tag Test page loaded');
+  console.log('📊 Available data:', PureMix.data);
+
+  // Display loader data in console for verification
+  if (PureMix.data && PureMix.data.loadPythonScriptTest) {
+    console.log('✅ Loader data available:', PureMix.data.loadPythonScriptTest.data);
+  }
+});
+
+// Add custom result display handling
+document.addEventListener('PureMixActionComplete', function(event) {
+  const resultsDiv = document.getElementById('results');
+  const response = event.detail.response;
+
+  if (response.success) {
+    let htmlContent = '<div class="success-result">';
+    htmlContent += `<h3>✅ ${response.message || 'Operation completed'}</h3>`;
+
+    // Display analysis results
+    if (response.analysis) {
+      htmlContent += '<h4>📊 Analysis Results:</h4>';
+      htmlContent += `<p><strong>Students:</strong> ${response.analysis.total_students}</p>`;
+      htmlContent += `<p><strong>Average Score:</strong> ${response.analysis.average_score}</p>`;
+      htmlContent += `<p><strong>Range:</strong> ${response.analysis.min_score} - ${response.analysis.max_score}</p>`;
+      htmlContent += `<p><strong>Top Student:</strong> ${response.analysis.top_student.name} (${response.analysis.top_student.score})</p>`;
+      htmlContent += `<p><strong>Python Version:</strong> ${response.analysis.python_version}</p>`;
+    }
+
+    // Display statistics results
+    if (response.statistics) {
+      htmlContent += '<h4>📈 Statistical Analysis:</h4>';
+      htmlContent += `<p><strong>Count:</strong> ${response.statistics.count}</p>`;
+      htmlContent += `<p><strong>Mean:</strong> ${response.statistics.mean}</p>`;
+      htmlContent += `<p><strong>Median:</strong> ${response.statistics.median}</p>`;
+      htmlContent += `<p><strong>Standard Deviation:</strong> ${response.statistics.std_deviation}</p>`;
+      htmlContent += `<p><strong>Variance:</strong> ${response.statistics.variance}</p>`;
+    }
+
+    // Display report results
+    if (response.report) {
+      htmlContent += '<h4>📋 Generated Report:</h4>';
+      htmlContent += `<pre class="report-content">${response.report.content}</pre>`;
+    }
+
+    htmlContent += '</div>';
+    resultsDiv.innerHTML = htmlContent;
+
+    // Smooth scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    resultsDiv.innerHTML = `<div class="error-result">❌ Error: ${response.error || 'Unknown error'}</div>`;
+  }
+});
+</script>
+
+<style>
+.python-script-test-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.test-section, .action-section {
+  margin: 30px 0;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.test-data {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.student-card {
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.student-card h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.student-card p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.test-form {
+  display: inline-block;
+  margin: 10px 10px 10px 0;
+}
+
+.btn-primary, .btn-secondary, .btn-success {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.btn-secondary:hover {
+  background: #545b62;
+  transform: translateY(-1px);
+}
+
+.btn-success:hover {
+  background: #1e7e34;
+  transform: translateY(-1px);
+}
+
+.results-container {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 6px;
+  min-height: 50px;
+}
+
+.success-result {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.success-result h3 {
+  margin-top: 0;
+  color: #155724;
+}
+
+.success-result h4 {
+  color: #0c5460;
+  margin: 15px 0 10px 0;
+}
+
+.report-content {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  padding: 15px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.error-result {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+h2 {
+  color: #444;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+p {
+  color: #666;
+  line-height: 1.6;
+}
+</style>

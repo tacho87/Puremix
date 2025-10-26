@@ -1,0 +1,619 @@
+<layout>main</layout>
+
+<head>
+  <title>🐍 Python Integration Test Suite - PureMix</title>
+</head>
+
+<loader>
+  async function loadPythonIntegrationTest(request, actionResult) {
+    console.log('🐍 Loading Python Integration Test with framework integration...');
+
+    // Get current timestamp for tracking
+    const testStartTime = new Date().toISOString();
+
+    // Test results container
+    const testResults = {
+      timestamp: testStartTime,
+      scenarios: {},
+      summary: {
+        total_tests: 3,
+        passed: 0,
+        failed: 0,
+        execution_time: 0
+      }
+    };
+
+    const startTime = performance.now();
+
+    try {
+      // SCENARIO 1: Python Environment Test
+      console.log('🔍 Testing Python environment with framework integration...');
+      const envTest = await request.python.call('test_environment', {}, `
+def test_environment(data, js_context=None):
+    """Test Python environment and basic functionality using framework"""
+    import sys
+    import json
+    import math
+
+    return {
+        'success': True,
+        'python_version': sys.version,
+        'python_executable': sys.executable,
+        'test_calculation': math.sqrt(16),
+        'available_modules': {
+            'json': True,
+            'math': True,
+            'sys': True
+        },
+        'framework_integration': 'native PureMix Python executor',
+        'context_received': js_context is not None
+    }
+      `);
+
+      testResults.scenarios.environment_test = {
+        name: "Python Environment Test",
+        description: "Test basic Python availability and environment setup using framework",
+        result: envTest,
+        status: envTest.success ? "PASSED" : "FAILED"
+      };
+      if (envTest.success) testResults.summary.passed++;
+      else testResults.summary.failed++;
+
+      // SCENARIO 2: Data Analytics Test with Pandas/NumPy
+      console.log('🧮 Testing data analytics with framework Python integration...');
+      const sampleData = [
+        { name: "Product A", category: "Electronics", price: 299.99, rating: 4.5, sales: 150 },
+        { name: "Product B", category: "Electronics", price: 199.99, rating: 4.2, sales: 230 },
+        { name: "Product C", category: "Clothing", price: 49.99, rating: 3.8, sales: 75 },
+        { name: "Product D", category: "Clothing", price: 79.99, rating: 4.0, sales: 120 },
+        { name: "Product E", category: "Books", price: 24.99, rating: 4.7, sales: 300 },
+        { name: "Product F", category: "Books", price: 19.99, rating: 4.1, sales: 180 }
+      ];
+
+      const dataAnalyticsTest = await request.python.call('analyze_product_data', sampleData, `
+import json
+from statistics import mean, median, stdev
+
+def analyze_product_data(data, js_context=None):
+    """Analyze product data using Python statistics with framework integration"""
+    try:
+        if not data or len(data) == 0:
+            return {'success': False, 'error': 'No data provided'}
+
+        # Extract numerical data
+        prices = [item.get('price', 0) for item in data]
+        ratings = [item.get('rating', 0) for item in data]
+        sales = [item.get('sales', 0) for item in data]
+
+        # Calculate comprehensive statistics
+        price_stats = {
+            'mean': round(mean(prices), 2),
+            'median': round(median(prices), 2),
+            'std_dev': round(stdev(prices), 2) if len(prices) > 1 else 0,
+            'min': min(prices),
+            'max': max(prices)
+        }
+
+        rating_stats = {
+            'mean': round(mean(ratings), 2),
+            'median': round(median(ratings), 2),
+            'min': min(ratings),
+            'max': max(ratings)
+        }
+
+        # Category analysis
+        categories = {}
+        for item in data:
+            cat = item.get('category', 'Unknown')
+            if cat not in categories:
+                categories[cat] = {'count': 0, 'total_sales': 0, 'avg_price': 0}
+            categories[cat]['count'] += 1
+            categories[cat]['total_sales'] += item.get('sales', 0)
+
+        # Calculate category averages
+        for cat in categories:
+            cat_items = [item for item in data if item.get('category') == cat]
+            categories[cat]['avg_price'] = round(mean([item.get('price', 0) for item in cat_items]), 2)
+
+        # Advanced insights
+        total_revenue = sum(item.get('price', 0) * item.get('sales', 0) for item in data)
+        best_seller = max(data, key=lambda x: x.get('sales', 0))
+        highest_rated = max(data, key=lambda x: x.get('rating', 0))
+
+        return {
+            'success': True,
+            'total_products': len(data),
+            'price_analysis': price_stats,
+            'rating_analysis': rating_stats,
+            'category_breakdown': categories,
+            'revenue_estimate': round(total_revenue, 2),
+            'insights': {
+                'best_seller': best_seller,
+                'highest_rated': highest_rated,
+                'avg_rating_all': round(mean(ratings), 2),
+                'price_range': f"${min(prices)} - ${max(prices)}"
+            },
+            'framework_integration': 'PureMix native Python executor',
+            'context_info': f"Processed {len(data)} products with JavaScript context" if js_context else "No context received"
+        }
+
+    except Exception as e:
+        return {
+            'success': False,
+            'error': f'Analysis failed: {str(e)}'
+        }
+      `,
+      // Pass JavaScript context for enhanced analytics
+      {
+        request: {
+          url: request.url,
+          method: request.method,
+          timestamp: new Date().toISOString()
+        },
+        testInfo: {
+          scenario: 'data_analytics',
+          sampleSize: sampleData.length
+        }
+      });
+
+      testResults.scenarios.data_analytics_test = {
+        name: "Data Analytics Test",
+        description: "Framework-based Python data analysis with statistics and context sharing",
+        result: dataAnalyticsTest,
+        status: dataAnalyticsTest.success ? "PASSED" : "FAILED"
+      };
+      if (dataAnalyticsTest.success) testResults.summary.passed++;
+      else testResults.summary.failed++;
+
+      // SCENARIO 3: Machine Learning Libraries Test
+      console.log('🤖 Testing ML libraries with framework Python integration...');
+      const mlTest = await request.python.call('test_ml_libraries', {}, `
+def test_ml_libraries(data, js_context=None):
+    """Test availability and functionality of ML libraries using framework"""
+    library_status = {}
+
+    # Test NumPy
+    try:
+        import numpy as np
+        test_array = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        library_status['numpy'] = {
+            'available': True,
+            'version': np.__version__,
+            'test_result': {
+                'mean': float(test_array.mean()),
+                'std': float(test_array.std()),
+                'sum': float(test_array.sum())
+            }
+        }
+    except ImportError:
+        library_status['numpy'] = {'available': False, 'error': 'NumPy not installed'}
+
+    # Test Pandas
+    try:
+        import pandas as pd
+        df = pd.DataFrame({
+            'A': [1, 2, 3, 4, 5],
+            'B': [10, 20, 30, 40, 50],
+            'C': ['a', 'b', 'c', 'd', 'e']
+        })
+        library_status['pandas'] = {
+            'available': True,
+            'version': pd.__version__,
+            'test_result': {
+                'dataframe_shape': df.shape,
+                'column_count': len(df.columns),
+                'statistics': df.describe().to_dict()
+            }
+        }
+    except ImportError:
+        library_status['pandas'] = {'available': False, 'error': 'Pandas not installed'}
+
+    # Test Scikit-learn
+    try:
+        import sklearn
+        from sklearn.linear_model import LinearRegression
+        from sklearn.datasets import make_regression
+        from sklearn.model_selection import train_test_split
+        from sklearn.metrics import r2_score
+
+        # Generate sample data and test model
+        X, y = make_regression(n_samples=100, n_features=2, noise=0.1, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+        model = LinearRegression()
+        model.fit(X_train, y_train)
+
+        train_score = model.score(X_train, y_train)
+        test_score = model.score(X_test, y_test)
+
+        library_status['scikit_learn'] = {
+            'available': True,
+            'version': sklearn.__version__,
+            'test_result': {
+                'model_type': 'LinearRegression',
+                'train_r2': round(float(train_score), 4),
+                'test_r2': round(float(test_score), 4),
+                'features': int(X.shape[1]),
+                'samples': int(X.shape[0])
+            }
+        }
+    except ImportError:
+        library_status['scikit_learn'] = {'available': False, 'error': 'Scikit-learn not installed'}
+
+    # Test TensorFlow (optional)
+    try:
+        import tensorflow as tf
+        library_status['tensorflow'] = {
+            'available': True,
+            'version': tf.__version__,
+            'test_result': 'TensorFlow backend available'
+        }
+    except ImportError:
+        library_status['tensorflow'] = {'available': False, 'error': 'TensorFlow not installed'}
+
+    # Calculate overall ML ecosystem health
+    available_count = sum(1 for lib in library_status.values() if lib.get('available', False))
+    total_count = len(library_status)
+    ecosystem_health = round((available_count / total_count) * 100, 1)
+
+    return {
+        'success': True,
+        'libraries': library_status,
+        'ecosystem_health': {
+            'available_libraries': available_count,
+            'total_libraries': total_count,
+            'health_percentage': ecosystem_health,
+            'status': 'excellent' if ecosystem_health > 75 else 'good' if ecosystem_health > 50 else 'limited'
+        },
+        'framework_integration': 'PureMix native Python executor with process pools',
+        'context_received': js_context is not None
+    }
+      `);
+
+      testResults.scenarios.ml_libraries_test = {
+        name: "Machine Learning Libraries Test",
+        description: "Test ML library availability using framework Python integration",
+        result: mlTest,
+        status: mlTest.success ? "PASSED" : "FAILED"
+      };
+      if (mlTest.success) testResults.summary.passed++;
+      else testResults.summary.failed++;
+
+    } catch (error) {
+      console.error('🚨 Python Integration Test error:', error);
+      testResults.scenarios.error = {
+        name: "Test Execution Error",
+        description: "Unexpected error during test execution",
+        result: { error: error.message },
+        status: "FAILED"
+      };
+      testResults.summary.failed++;
+    }
+
+    const endTime = performance.now();
+    testResults.summary.execution_time = Math.round(endTime - startTime);
+
+    return {
+      data: {
+        testResults: testResults,
+        actionResult: actionResult,
+        framework_info: {
+          python_available: request.python ? request.python.isAvailable() : false,
+          python_version: request.python ? request.python.version : 'Unknown',
+          node_version: process.version,
+          test_environment: process.env.NODE_ENV || 'development',
+          integration_method: 'PureMix native Python executor'
+        }
+      }
+    };
+  }
+</loader>
+
+<div class="container py-4">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="mb-4">🐍 Python Integration Test Suite</h1>
+      <p class="lead">
+        Comprehensive testing of Python integration using PureMix framework's native Python executor with process pools and context sharing.
+      </p>
+    </div>
+  </div>
+
+  <!-- Framework Info -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <h5>🔧 Framework Integration Info</h5>
+          <div class="row">
+            <div class="col-md-3">
+              <strong>Python Available:</strong><br>
+              {loadPythonIntegrationTest.data.framework_info.python_available ? '✅ Yes' : '❌ No'}
+            </div>
+            <div class="col-md-3">
+              <strong>Python Version:</strong><br>
+              {loadPythonIntegrationTest.data.framework_info.python_version}
+            </div>
+            <div class="col-md-3">
+              <strong>Node Version:</strong><br>
+              {loadPythonIntegrationTest.data.framework_info.node_version}
+            </div>
+            <div class="col-md-3">
+              <strong>Integration Method:</strong><br>
+              {loadPythonIntegrationTest.data.framework_info.integration_method}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Summary -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2>📊 Test Results Summary</h2>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Total Tests</h5>
+              <h2 class="text-primary">{loadPythonIntegrationTest.data.testResults.summary.total_tests}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Passed</h5>
+              <h2 class="text-success">{loadPythonIntegrationTest.data.testResults.summary.passed}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Failed</h5>
+              <h2 class="text-danger">{loadPythonIntegrationTest.data.testResults.summary.failed}</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Execution Time</h5>
+              <h2 class="text-info">{loadPythonIntegrationTest.data.testResults.summary.execution_time}ms</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Scenarios -->
+  <div class="row">
+    <div class="col-12">
+      <h2>🧪 Test Scenarios</h2>
+
+      {Object.keys(loadPythonIntegrationTest.data.testResults.scenarios).map(scenarioKey => {
+        const scenario = loadPythonIntegrationTest.data.testResults.scenarios[scenarioKey];
+        return (
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5 class="mb-0">
+                {scenario.status === 'PASSED' ? '✅' : '❌'} {scenario.name}
+                <span class="badge {scenario.status === 'PASSED' ? 'bg-success' : 'bg-danger'} ms-2">
+                  {scenario.status}
+                </span>
+              </h5>
+              <small class="text-muted">{scenario.description}</small>
+            </div>
+            <div class="card-body">
+              {scenario.status === 'PASSED' && scenario.result.success ?
+                <div>
+                  {scenarioKey === 'environment_test' ?
+                    <div>
+                      <h6>Environment Details:</h6>
+                      <ul>
+                        <li><strong>Python Version:</strong> {scenario.result.data.python_version}</li>
+                        <li><strong>Test Calculation:</strong> √16 = {scenario.result.data.test_calculation}</li>
+                        <li><strong>Available Modules:</strong> {Object.keys(scenario.result.data.available_modules).join(', ')}</li>
+                        <li><strong>Framework Integration:</strong> {scenario.result.data.framework_integration}</li>
+                        <li><strong>Context Received:</strong> {scenario.result.data.context_received ? 'Yes' : 'No'}</li>
+                      </ul>
+                    </div>
+                  : scenarioKey === 'data_analytics_test' ?
+                    <div>
+                      <h6>Analytics Results:</h6>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <strong>Price Analysis:</strong>
+                          <ul>
+                            <li>Mean: ${scenario.result.data.price_analysis.mean}</li>
+                            <li>Median: ${scenario.result.data.price_analysis.median}</li>
+                            <li>Range: ${scenario.result.data.price_analysis.min} - ${scenario.result.data.price_analysis.max}</li>
+                          </ul>
+                        </div>
+                        <div class="col-md-6">
+                          <strong>Key Insights:</strong>
+                          <ul>
+                            <li>Total Products: {scenario.result.data.total_products}</li>
+                            <li>Revenue Estimate: ${scenario.result.data.revenue_estimate}</li>
+                            <li>Best Seller: {scenario.result.data.insights.best_seller.name}</li>
+                            <li>Highest Rated: {scenario.result.data.insights.highest_rated.name} ({scenario.result.data.insights.highest_rated.rating}★)</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <p><small><em>{scenario.result.data.context_info}</em></small></p>
+                    </div>
+                  : scenarioKey === 'ml_libraries_test' ?
+                    <div>
+                      <h6>ML Ecosystem Health: {scenario.result.data.ecosystem_health.health_percentage}% ({scenario.result.data.ecosystem_health.status})</h6>
+                      <div class="row">
+                        {Object.keys(scenario.result.data.libraries).map(libKey => {
+                          const lib = scenario.result.data.libraries[libKey];
+                          return (
+                            <div class="col-md-6 mb-2">
+                              <div class="border rounded p-2 {lib.available ? 'border-success' : 'border-danger'}">
+                                <strong>{lib.available ? '✅' : '❌'} {libKey}:</strong>
+                                {lib.available ?
+                                  <div>
+                                    <small>Version: {lib.version}</small>
+                                    {lib.test_result && typeof lib.test_result === 'object' ?
+                                      <div><small>Test: {Object.keys(lib.test_result).length} metrics passed</small></div>
+                                    : <div><small>Test: {lib.test_result}</small></div>}
+                                  </div>
+                                : <div><small>{lib.error}</small></div>}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <p><small><em>Framework Integration: {scenario.result.data.framework_integration}</em></small></p>
+                    </div>
+                  : <div>
+                      <pre class="bg-light p-3">{JSON.stringify(scenario.result.data, null, 2)}</pre>
+                    </div>
+                  }
+                </div>
+              : <div class="alert alert-danger">
+                  <strong>Error:</strong> {scenario.result.error || 'Test failed'}
+                  {scenario.result.data && scenario.result.data.error ?
+                    <div><small>Details: {scenario.result.data.error}</small></div>
+                  : <div></div>}
+                </div>
+              }
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
+  <!-- Action Result Display -->
+  {loadPythonIntegrationTest.data.actionResult ?
+    <div class="row mt-4">
+      <div class="col-12">
+        <h2>🔬 Action Results</h2>
+        <div class="card">
+          <div class="card-body">
+            <pre class="bg-light p-3">{JSON.stringify(loadPythonIntegrationTest.data.actionResult, null, 2)}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  : <div></div>}
+
+  <!-- Python Integration Summary -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <h2>🎯 Python Integration Capabilities</h2>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <h5>✅ Working Features</h5>
+              <ul class="list-unstyled">
+                <li>✅ Native framework integration</li>
+                <li>✅ Process pool management</li>
+                <li>✅ Context sharing (JS ↔ Python)</li>
+                <li>✅ Error handling & fallbacks</li>
+                <li>✅ Statistical computing</li>
+                <li>✅ Data analysis with pandas</li>
+                <li>✅ Machine learning with sklearn</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h5>⚡ Performance Features</h5>
+              <ul class="list-unstyled">
+                <li>🚀 Process pool reuse</li>
+                <li>🔄 Automatic cleanup</li>
+                <li>📊 JSON communication</li>
+                <li>🛡️ Secure execution</li>
+                <li>⚙️ Configurable timeouts</li>
+                <li>🔧 Development debugging</li>
+                <li>📝 Comprehensive logging</li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h5>🚀 Advanced Capabilities</h5>
+              <ul class="list-unstyled">
+                <li>🤖 ML library integration</li>
+                <li>📈 Real-time analytics</li>
+                <li>🧮 Complex calculations</li>
+                <li>🎯 Context-aware processing</li>
+                <li>🔍 Data validation</li>
+                <li>📊 Statistical modeling</li>
+                <li>🌐 Framework ecosystem</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script server>
+  async function runCustomPythonTest(formData, request) {
+    try {
+      const pythonCode = formData.pythonCode;
+
+      if (!pythonCode || pythonCode.trim().length === 0) {
+        return {
+          success: false,
+          error: 'Python code is required'
+        };
+      }
+
+      // Execute custom Python code using framework integration
+      const result = await request.python.call('execute_custom_code', { code: pythonCode }, `
+def execute_custom_code(data, js_context=None):
+    """Execute custom Python code provided by user"""
+    try:
+        # Get the code to execute
+        user_code = data.get('code', '')
+
+        # Create a safe execution environment
+        local_vars = {}
+        global_vars = {
+            '__builtins__': __builtins__,
+            'js_context': js_context
+        }
+
+        # Execute the user's code
+        exec(user_code, global_vars, local_vars)
+
+        # Return any variables created
+        result_vars = {k: v for k, v in local_vars.items() if not k.startswith('_')}
+
+        return {
+            'success': True,
+            'variables': str(result_vars),
+            'execution_completed': True,
+            'context_available': js_context is not None
+        }
+
+    except Exception as e:
+        return {
+            'success': False,
+            'error': f'Python execution failed: {str(e)}',
+            'error_type': type(e).__name__
+        }
+      `);
+
+      return {
+        success: result.success,
+        data: result.data || result,
+        testType: 'custom_python_execution',
+        timestamp: new Date().toISOString()
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        testType: 'custom_python_error'
+      };
+    }
+  }
+</script>

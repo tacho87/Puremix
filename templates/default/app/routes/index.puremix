@@ -1,0 +1,43 @@
+<layout>main</layout>
+
+<loader>
+  async function loadPage(request) {
+    return {
+      data: {
+        message: 'Welcome to PureMix!',
+        features: [
+          'File-based routing',
+          'Server-side rendering',
+          'Python integration',
+          'Hot reload development'
+        ]
+      }
+    };
+  }
+</loader>
+
+<div style="text-align: center; padding: 40px; font-family: system-ui, -apple-system, sans-serif;">
+  <h1 style="color: #2563eb; margin-bottom: 20px;">{loadPage.data.message}</h1>
+
+  <p style="color: #64748b; font-size: 18px; margin-bottom: 30px;">
+    Your PureMix application is ready to go!
+  </p>
+
+  <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #334155; margin-bottom: 15px;">Key Features:</h2>
+    <ul style="text-align: left; color: #475569;">
+      {loadPage.data.features.map(feature =>
+        <li style="margin: 10px 0;">✨ {feature}</li>
+      )}
+    </ul>
+  </div>
+
+  <div style="margin-top: 40px;">
+    <p style="color: #94a3b8;">
+      📚 Read <a href="/FRAMEWORK_GUIDE.md" style="color: #2563eb; text-decoration: none;">FRAMEWORK_GUIDE.md</a> to learn more
+    </p>
+    <p style="color: #94a3b8;">
+      📖 Check <a href="/PROJECT_STRUCTURE.md" style="color: #2563eb; text-decoration: none;">PROJECT_STRUCTURE.md</a> for project organization
+    </p>
+  </div>
+</div>

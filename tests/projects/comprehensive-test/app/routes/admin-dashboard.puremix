@@ -1,0 +1,962 @@
+<layout>main</layout>
+
+<imports>
+  import UserStats from '../components/UserStats'
+  import ProductCard from '../components/ProductCard'
+  import NotificationPanel from '../components/NotificationPanel'
+  import ActivityFeed from '../components/ActivityFeed'
+</imports>
+
+<loader>
+  async function loadAdminDashboard(request, actionResult) {
+    console.log('🏢 AdminDashboard loader called');
+    
+    // Simulate dashboard data loading
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    let dashboardData = {
+      adminUser: {
+        name: 'Admin User',
+        role: 'Super Administrator',
+        lastLogin: new Date().toLocaleString(),
+        permissions: ['read', 'write', 'delete', 'admin']
+      },
+      systemStatus: {
+        uptime: '99.9%',
+        cpu: Math.floor(Math.random() * 30 + 20),
+        memory: Math.floor(Math.random() * 40 + 30),
+        disk: Math.floor(Math.random() * 20 + 60),
+        activeConnections: Math.floor(Math.random() * 500 + 100)
+      },
+      quickStats: {
+        todayVisits: Math.floor(Math.random() * 1000 + 2000),
+        revenue: (Math.random() * 10000 + 5000).toFixed(2),
+        orders: Math.floor(Math.random() * 50 + 25),
+        conversionRate: (Math.random() * 5 + 2).toFixed(2)
+      },
+      recentAlerts: [
+        { id: 1, level: 'info', message: 'System backup completed' },
+        { id: 2, level: 'warning', message: 'High CPU usage detected' },
+        { id: 3, level: 'success', message: 'Security scan passed' }
+      ],
+      lastUpdated: new Date().toLocaleTimeString()
+    };
+    
+    // Handle action results from dashboard actions
+    if (actionResult?.systemRefreshed) {
+      dashboardData.systemStatus.cpu = Math.floor(Math.random() * 30 + 20);
+      dashboardData.systemStatus.memory = Math.floor(Math.random() * 40 + 30);
+      dashboardData.systemStatus.activeConnections = Math.floor(Math.random() * 500 + 100);
+      dashboardData.lastUpdated = actionResult.timestamp;
+    }
+    
+    if (actionResult?.alertAcknowledged) {
+      dashboardData.recentAlerts = dashboardData.recentAlerts.filter(
+        alert => alert.id !== actionResult.alertId
+      );
+    }
+    
+    if (actionResult?.settingsUpdated) {
+      dashboardData.settings = actionResult.newSettings;
+    }
+    
+    return {
+      data: dashboardData,
+      state: { 
+        isAdmin: true,
+        canRefresh: true,
+        showSettings: false,
+        systemHealthy: dashboardData.systemStatus.cpu < 80 && 
+                      dashboardData.systemStatus.memory < 90,
+        hasAlerts: dashboardData.recentAlerts.length > 0
+      }
+    };
+  }
+</loader>
+
+<div class="admin-dashboard">
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>🏢 Admin Dashboard</h1>
+        <p>Welcome back, {loadAdminDashboard.data.adminUser.name}</p>
+      </div>
+      <div class="header-actions">
+        <button onclick="refreshSystem" class="btn-refresh">
+          🔄 Refresh System
+        </button>
+        <button onclick="toggleSettings" class="btn-settings">
+          ⚙️ Settings
+        </button>
+        <div class="system-health {loadAdminDashboard.state.systemHealthy ? 'healthy' : 'warning'}">
+          {loadAdminDashboard.state.systemHealthy ? 
+            <span>✅ System Healthy</span> 
+          : 
+            <span>⚠️ System Issues</span>
+          }
+        </div>
+      </div>
+    </div>
+    
+    {loadAdminDashboard.state.hasAlerts ? 
+      <div class="alert-bar">
+        <strong>System Alerts:</strong>
+        {loadAdminDashboard.data.recentAlerts.map(alert => 
+          <span class="alert-item {alert.level}">
+            {alert.message}
+            <button onclick="acknowledgeAlert" 
+                    data-alert-id="{alert.id}" 
+                    class="btn-ack">×</button>
+          </span>
+        )}
+      </div>
+    : 
+      <div></div>
+    }
+  </header>
+  
+  <!-- Dashboard Settings Panel -->
+  {loadAdminDashboard.state.showSettings ? 
+    <section class="settings-panel">
+      <h3>Dashboard Settings</h3>
+      <form onsubmit="AdminDashboard.updateSettings" class="settings-form">
+        <div class="settings-grid">
+          <div class="setting-group">
+            <label>Refresh Interval (seconds)</label>
+            <input name="refreshInterval" type="number" value="30" min="10" max="300">
+          </div>
+          <div class="setting-group">
+            <label>Theme</label>
+            <select name="theme">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="auto">Auto</option>
+            </select>
+          </div>
+          <div class="setting-group">
+            <label>Components Layout</label>
+            <select name="layout">
+              <option value="masonry">Masonry</option>
+              <option value="grid">Grid</option>
+              <option value="list">List</option>
+            </select>
+          </div>
+          <div class="setting-group">
+            <button type="submit" class="btn-save">💾 Save Settings</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  : 
+    <div></div>
+  }
+  
+  <!-- Quick Stats Overview -->
+  <section class="quick-stats">
+    <h2>📊 Today's Overview</h2>
+    <div class="stats-grid">
+      <div class="quick-stat-card visits">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-number">{loadAdminDashboard.data.quickStats.todayVisits}</div>
+          <div class="stat-label">Visits Today</div>
+        </div>
+      </div>
+      <div class="quick-stat-card revenue">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <div class="stat-number">${loadAdminDashboard.data.quickStats.revenue}</div>
+          <div class="stat-label">Revenue</div>
+        </div>
+      </div>
+      <div class="quick-stat-card orders">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+          <div class="stat-number">{loadAdminDashboard.data.quickStats.orders}</div>
+          <div class="stat-label">Orders</div>
+        </div>
+      </div>
+      <div class="quick-stat-card conversion">
+        <div class="stat-icon">📈</div>
+        <div class="stat-info">
+          <div class="stat-number">{loadAdminDashboard.data.quickStats.conversionRate}%</div>
+          <div class="stat-label">Conversion</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- System Status -->
+  <section class="system-status">
+    <h2>⚡ System Status</h2>
+    <div class="status-grid">
+      <div class="status-metric">
+        <span>Uptime</span>
+        <span class="status-value uptime">{loadAdminDashboard.data.systemStatus.uptime}</span>
+      </div>
+      <div class="status-metric">
+        <span>CPU Usage</span>
+        <span class="status-value {loadAdminDashboard.data.systemStatus.cpu > 80 ? 'high' : 'normal'}">
+          {loadAdminDashboard.data.systemStatus.cpu}%
+        </span>
+      </div>
+      <div class="status-metric">
+        <span>Memory</span>
+        <span class="status-value {loadAdminDashboard.data.systemStatus.memory > 90 ? 'high' : 'normal'}">
+          {loadAdminDashboard.data.systemStatus.memory}%
+        </span>
+      </div>
+      <div class="status-metric">
+        <span>Disk Usage</span>
+        <span class="status-value {loadAdminDashboard.data.systemStatus.disk > 90 ? 'high' : 'normal'}">
+          {loadAdminDashboard.data.systemStatus.disk}%
+        </span>
+      </div>
+      <div class="status-metric">
+        <span>Connections</span>
+        <span class="status-value">{loadAdminDashboard.data.systemStatus.activeConnections}</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Component Testing Area -->
+  <section class="component-testing">
+    <h2>🧩 Component Independence Test</h2>
+    <p class="test-description">
+      Each component below operates independently. Test their functionality to ensure they don't interfere with each other or the dashboard.
+    </p>
+    
+    <!-- Masonry Layout for Components -->
+    <div class="masonry-grid" id="componentGrid">
+      <div class="masonry-item">
+        <div class="component-label">UserStats Component</div>
+        <UserStats />
+      </div>
+      
+      <div class="masonry-item">
+        <div class="component-label">NotificationPanel Component</div>
+        <NotificationPanel />
+      </div>
+      
+      <div class="masonry-item">
+        <div class="component-label">ProductCard Component #1</div>
+        <ProductCard />
+      </div>
+      
+      <div class="masonry-item">
+        <div class="component-label">ActivityFeed Component</div>
+        <ActivityFeed />
+      </div>
+      
+      <div class="masonry-item">
+        <div class="component-label">ProductCard Component #2</div>
+        <ProductCard />
+      </div>
+      
+      <div class="masonry-item">
+        <div class="component-label">UserStats Component #2</div>
+        <UserStats />
+      </div>
+      
+      <div class="masonry-item">
+        <div class="component-label">ProductCard Component #3</div>
+        <ProductCard />
+      </div>
+    </div>
+  </section>
+  
+  <!-- Test Controls -->
+  <section class="test-controls">
+    <h3>🧪 Test Controls</h3>
+    <div class="control-buttons">
+      <button onclick="stressTest" class="btn-stress">
+        🚀 Stress Test All Components
+      </button>
+      <button onclick="measurePerformance" class="btn-performance">
+        📊 Measure Performance
+      </button>
+      <button onclick="testIndependence" class="btn-independence">
+        🔬 Test Independence
+      </button>
+      <button onclick="generateReport" class="btn-report">
+        📋 Generate Test Report
+      </button>
+    </div>
+  </section>
+  
+  <footer class="dashboard-footer">
+    <div class="footer-info">
+      <span>Last updated: {loadAdminDashboard.data.lastUpdated}</span>
+      <span>Admin: {loadAdminDashboard.data.adminUser.name}</span>
+      <span>Role: {loadAdminDashboard.data.adminUser.role}</span>
+    </div>
+  </footer>
+</div>
+
+<script server>
+  async function refreshSystem(formData, request) {
+    console.log('🔄 AdminDashboard.refreshSystem called');
+    
+    // Simulate system refresh
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    return {
+      success: true,
+      systemRefreshed: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'System status refreshed successfully'
+    };
+  }
+  
+  async function toggleSettings(formData, request) {
+    console.log('⚙️ AdminDashboard.toggleSettings called');
+    
+    return {
+      success: true,
+      settingsToggled: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Settings panel toggled'
+    };
+  }
+  
+  async function acknowledgeAlert(formData, request) {
+    console.log('❌ AdminDashboard.acknowledgeAlert called:', formData);
+    
+    const alertId = parseInt(formData.alertId);
+    
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    return {
+      success: true,
+      alertAcknowledged: true,
+      alertId: alertId,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Alert acknowledged and dismissed'
+    };
+  }
+  
+  async function updateSettings(formData, request) {
+    console.log('💾 AdminDashboard.updateSettings called:', formData);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    return {
+      success: true,
+      settingsUpdated: true,
+      newSettings: {
+        refreshInterval: parseInt(formData.refreshInterval),
+        theme: formData.theme,
+        layout: formData.layout
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Dashboard settings updated successfully'
+    };
+  }
+  
+  async function stressTest(formData, request) {
+    console.log('🚀 AdminDashboard.stressTest called');
+    
+    // Simulate stress testing
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    return {
+      success: true,
+      stressTestCompleted: true,
+      results: {
+        componentsLoaded: 7,
+        averageLoadTime: '45ms',
+        memoryUsage: '12.3MB',
+        errorsDetected: 0
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Stress test completed successfully'
+    };
+  }
+  
+  async function measurePerformance(formData, request) {
+    console.log('📊 AdminDashboard.measurePerformance called');
+    
+    await new Promise(resolve => setTimeout(resolve, 400));
+    
+    return {
+      success: true,
+      performanceMeasured: true,
+      metrics: {
+        renderTime: '123ms',
+        componentCount: 7,
+        memoryDelta: '8.7MB',
+        cacheHitRate: '94%'
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Performance metrics collected'
+    };
+  }
+  
+  async function testIndependence(formData, request) {
+    console.log('🔬 AdminDashboard.testIndependence called');
+    
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
+    return {
+      success: true,
+      independenceTestCompleted: true,
+      results: {
+        isolationScore: '100%',
+        crossContamination: false,
+        memoryLeaks: false,
+        stateInterference: false
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Component independence test passed'
+    };
+  }
+  
+  async function generateReport(formData, request) {
+    console.log('📋 AdminDashboard.generateReport called');
+    
+    await new Promise(resolve => setTimeout(resolve, 700));
+    
+    return {
+      success: true,
+      reportGenerated: true,
+      report: {
+        testDate: new Date().toISOString(),
+        componentsCount: 7,
+        testsRun: 15,
+        successRate: '100%',
+        issues: [],
+        recommendations: [
+          'All components functioning independently',
+          'Performance within acceptable limits',
+          'No memory leaks detected'
+        ]
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Comprehensive test report generated'
+    };
+  }
+</script>
+
+<style>
+  .admin-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .dashboard-header {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .header-title h1 {
+    margin: 0;
+    color: #1a202c;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  
+  .header-title p {
+    margin: 4px 0 0 0;
+    color: #718096;
+    font-size: 16px;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .btn-refresh, .btn-settings {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-refresh {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  .btn-settings {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+  
+  .btn-refresh:hover, .btn-settings:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  
+  .system-health {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .system-health.healthy {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+  
+  .system-health.warning {
+    background: #fed7d7;
+    color: #742a2a;
+  }
+  
+  .alert-bar {
+    margin-top: 16px;
+    padding: 12px;
+    background: #fef5e7;
+    border-radius: 8px;
+    border-left: 4px solid #f6ad55;
+  }
+  
+  .alert-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 16px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .alert-item.info {
+    background: #bee3f8;
+    color: #2b6cb7;
+  }
+  
+  .alert-item.warning {
+    background: #faf089;
+    color: #744210;
+  }
+  
+  .alert-item.success {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+  
+  .btn-ack {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 2px;
+  }
+  
+  .btn-ack:hover {
+    background: rgba(0,0,0,0.1);
+  }
+  
+  .settings-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  .settings-panel h3 {
+    margin: 0 0 16px 0;
+    color: #2d3748;
+  }
+  
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    align-items: end;
+  }
+  
+  .setting-group label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: #4a5568;
+    font-weight: 600;
+  }
+  
+  .setting-group input, .setting-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  
+  .btn-save {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .quick-stats {
+    margin-bottom: 24px;
+  }
+  
+  .quick-stats h2 {
+    color: #2d3748;
+    margin-bottom: 16px;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  
+  .quick-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+  
+  .quick-stat-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .stat-icon {
+    font-size: 32px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+  
+  .visits .stat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  .revenue .stat-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+  .orders .stat-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+  .conversion .stat-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+  
+  .stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 4px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  
+  .system-status {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  .system-status h2 {
+    margin: 0 0 16px 0;
+    color: #2d3748;
+  }
+  
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+  
+  .status-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    background: #f7fafc;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .status-metric span:first-child {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  
+  .status-value {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .status-value.normal, .status-value.uptime {
+    color: #48bb78;
+  }
+  
+  .status-value.high {
+    color: #f56565;
+  }
+  
+  .component-testing {
+    margin-bottom: 24px;
+  }
+  
+  .component-testing h2 {
+    color: #2d3748;
+    margin-bottom: 8px;
+  }
+  
+  .test-description {
+    color: #718096;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    grid-auto-rows: min-content;
+  }
+  
+  .masonry-item {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .masonry-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  }
+  
+  .component-label {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .test-controls {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  
+  .test-controls h3 {
+    margin: 0 0 16px 0;
+    color: #2d3748;
+  }
+  
+  .control-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  
+  .btn-stress, .btn-performance, .btn-independence, .btn-report {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-stress {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+  
+  .btn-performance {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+  
+  .btn-independence {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+  }
+  
+  .btn-report {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+  }
+  
+  .control-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  
+  .dashboard-footer {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-top: 24px;
+  }
+  
+  .footer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #718096;
+    font-size: 12px;
+  }
+  
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+    
+    .header-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .masonry-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .control-buttons {
+      grid-template-columns: 1fr;
+    }
+    
+    .footer-info {
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+  }
+</style>
+
+<script client>
+  console.log('🏢 Admin Dashboard client script loaded');
+  
+  // Performance monitoring
+  let performanceData = {
+    pageLoadTime: 0,
+    componentLoadTimes: [],
+    memoryUsage: 0,
+    renderCount: 0
+  };
+  
+  // Track page load performance
+  window.addEventListener('load', function() {
+    performanceData.pageLoadTime = performance.now();
+    console.log('📊 Page load time:', performanceData.pageLoadTime.toFixed(2), 'ms');
+  });
+  
+  // Monitor component updates
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('🧩 Admin Dashboard initialized');
+    
+    // Set up component monitoring
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          performanceData.renderCount++;
+        }
+      });
+    });
+    
+    observer.observe(document.getElementById('componentGrid'), {
+      childList: true,
+      subtree: true
+    });
+    
+    // Memory monitoring (if available)
+    if (performance.memory) {
+      performanceData.memoryUsage = performance.memory.usedJSHeapSize;
+      console.log('💾 Initial memory usage:', (performanceData.memoryUsage / 1024 / 1024).toFixed(2), 'MB');
+    }
+    
+    // Component interaction tracking
+    document.addEventListener('click', function(event) {
+      if (event.target.tagName === 'BUTTON') {
+        console.log('🖱️ Button clicked:', event.target.textContent.trim());
+      }
+    });
+    
+    // Set up periodic health checks
+    setInterval(function() {
+      checkComponentHealth();
+    }, 10000); // Every 10 seconds
+  });
+  
+  function checkComponentHealth() {
+    const components = document.querySelectorAll('[data-component]');
+    const healthStatus = {
+      totalComponents: components.length,
+      activeComponents: 0,
+      errors: []
+    };
+    
+    components.forEach(function(component) {
+      try {
+        if (component.offsetHeight > 0) {
+          healthStatus.activeComponents++;
+        }
+      } catch (error) {
+        healthStatus.errors.push(error.message);
+      }
+    });
+    
+    if (healthStatus.errors.length === 0 && healthStatus.activeComponents === healthStatus.totalComponents) {
+      console.log('✅ All components healthy');
+    } else {
+      console.warn('⚠️ Component health issues detected:', healthStatus);
+    }
+  }
+  
+  // Global error handler for component issues
+  window.addEventListener('error', function(event) {
+    console.error('🚨 Global error detected:', event.error);
+    console.log('   File:', event.filename);
+    console.log('   Line:', event.lineno);
+    console.log('   Column:', event.colno);
+  });
+</script>

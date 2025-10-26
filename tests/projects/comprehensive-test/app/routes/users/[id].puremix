@@ -1,0 +1,51 @@
+<layout>main</layout>
+
+<loader>
+  async function loadPage(request) {
+    const userId = request.params.id;
+
+    return {
+      data: {
+        userId: userId,
+        user: {
+          id: userId,
+          name: `User ${userId}`,
+          email: `user${userId}@example.com`,
+          role: 'member',
+          createdAt: new Date().toISOString()
+        },
+        routeType: 'dynamic-id'
+      }
+    };
+  }
+</loader>
+
+<div style="padding: 20px;">
+  <h1>User Profile: {loadPage.data.user.name}</h1>
+
+  <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+    <h2>Route Testing: Dynamic ID</h2>
+    <p><strong>File:</strong> /app/routes/users/[id].puremix</p>
+    <p><strong>Pattern:</strong> /users/:id</p>
+    <p><strong>Current ID:</strong> {loadPage.data.userId}</p>
+  </div>
+
+  <div style="margin: 20px 0;">
+    <h3>User Details</h3>
+    <p><strong>ID:</strong> {loadPage.data.user.id}</p>
+    <p><strong>Name:</strong> {loadPage.data.user.name}</p>
+    <p><strong>Email:</strong> {loadPage.data.user.email}</p>
+    <p><strong>Role:</strong> {loadPage.data.user.role}</p>
+    <p><strong>Created:</strong> {loadPage.data.user.createdAt}</p>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <h3>Test Other User IDs:</h3>
+    <ul>
+      <li><a href="/users/123">User 123</a></li>
+      <li><a href="/users/456">User 456</a></li>
+      <li><a href="/users/abc">User abc</a></li>
+      <li><a href="/users/test-user-id">User test-user-id</a></li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,425 @@
+<div class="conditional-test-component">
+  <h4>🧪 Component Conditional Tests</h4>
+  <div class="component-description">
+    This component tests various conditional scenarios that might reveal template engine issues
+  </div>
+
+  <!-- Test 1: Basic prop-based conditional -->
+  <div class="test-case">
+    <h5>Test 1: Basic Prop Conditional</h5>
+    <div class="test-result">
+      {showDetails ?
+        <div class="details-panel">
+          <p>Details are shown: {user.name}</p>
+          <p>Test mode: {testMode ? 'Enabled' : 'Disabled'}</p>
+        </div>
+      :
+        <div class="no-details">Details hidden</div>
+      }
+    </div>
+  </div>
+
+  <!-- Test 2: Complex nested conditional (issue candidate) -->
+  <div class="test-case">
+    <h5>Test 2: Complex Nested Conditional</h5>
+    <div class="test-result">
+      {user.isActive ?
+        <div class="active-user-info">
+          <h6>Active User: {user.name}</h6>
+          {user.balance > 1000 ?
+            <div class="high-balance-user">
+              <p>High balance user: {user.balance}</p>
+              {user.membershipType === 'premium' ?
+                <span class="premium-badge">Premium Member</span>
+              : user.membershipType === 'enterprise' ?
+                <span class="enterprise-badge">Enterprise Member</span>
+              :
+                <span class="basic-badge">Basic Member</span>
+              }
+            </div>
+          :
+            <div class="standard-balance-user">
+              <p>Standard balance: {user.balance}</p>
+            </div>
+          }
+        </div>
+      :
+        <div class="inactive-user">
+          <p>User {user.name} is inactive</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Test 3: Conditional with object property chains -->
+  <div class="test-case">
+    <h5>Test 3: Object Property Chain Conditionals</h5>
+    <div class="test-result">
+      {user.preferences ?
+        <div class="preferences-display">
+          <p>Theme: {user.preferences.theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}</p>
+          <p>Notifications: {user.preferences.notifications ? '🔔 Enabled' : '🔕 Disabled'}</p>
+          {user.preferences.theme === 'dark' && user.preferences.notifications ?
+            <div class="optimal-settings">✨ Optimal settings detected</div>
+          :
+            <div class="suboptimal-settings">⚙️ Settings could be optimized</div>
+          }
+        </div>
+      :
+        <div class="no-preferences">No preferences set</div>
+      }
+    </div>
+  </div>
+
+  <!-- Test 4: Array-based conditional (another issue candidate) -->
+  <div class="test-case">
+    <h5>Test 4: Array Processing with Conditionals</h5>
+    <div class="test-result">
+      {testMode ?
+        <div class="array-test">
+          <h6>Array Processing Test</h6>
+          <div class="array-results">
+            <!-- This type of pattern might trigger the colon issue -->
+            {[1, 2, 3, 4, 5].map(num =>
+              <div class="number-item">
+                Number: {num}
+                {num % 2 === 0 ?
+                  <span class="even-marker">Even</span>
+                :
+                  <span class="odd-marker">Odd</span>
+                }
+                {num > 3 ?
+                  <span class="high-marker">High</span>
+                : num > 1 ?
+                  <span class="medium-marker">Medium</span>
+                :
+                  <span class="low-marker">Low</span>
+                }
+              </div>
+            )}
+          </div>
+        </div>
+      :
+        <div class="no-array-test">Array test disabled</div>
+      }
+    </div>
+  </div>
+
+  <!-- Test 5: Multiple ternary operations (high risk for colon issue) -->
+  <div class="test-case">
+    <h5>Test 5: Multiple Ternary Operations</h5>
+    <div class="test-result">
+      <div class="ternary-tests">
+        <p>User Status: {user.isActive ? 'Active' : 'Inactive'}</p>
+        <p>Balance Level: {user.balance > 5000 ? 'High' : user.balance > 1000 ? 'Medium' : 'Low'}</p>
+        <p>Membership: {user.membershipType === 'enterprise' ? 'Enterprise' : user.membershipType === 'premium' ? 'Premium' : 'Basic'}</p>
+        <p>Theme Icon: {user.preferences ? (user.preferences.theme === 'dark' ? '🌙' : '☀️') : '❓'}</p>
+
+        <!-- Nested ternary with complex expressions -->
+        <div class="complex-ternary">
+          {user.isActive ?
+            (user.balance > 2000 ?
+              (user.membershipType === 'enterprise' ?
+                <div class="vip-status">🏆 VIP Enterprise User</div>
+              : user.membershipType === 'premium' ?
+                <div class="premium-status">💎 Premium High-Value User</div>
+              :
+                <div class="wealthy-basic">💰 Wealthy Basic User</div>
+              )
+            :
+              <div class="standard-active">👤 Standard Active User</div>
+            )
+          :
+            <div class="inactive-status">😴 Inactive User</div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test 6: Component action test -->
+  <div class="test-case">
+    <h5>Test 6: Component Action</h5>
+    <button onclick="testComponentAction" class="test-action-btn">
+      Test Component Action
+    </button>
+    <div class="action-result" id="component-action-result">
+      Click button to test component action
+    </div>
+  </div>
+</div>
+
+<script server>
+  async function testComponentAction(formData, request) {
+    return {
+      success: true,
+      message: 'Component action executed successfully',
+      timestamp: new Date().toISOString(),
+      componentName: 'ConditionalTestComponent',
+      testData: {
+        formData: Object.keys(formData),
+        userAgent: request.headers ? request.headers['user-agent'] : 'Unknown',
+        method: request.method
+      }
+    };
+  }
+</script>
+
+<style>
+.conditional-test-component {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  border-left: 4px solid #17a2b8;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.component-description {
+  color: #6c757d;
+  margin: 0.5rem 0 1.5rem 0;
+  font-style: italic;
+}
+
+.test-case {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+.test-case h5 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.test-result {
+  background: white;
+  padding: 1rem;
+  border-radius: 4px;
+  border-left: 3px solid #17a2b8;
+}
+
+.details-panel {
+  background: #e7f3ff;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #b3d9ff;
+}
+
+.no-details {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.active-user-info {
+  padding: 0.75rem;
+  background: #d4edda;
+  border-radius: 4px;
+  border: 1px solid #c3e6cb;
+}
+
+.high-balance-user, .standard-balance-user {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.high-balance-user {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+}
+
+.standard-balance-user {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.premium-badge, .enterprise-badge, .basic-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+}
+
+.premium-badge { background: #6f42c1; }
+.enterprise-badge { background: #fd7e14; }
+.basic-badge { background: #6c757d; }
+
+.inactive-user {
+  background: #f8d7da;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.preferences-display {
+  background: #e2e3e5;
+  padding: 0.75rem;
+  border-radius: 4px;
+}
+
+.optimal-settings {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.suboptimal-settings {
+  background: #fff3cd;
+  color: #856404;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.array-test {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.array-results {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.number-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.even-marker, .odd-marker, .high-marker, .medium-marker, .low-marker {
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.even-marker { background: #007bff; }
+.odd-marker { background: #dc3545; }
+.high-marker { background: #28a745; }
+.medium-marker { background: #ffc107; color: #000; }
+.low-marker { background: #6c757d; }
+
+.ternary-tests {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.ternary-tests p {
+  margin: 0.5rem 0;
+  padding: 0.25rem 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border-left: 3px solid #007bff;
+}
+
+.complex-ternary {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 4px;
+  border: 2px solid #e9ecef;
+}
+
+.vip-status {
+  background: linear-gradient(135deg, #fd7e14, #ffc107);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.premium-status {
+  background: linear-gradient(135deg, #6f42c1, #007bff);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.wealthy-basic {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.standard-active {
+  background: #e9ecef;
+  color: #495057;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.inactive-status {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.test-action-btn {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.test-action-btn:hover {
+  background: #138496;
+  transform: translateY(-1px);
+}
+
+.action-result {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border-left: 3px solid #17a2b8;
+  min-height: 50px;
+}
+
+@media (max-width: 768px) {
+  .conditional-test-component {
+    padding: 1rem;
+  }
+
+  .number-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .complex-ternary {
+    padding: 0.75rem;
+  }
+}
+</style>

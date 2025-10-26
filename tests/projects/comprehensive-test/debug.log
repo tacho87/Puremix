@@ -1,0 +1,1264 @@
+
+> tests/projects/comprehensive-test@1.0.0 dev
+> node ../../../cli/puremix.ts dev
+
+🔥 Starting PureMix development server...
+
+📋 Loaded configuration from puremix.config.js
+⚠️  Port 3000 is in use, using port 3002 instead
+
+2025-09-12T08:18:52.323Z 🚀 SERVER STARTUP 
+{
+  "event": "SERVER_START",
+  "timestamp": "2025-09-12T08:18:52.323Z",
+  "pid": 17140,
+  "nodeVersion": "v24.6.0",
+  "platform": "darwin",
+  "memory": {
+    "rss": 117800960,
+    "heapTotal": 23707648,
+    "heapUsed": 15981992,
+    "external": 9863027,
+    "arrayBuffers": 18683
+  },
+  "env": "development",
+  "config": {
+    "enabled": true,
+    "save": true,
+    "console": true,
+    "logDir": "logs",
+    "maxFileSize": 10,
+    "maxFiles": 30,
+    "includeData": true,
+    "trackPerformance": true,
+    "level": "debug"
+  }
+}
+🐍 Python detected: Python 3.13.6 (python3)
+🔄 Hot reload server on ws://localhost:3003
+🔍 COMPONENT DEBUG: Found component import: UserStats -> ../components/UserStats -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/UserStats.puremix
+🔍 COMPONENT DEBUG: Found component import: ProductCard -> ../components/ProductCard -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/ProductCard.puremix
+🔍 COMPONENT DEBUG: Found component import: NotificationPanel -> ../components/NotificationPanel -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/NotificationPanel.puremix
+🔍 COMPONENT DEBUG: Found component import: ActivityFeed -> ../components/ActivityFeed -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/ActivityFeed.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/admin-dashboard.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadAdminDashboard in loader
+🔍 DEBUG: Found 1 server script blocks in admin-dashboard.puremix
+🔍 DEBUG: Processing server script block 1, content length: 3939
+🔍 DEBUG: Script content preview: "async function refreshSystem(formData, request) {\n    console.log('🔄 AdminDashboard.refreshSystem c..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /admin-dashboard with 1 loaders: [ 'loadAdminDashboard' ]
+  ✓ Route: /admin-dashboard -> app/routes/admin-dashboard.puremix
+  ✓ API Route: /api/auth/login -> app/routes/api/auth/login.ts
+  ✓ API Route: /api/upload -> app/routes/api/upload.py
+  ✓ API Route: /api/users/:id -> app/routes/api/users/[id].js
+  ✓ API Route: /api/users -> app/routes/api/users.js
+  ✓ API Route: /api/webhook/:service -> app/routes/api/webhook/[service].js
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/api-testing.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadApiTests in loader
+🔍 DEBUG: Found 1 server script blocks in api-testing.puremix
+🔍 DEBUG: Processing server script block 1, content length: 3799
+🔍 DEBUG: Script content preview: "async function testApiEndpoint(formData, request) {\n    const { endpoint, method, testData } = formD..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /api-testing with 1 loaders: [ 'loadApiTests' ]
+  ✓ Route: /api-testing -> app/routes/api-testing.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/ast-improvements-test.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadASTImprovements in loader
+🔍 DEBUG: Found 1 server script blocks in ast-improvements-test.puremix
+🔍 DEBUG: Processing server script block 1, content length: 424
+🔍 DEBUG: Script content preview: "async function addToCart(formData, request) {\n    // Simulate adding item to cart\n    return { \n    ..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /ast-improvements-test with 1 loaders: [ 'loadASTImprovements' ]
+  ✓ Route: /ast-improvements-test -> app/routes/ast-improvements-test.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/basic-form-test.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadFormTest in loader
+🔍 DEBUG: Found 1 server script blocks in basic-form-test.puremix
+🔍 DEBUG: Processing server script block 1, content length: 714
+🔍 DEBUG: Script content preview: "async function handleFormSubmission(formData, request) {\n    const { name, email, message } = formDa..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /basic-form-test with 1 loaders: [ 'loadFormTest' ]
+  ✓ Route: /basic-form-test -> app/routes/basic-form-test.puremix
+🔍 COMPONENT DEBUG: Found component import: UserCard -> ../components/UserCard.puremix -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/UserCard.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/dashboard.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadDashboard in loader
+🔍 DEBUG: Found 1 server script blocks in dashboard.puremix
+🔍 DEBUG: Processing server script block 1, content length: 1546
+🔍 DEBUG: Script content preview: "// ==================== DASHBOARD-LEVEL SERVER FUNCTIONS ====================\n  \n  async function re..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /dashboard with 1 loaders: [ 'loadDashboard' ]
+  ✓ Route: /dashboard -> app/routes/dashboard.puremix
+🔍 COMPONENT DEBUG: Found component import: UserCard -> ../components/UserCard -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/UserCard.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/edge-case-components.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadComponentEdgeCases in loader
+🔍 DEBUG: Storing route /edge-case-components with 1 loaders: [ 'loadComponentEdgeCases' ]
+  ✓ Route: /edge-case-components -> app/routes/edge-case-components.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/edge-case-forms.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadFormEdgeCases in loader
+🔍 DEBUG: Found 1 server script blocks in edge-case-forms.puremix
+🔍 DEBUG: Processing server script block 1, content length: 6569
+🔍 DEBUG: Script content preview: "async function testEmptyForm(formData, request) {\n    const startTime = Date.now();\n    \n    const v..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /edge-case-forms with 1 loaders: [ 'loadFormEdgeCases' ]
+  ✓ Route: /edge-case-forms -> app/routes/edge-case-forms.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/edge-case-templates.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadTemplateEdgeCases in loader
+🔍 DEBUG: Storing route /edge-case-templates with 1 loaders: [ 'loadTemplateEdgeCases' ]
+  ✓ Route: /edge-case-templates -> app/routes/edge-case-templates.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadFileUploadTest in loader
+🔍 DEBUG: Found 1 server script blocks in file-upload-test.puremix
+🔍 DEBUG: Processing server script block 1, content length: 6588
+🔍 DEBUG: Script content preview: "const path = require('path');\n  const fs = require('fs').promises;\n  const crypto = require('crypto'..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Function code for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix:
+Function parameters: []
+Function code preview: "
+        const path = require('path');
+  const fs = require('fs').promises;
+  const crypto = require('crypto');
+
+  // Security configuration
+  const SECURITY_CONFIG = {
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedExtensions: ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.txt', '.csv'],
+    allowedMimeTypes: [
+      'image/jpeg', 'image/png', 'image/gif', 
+      'application/pdf', 'text/plain', 'text/csv'
+    ],
+    blockedPatterns: [
+      new RegExp('\\.\\.'),  // Path traversal
+      ne..."
+❌ DEBUG: Function compilation error for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+Failed to compile server function 'performSecurityChecks' in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Compilation failed for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+🔍 DEBUG: Function code for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix:
+Function parameters: []
+Function code preview: "
+        const path = require('path');
+  const fs = require('fs').promises;
+  const crypto = require('crypto');
+
+  // Security configuration
+  const SECURITY_CONFIG = {
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedExtensions: ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.txt', '.csv'],
+    allowedMimeTypes: [
+      'image/jpeg', 'image/png', 'image/gif', 
+      'application/pdf', 'text/plain', 'text/csv'
+    ],
+    blockedPatterns: [
+      new RegExp('\\.\\.'),  // Path traversal
+      ne..."
+❌ DEBUG: Function compilation error for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+Failed to compile server function 'handleFileUpload' in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Compilation failed for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+🔍 DEBUG: Function code for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix:
+Function parameters: []
+Function code preview: "
+        const path = require('path');
+  const fs = require('fs').promises;
+  const crypto = require('crypto');
+
+  // Security configuration
+  const SECURITY_CONFIG = {
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedExtensions: ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.txt', '.csv'],
+    allowedMimeTypes: [
+      'image/jpeg', 'image/png', 'image/gif', 
+      'application/pdf', 'text/plain', 'text/csv'
+    ],
+    blockedPatterns: [
+      new RegExp('\\.\\.'),  // Path traversal
+      ne..."
+❌ DEBUG: Function compilation error for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+Failed to compile server function 'testFilenameAttacks' in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Compilation failed for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+🔍 DEBUG: Function code for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix:
+Function parameters: []
+Function code preview: "
+        const path = require('path');
+  const fs = require('fs').promises;
+  const crypto = require('crypto');
+
+  // Security configuration
+  const SECURITY_CONFIG = {
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    allowedExtensions: ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.txt', '.csv'],
+    allowedMimeTypes: [
+      'image/jpeg', 'image/png', 'image/gif', 
+      'application/pdf', 'text/plain', 'text/csv'
+    ],
+    blockedPatterns: [
+      new RegExp('\\.\\.'),  // Path traversal
+      ne..."
+❌ DEBUG: Function compilation error for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+Failed to compile server function 'testMaliciousContent' in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Compilation failed for /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/file-upload-test.puremix: Invalid or unexpected token
+🔍 DEBUG: Storing route /file-upload-test with 1 loaders: [ 'loadFileUploadTest' ]
+  ✓ Route: /file-upload-test -> app/routes/file-upload-test.puremix
+🔍 COMPONENT DEBUG: Found component import: UserCard -> ../components/UserCard.puremix -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/UserCard.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/index.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadWelcome in loader
+🔍 DEBUG: Found 1 server script blocks in index.puremix
+🔍 DEBUG: Processing server script block 1, content length: 2733
+🔍 DEBUG: Script content preview: "async function sayHello(formData, request) {\n    const { name } = formData;\n    \n    if (!name || na..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route / with 1 loaders: [ 'loadWelcome' ]
+  ✓ Route: / -> app/routes/index.puremix
+🔍 COMPONENT DEBUG: Found component import: PropsTestCard -> ../components/PropsTestCard.puremix -> /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/PropsTestCard.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/props-test.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadPropsTest in loader
+🔍 DEBUG: Storing route /props-test with 1 loaders: [ 'loadPropsTest' ]
+  ✓ Route: /props-test -> app/routes/props-test.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/security-test.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadSecurityTest in loader
+🔍 DEBUG: Found 1 server script blocks in security-test.puremix
+🔍 DEBUG: Processing server script block 1, content length: 11857
+🔍 DEBUG: Script content preview: "// Security testing utilities and attack simulations\n  \n  // Input validation and sanitization\n  fun..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /security-test with 1 loaders: [ 'loadSecurityTest' ]
+  ✓ Route: /security-test -> app/routes/security-test.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/unified-template-literals.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadTemplateTest in loader
+🔍 DEBUG: Found 1 server script blocks in unified-template-literals.puremix
+🔍 DEBUG: Processing server script block 1, content length: 1383
+🔍 DEBUG: Script content preview: "async function updateTemplateTest(formData, request) {\n    const { userName, userId, message, sectio..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+🔍 DEBUG: Storing route /unified-template-literals with 1 loaders: [ 'loadTemplateTest' ]
+  ✓ Route: /unified-template-literals -> app/routes/unified-template-literals.puremix
+🚀 Loaded 18 routes
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/ActivityFeed.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadActivityFeed in loader
+🔍 DEBUG: Found 1 server script blocks in ActivityFeed.puremix
+🔍 DEBUG: Processing server script block 1, content length: 1571
+🔍 DEBUG: Script content preview: "async function filterActivities(formData, request) {\n    console.log('🔍 ActivityFeed.filterActiviti..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+  ✓ Component: ActivityFeed -> app/components/ActivityFeed.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/NotificationPanel.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadNotificationPanel in loader
+🔍 DEBUG: Found 1 server script blocks in NotificationPanel.puremix
+🔍 DEBUG: Processing server script block 1, content length: 2193
+🔍 DEBUG: Script content preview: "async function markAsRead(formData, request) {\n    console.log('👁️ NotificationPanel.markAsRead cal..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+  ✓ Component: NotificationPanel -> app/components/NotificationPanel.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/ProductCard.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadProductCard in loader
+🔍 DEBUG: Found 1 server script blocks in ProductCard.puremix
+🔍 DEBUG: Processing server script block 1, content length: 1448
+🔍 DEBUG: Script content preview: "async function updateProduct(formData, request) {\n    console.log('💾 ProductCard.updateProduct call..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+  ✓ Component: ProductCard -> app/components/ProductCard.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/PropsTestCard.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadPropsTestCard in loader
+🔍 DEBUG: Found 1 server script blocks in PropsTestCard.puremix
+🔍 DEBUG: Processing server script block 1, content length: 899
+🔍 DEBUG: Script content preview: "async function viewDetails(formData, request) {\n    console.log('👁️ PropsTestCard.viewDetails calle..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+  ✓ Component: PropsTestCard -> app/components/PropsTestCard.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/UserCard.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadUserCard in loader
+🔍 DEBUG: Found 1 server script blocks in UserCard.puremix
+🔍 DEBUG: Processing server script block 1, content length: 2197
+🔍 DEBUG: Script content preview: "async function refreshProfile(formData, request) {\n    console.log('🔄 UserCard.refreshProfile calle..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+  ✓ Component: UserCard -> app/components/UserCard.puremix
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/components/UserStats.puremix
+🔍 DEBUG: Found 1 loader blocks
+🔍 DEBUG: Found function loadUserStats in loader
+🔍 DEBUG: Found 1 server script blocks in UserStats.puremix
+🔍 DEBUG: Processing server script block 1, content length: 1022
+🔍 DEBUG: Script content preview: "async function refreshStats(formData, request) {\n    console.log('🔄 UserStats.refreshStats called f..."
+✅ DEBUG: Valid JavaScript detected (has JS indicators)
+  ✓ Component: UserStats -> app/components/UserStats.puremix
+📦 Loaded 6 components
+
+✨ PureMix Framework v1.0.0
+🚀 Server running on http://localhost:3002
+🐍 Python support: Enabled
+📂 App directory: app
+🔥 Hot reload: Enabled
+
+Press Ctrl+C to stop the server
+
+👀 Watching for file changes...
+2025-09-12T08:19:06.318Z 📥 REQUEST [req_1757665146317_1]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665146317_1",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665146318,
+    "performance": {
+      "startTime": 14253.147125
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "user-agent": "curl/8.7.1",
+    "accept": "*/*"
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:19:06.320Z 🛣️  ROUTE [req_f90xr4uhq]
+{
+  "event": "ROUTE_RESOLUTION",
+  "context": {
+    "requestId": "req_f90xr4uhq",
+    "ip": "::1",
+    "sessionId": "Z34qlO43XFt3ArqLqfcZB4eiF6HC5GWy"
+  },
+  "route": "/basic-form-test"
+}
+🔍 DEBUG: Retrieved route /basic-form-test with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: executeLoaders called with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: Executing loader loadFormTest...
+🔍 DEBUG: Loader loadFormTest returned: {
+  data: {
+    title: 'Basic Form Test',
+    description: 'Testing basic form functionality'
+  },
+  state: { showSuccess: false }
+}
+2025-09-12T08:19:06.321Z 🔄 LOADER [req_f90xr4uhq]
+{
+  "event": "LOADER_EXECUTION",
+  "context": {
+    "requestId": "req_f90xr4uhq",
+    "ip": "::1",
+    "sessionId": "Z34qlO43XFt3ArqLqfcZB4eiF6HC5GWy"
+  },
+  "hasData": false,
+  "dataKeys": [],
+  "performance": {
+    "duration": 0.009500000000116415
+  }
+}
+🔧 ENGINE DEBUG - Calling processTemplate with componentImports: {}
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/views/layouts/main.puremix
+🔍 DEBUG: Found 0 loader blocks
+2025-09-12T08:19:06.327Z 📄 TEMPLATE [req_f90xr4uhq]
+{
+  "event": "TEMPLATE_RENDER",
+  "context": {
+    "requestId": "req_f90xr4uhq",
+    "ip": "::1",
+    "sessionId": "Z34qlO43XFt3ArqLqfcZB4eiF6HC5GWy"
+  },
+  "template": "/Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/basic-form-test.puremix",
+  "components": [],
+  "pythonImports": [],
+  "htmlLength": 7119,
+  "performance": {
+    "duration": 3.0947499999983847
+  }
+}
+🔍 DEBUG: injectClientRuntime called - START
+🔍 DEBUG: Method exists and executing
+🔍 DEBUG: serverFunctionNames: [ 'handleFormSubmission' ]
+🔍 DEBUG: About to call generateClientRuntime
+🔍 DEBUG: generateClientRuntime success, length: 36103
+🔍 DEBUG: Runtime first 500 chars: 
+<script>
+(function() {
+  'use strict';
+  
+  // PureMix Client Runtime - extend existing object or create new one
+  window.PureMix = Object.assign(window.PureMix || {}, {
+    // Framework version
+    version: '1.0.0',
+    
+    // Loader results from server
+    data: {"loadFormTest":{"data":{"title":"Basic Form Test","description":"Testing basic form functionality"},"state":{"showSuccess":false}}},
+    
+    // Server functions available on this page
+    serverFunctions: ["handleFormSubmission"],
+
+2025-09-12T08:19:06.328Z 📤 RESPONSE [req_f90xr4uhq]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_f90xr4uhq",
+    "ip": "::1",
+    "sessionId": "Z34qlO43XFt3ArqLqfcZB4eiF6HC5GWy"
+  },
+  "status": 200
+}
+🚀 REQUEST PERFORMANCE SUMMARY for /basic-form-test:
+   📊 Route Resolution: 0.23ms
+   🔄 Loader Execution: 0.59ms
+   🎨 Template Processing: 3.09ms
+   🖥️  Final Rendering: 0.69ms
+   ✅ TOTAL REQUEST: 7.73ms
+2025-09-12T08:19:06.329Z 📤 RESPONSE [req_1757665146317_1]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_1757665146317_1",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "curl/8.7.1",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665146318,
+    "performance": {
+      "startTime": 14253.147125,
+      "duration": 11.136916999999812
+    }
+  },
+  "status": 200,
+  "contentLength": 57592,
+  "performance": {
+    "startTime": 14253.147125,
+    "duration": 11.136916999999812
+  }
+}
+2025-09-12T08:19:29.320Z 📥 REQUEST [req_1757665169320_2]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665169320_2",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665169320,
+    "performance": {
+      "startTime": 37255.723083
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]"
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:19:29.324Z 🛣️  ROUTE [req_ifk2yrmam]
+{
+  "event": "ROUTE_RESOLUTION",
+  "context": {
+    "requestId": "req_ifk2yrmam",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "route": "/basic-form-test"
+}
+🔍 DEBUG: Retrieved route /basic-form-test with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: executeLoaders called with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: Executing loader loadFormTest...
+🔍 DEBUG: Loader loadFormTest returned: {
+  data: {
+    title: 'Basic Form Test',
+    description: 'Testing basic form functionality'
+  },
+  state: { showSuccess: false }
+}
+2025-09-12T08:19:29.325Z 🔄 LOADER [req_ifk2yrmam]
+{
+  "event": "LOADER_EXECUTION",
+  "context": {
+    "requestId": "req_ifk2yrmam",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "hasData": false,
+  "dataKeys": [],
+  "performance": {
+    "duration": 0.005415999999968335
+  }
+}
+🔧 ENGINE DEBUG - Calling processTemplate with componentImports: {}
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/views/layouts/main.puremix
+🔍 DEBUG: Found 0 loader blocks
+2025-09-12T08:19:29.330Z 📄 TEMPLATE [req_ifk2yrmam]
+{
+  "event": "TEMPLATE_RENDER",
+  "context": {
+    "requestId": "req_ifk2yrmam",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "template": "/Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/basic-form-test.puremix",
+  "components": [],
+  "pythonImports": [],
+  "htmlLength": 7119,
+  "performance": {
+    "duration": 1.2942909999983385
+  }
+}
+🔍 DEBUG: injectClientRuntime called - START
+🔍 DEBUG: Method exists and executing
+🔍 DEBUG: serverFunctionNames: [ 'handleFormSubmission' ]
+🔍 DEBUG: About to call generateClientRuntime
+🔍 DEBUG: generateClientRuntime success, length: 36103
+🔍 DEBUG: Runtime first 500 chars: 
+<script>
+(function() {
+  'use strict';
+  
+  // PureMix Client Runtime - extend existing object or create new one
+  window.PureMix = Object.assign(window.PureMix || {}, {
+    // Framework version
+    version: '1.0.0',
+    
+    // Loader results from server
+    data: {"loadFormTest":{"data":{"title":"Basic Form Test","description":"Testing basic form functionality"},"state":{"showSuccess":false}}},
+    
+    // Server functions available on this page
+    serverFunctions: ["handleFormSubmission"],
+
+2025-09-12T08:19:29.331Z 📤 RESPONSE [req_ifk2yrmam]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_ifk2yrmam",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "status": 200
+}
+🚀 REQUEST PERFORMANCE SUMMARY for /basic-form-test:
+   📊 Route Resolution: 1.18ms
+   🔄 Loader Execution: 0.26ms
+   🎨 Template Processing: 1.29ms
+   🖥️  Final Rendering: 0.41ms
+   ✅ TOTAL REQUEST: 6.97ms
+2025-09-12T08:19:29.331Z 📤 RESPONSE [req_1757665169320_2]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_1757665169320_2",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665169320,
+    "performance": {
+      "startTime": 37255.723083,
+      "duration": 11.15937500000291
+    }
+  },
+  "status": 200,
+  "contentLength": 57592,
+  "performance": {
+    "startTime": 37255.723083,
+    "duration": 11.15937500000291
+  }
+}
+2025-09-12T08:19:29.339Z 📥 REQUEST [req_1757665169339_3]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665169339_3",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/public/css/style.css",
+    "method": "GET",
+    "timestamp": 1757665169339,
+    "performance": {
+      "startTime": 37274.308083
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "sec-ch-ua-mobile": "?0",
+    "accept": "text/css,*/*;q=0.1",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-dest": "style",
+    "referer": "http://localhost:3002/basic-form-test",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]",
+    "if-none-match": "W/\"1b62-198df7db710\"",
+    "if-modified-since": "Mon, 25 Aug 2025 04:30:14 GMT"
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:19:29.385Z 📥 REQUEST [req_1757665169385_4]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665169385_4",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/favicon.ico",
+    "method": "GET",
+    "timestamp": 1757665169385,
+    "performance": {
+      "startTime": 37320.808375
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "sec-ch-ua-mobile": "?0",
+    "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-dest": "image",
+    "referer": "http://localhost:3002/basic-form-test",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]"
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:21:19.202Z 📥 REQUEST [req_1757665279202_5]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665279202_5",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665279202,
+    "performance": {
+      "startTime": 147137.190333
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "cache-control": "max-age=0",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]",
+    "if-none-match": "W/\"e193-9d3rkVfOOKUNNb0oGfE2NoXBztQ\""
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:21:19.203Z 🛣️  ROUTE [req_n8mv6vy2j]
+{
+  "event": "ROUTE_RESOLUTION",
+  "context": {
+    "requestId": "req_n8mv6vy2j",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "route": "/basic-form-test"
+}
+🔍 DEBUG: Retrieved route /basic-form-test with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: executeLoaders called with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: Executing loader loadFormTest...
+🔍 DEBUG: Loader loadFormTest returned: {
+  data: {
+    title: 'Basic Form Test',
+    description: 'Testing basic form functionality'
+  },
+  state: { showSuccess: false }
+}
+2025-09-12T08:21:19.204Z 🔄 LOADER [req_n8mv6vy2j]
+{
+  "event": "LOADER_EXECUTION",
+  "context": {
+    "requestId": "req_n8mv6vy2j",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "hasData": false,
+  "dataKeys": [],
+  "performance": {
+    "duration": 0.009957999980542809
+  }
+}
+🔧 ENGINE DEBUG - Calling processTemplate with componentImports: {}
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/views/layouts/main.puremix
+🔍 DEBUG: Found 0 loader blocks
+2025-09-12T08:21:19.207Z 📄 TEMPLATE [req_n8mv6vy2j]
+{
+  "event": "TEMPLATE_RENDER",
+  "context": {
+    "requestId": "req_n8mv6vy2j",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "template": "/Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/basic-form-test.puremix",
+  "components": [],
+  "pythonImports": [],
+  "htmlLength": 7119,
+  "performance": {
+    "duration": 1.1209580000140704
+  }
+}
+🔍 DEBUG: injectClientRuntime called - START
+🔍 DEBUG: Method exists and executing
+🔍 DEBUG: serverFunctionNames: [ 'handleFormSubmission' ]
+🔍 DEBUG: About to call generateClientRuntime
+🔍 DEBUG: generateClientRuntime success, length: 36103
+🔍 DEBUG: Runtime first 500 chars: 
+<script>
+(function() {
+  'use strict';
+  
+  // PureMix Client Runtime - extend existing object or create new one
+  window.PureMix = Object.assign(window.PureMix || {}, {
+    // Framework version
+    version: '1.0.0',
+    
+    // Loader results from server
+    data: {"loadFormTest":{"data":{"title":"Basic Form Test","description":"Testing basic form functionality"},"state":{"showSuccess":false}}},
+    
+    // Server functions available on this page
+    serverFunctions: ["handleFormSubmission"],
+
+2025-09-12T08:21:19.207Z 📤 RESPONSE [req_n8mv6vy2j]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_n8mv6vy2j",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "status": 200
+}
+🚀 REQUEST PERFORMANCE SUMMARY for /basic-form-test:
+   📊 Route Resolution: 0.37ms
+   🔄 Loader Execution: 0.16ms
+   🎨 Template Processing: 1.12ms
+   🖥️  Final Rendering: 0.16ms
+   ✅ TOTAL REQUEST: 4.50ms
+2025-09-12T08:21:19.208Z 📤 RESPONSE [req_1757665279202_5]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_1757665279202_5",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665279202,
+    "performance": {
+      "startTime": 147137.190333,
+      "duration": 6.145416999992449
+    }
+  },
+  "status": 200,
+  "contentLength": 57592,
+  "performance": {
+    "startTime": 147137.190333,
+    "duration": 6.145416999992449
+  }
+}
+2025-09-12T08:21:19.213Z 📥 REQUEST [req_1757665279213_6]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665279213_6",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/public/css/style.css",
+    "method": "GET",
+    "timestamp": 1757665279213,
+    "performance": {
+      "startTime": 147148.761333
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "if-none-match": "W/\"1b62-198df7db710\"",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "if-modified-since": "Mon, 25 Aug 2025 04:30:14 GMT",
+    "sec-ch-ua-mobile": "?0",
+    "accept": "text/css,*/*;q=0.1",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-dest": "style",
+    "referer": "http://localhost:3002/basic-form-test",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]"
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:22:00.791Z 📥 REQUEST [req_1757665320791_7]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665320791_7",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665320791,
+    "performance": {
+      "startTime": 188725.936292
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]",
+    "if-none-match": "W/\"e193-gNvEWCSJL+Zt9t66hp9dyTHFTSI\""
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:22:00.792Z 🛣️  ROUTE [req_g8segwo88]
+{
+  "event": "ROUTE_RESOLUTION",
+  "context": {
+    "requestId": "req_g8segwo88",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "route": "/basic-form-test"
+}
+🔍 DEBUG: Retrieved route /basic-form-test with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: executeLoaders called with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: Executing loader loadFormTest...
+🔍 DEBUG: Loader loadFormTest returned: {
+  data: {
+    title: 'Basic Form Test',
+    description: 'Testing basic form functionality'
+  },
+  state: { showSuccess: false }
+}
+2025-09-12T08:22:00.792Z 🔄 LOADER [req_g8segwo88]
+{
+  "event": "LOADER_EXECUTION",
+  "context": {
+    "requestId": "req_g8segwo88",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "hasData": false,
+  "dataKeys": [],
+  "performance": {
+    "duration": 0.005582999991020188
+  }
+}
+🔧 ENGINE DEBUG - Calling processTemplate with componentImports: {}
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/views/layouts/main.puremix
+🔍 DEBUG: Found 0 loader blocks
+2025-09-12T08:22:00.795Z 📄 TEMPLATE [req_g8segwo88]
+{
+  "event": "TEMPLATE_RENDER",
+  "context": {
+    "requestId": "req_g8segwo88",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "template": "/Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/basic-form-test.puremix",
+  "components": [],
+  "pythonImports": [],
+  "htmlLength": 7119,
+  "performance": {
+    "duration": 1.0159169999824371
+  }
+}
+🔍 DEBUG: injectClientRuntime called - START
+🔍 DEBUG: Method exists and executing
+🔍 DEBUG: serverFunctionNames: [ 'handleFormSubmission' ]
+🔍 DEBUG: About to call generateClientRuntime
+🔍 DEBUG: generateClientRuntime success, length: 36103
+🔍 DEBUG: Runtime first 500 chars: 
+<script>
+(function() {
+  'use strict';
+  
+  // PureMix Client Runtime - extend existing object or create new one
+  window.PureMix = Object.assign(window.PureMix || {}, {
+    // Framework version
+    version: '1.0.0',
+    
+    // Loader results from server
+    data: {"loadFormTest":{"data":{"title":"Basic Form Test","description":"Testing basic form functionality"},"state":{"showSuccess":false}}},
+    
+    // Server functions available on this page
+    serverFunctions: ["handleFormSubmission"],
+
+2025-09-12T08:22:00.796Z 📤 RESPONSE [req_g8segwo88]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_g8segwo88",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "status": 200
+}
+🚀 REQUEST PERFORMANCE SUMMARY for /basic-form-test:
+   📊 Route Resolution: 0.27ms
+   🔄 Loader Execution: 0.12ms
+   🎨 Template Processing: 1.02ms
+   🖥️  Final Rendering: 0.30ms
+   ✅ TOTAL REQUEST: 4.13ms
+2025-09-12T08:22:00.796Z 📤 RESPONSE [req_1757665320791_7]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_1757665320791_7",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665320791,
+    "performance": {
+      "startTime": 188725.936292,
+      "duration": 5.532540999993216
+    }
+  },
+  "status": 200,
+  "contentLength": 57592,
+  "performance": {
+    "startTime": 188725.936292,
+    "duration": 5.532540999993216
+  }
+}
+2025-09-12T08:22:00.801Z 📥 REQUEST [req_1757665320801_8]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665320801_8",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/public/css/style.css",
+    "method": "GET",
+    "timestamp": 1757665320801,
+    "performance": {
+      "startTime": 188736.61575
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "if-none-match": "W/\"1b62-198df7db710\"",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "if-modified-since": "Mon, 25 Aug 2025 04:30:14 GMT",
+    "sec-ch-ua-mobile": "?0",
+    "accept": "text/css,*/*;q=0.1",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-dest": "style",
+    "referer": "http://localhost:3002/basic-form-test",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]"
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:22:42.818Z 📥 REQUEST [req_1757665362818_9]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665362818_9",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665362818,
+    "performance": {
+      "startTime": 230753.317125
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]",
+    "if-none-match": "W/\"e193-ozATnS2hqgMlAiCn1/0CMNw4J7g\""
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+2025-09-12T08:22:42.819Z 🛣️  ROUTE [req_y60edc2i2]
+{
+  "event": "ROUTE_RESOLUTION",
+  "context": {
+    "requestId": "req_y60edc2i2",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "route": "/basic-form-test"
+}
+🔍 DEBUG: Retrieved route /basic-form-test with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: executeLoaders called with 1 loaders: [ 'loadFormTest' ]
+🔍 DEBUG: Executing loader loadFormTest...
+🔍 DEBUG: Loader loadFormTest returned: {
+  data: {
+    title: 'Basic Form Test',
+    description: 'Testing basic form functionality'
+  },
+  state: { showSuccess: false }
+}
+2025-09-12T08:22:42.820Z 🔄 LOADER [req_y60edc2i2]
+{
+  "event": "LOADER_EXECUTION",
+  "context": {
+    "requestId": "req_y60edc2i2",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "hasData": false,
+  "dataKeys": [],
+  "performance": {
+    "duration": 0.010125000000698492
+  }
+}
+🔧 ENGINE DEBUG - Calling processTemplate with componentImports: {}
+🔍 DEBUG: Looking for loaders in /Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/views/layouts/main.puremix
+🔍 DEBUG: Found 0 loader blocks
+2025-09-12T08:22:42.823Z 📄 TEMPLATE [req_y60edc2i2]
+{
+  "event": "TEMPLATE_RENDER",
+  "context": {
+    "requestId": "req_y60edc2i2",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "template": "/Users/anastaciogianareas/Documents/DevelopmentSAAS/Puremix/tests/projects/comprehensive-test/app/routes/basic-form-test.puremix",
+  "components": [],
+  "pythonImports": [],
+  "htmlLength": 7119,
+  "performance": {
+    "duration": 0.9922920000099111
+  }
+}
+🔍 DEBUG: injectClientRuntime called - START
+🔍 DEBUG: Method exists and executing
+🔍 DEBUG: serverFunctionNames: [ 'handleFormSubmission' ]
+🔍 DEBUG: About to call generateClientRuntime
+🔍 DEBUG: generateClientRuntime success, length: 36103
+🔍 DEBUG: Runtime first 500 chars: 
+<script>
+(function() {
+  'use strict';
+  
+  // PureMix Client Runtime - extend existing object or create new one
+  window.PureMix = Object.assign(window.PureMix || {}, {
+    // Framework version
+    version: '1.0.0',
+    
+    // Loader results from server
+    data: {"loadFormTest":{"data":{"title":"Basic Form Test","description":"Testing basic form functionality"},"state":{"showSuccess":false}}},
+    
+    // Server functions available on this page
+    serverFunctions: ["handleFormSubmission"],
+
+2025-09-12T08:22:42.823Z 📤 RESPONSE [req_y60edc2i2]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_y60edc2i2",
+    "ip": "::1",
+    "sessionId": "93uUP9k8Tz5-9myuUZe5AK1KmJYGPIQB"
+  },
+  "status": 200
+}
+🚀 REQUEST PERFORMANCE SUMMARY for /basic-form-test:
+   📊 Route Resolution: 0.32ms
+   🔄 Loader Execution: 0.12ms
+   🎨 Template Processing: 0.99ms
+   🖥️  Final Rendering: 0.26ms
+   ✅ TOTAL REQUEST: 4.20ms
+2025-09-12T08:22:42.824Z 📤 RESPONSE [req_1757665362818_9]
+{
+  "event": "REQUEST_COMPLETE",
+  "context": {
+    "requestId": "req_1757665362818_9",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/basic-form-test",
+    "method": "GET",
+    "timestamp": 1757665362818,
+    "performance": {
+      "startTime": 230753.317125,
+      "duration": 5.668333000008715
+    }
+  },
+  "status": 200,
+  "contentLength": 57592,
+  "performance": {
+    "startTime": 230753.317125,
+    "duration": 5.668333000008715
+  }
+}
+2025-09-12T08:22:42.832Z 📥 REQUEST [req_1757665362831_10]
+{
+  "event": "REQUEST_START",
+  "context": {
+    "requestId": "req_1757665362831_10",
+    "sessionId": "no_session",
+    "userId": "anonymous",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "route": "/public/css/style.css",
+    "method": "GET",
+    "timestamp": 1757665362832,
+    "performance": {
+      "startTime": 230766.76875
+    }
+  },
+  "headers": {
+    "host": "localhost:3002",
+    "connection": "keep-alive",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "if-none-match": "W/\"1b62-198df7db710\"",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+    "if-modified-since": "Mon, 25 Aug 2025 04:30:14 GMT",
+    "sec-ch-ua-mobile": "?0",
+    "accept": "text/css,*/*;q=0.1",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-dest": "style",
+    "referer": "http://localhost:3002/basic-form-test",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "en-US,en;q=0.9",
+    "cookie": "[REDACTED]"
+  },
+  "query": {},
+  "session": {
+    "exists": false,
+    "id": "no_session",
+    "authenticated": false
+  }
+}
+\n🛑 Shutting down development server...
+
+👋 PureMix server stopped

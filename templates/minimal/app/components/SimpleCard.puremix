@@ -1,0 +1,66 @@
+<loader>
+  async function loadSimpleCard(request, actionResult, props) {
+    const title = props?.title || 'Simple Card';
+    const message = props?.message || 'This is a simple card component.';
+    const showFeatures = props?.showFeatures || false;
+    const features = props?.features || [];
+    
+    return {
+      data: { 
+        title,
+        message,
+        showFeatures,
+        features,
+        lastRefresh: actionResult?.refreshed ? new Date().toLocaleTimeString() : null
+      },
+      state: { 
+        canRefresh: true 
+      }
+    };
+  }
+</loader>
+
+<div class="card component-card">
+  <div class="card-header">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 class="card-title">{loadSimpleCard.data.title}</h3>
+      
+      {loadSimpleCard.state.canRefresh ? 
+        <button onclick="SimpleCard.SimpleCard_refresh" class="btn btn-secondary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+          🔄 Refresh
+        </button>
+      : <div></div>}
+    </div>
+  </div>
+  
+  <p class="text-large mb-3">{loadSimpleCard.data.message}</p>
+  
+  {loadSimpleCard.data.showFeatures ? 
+    <div>
+      <h4 class="mb-2">Features:</h4>
+      <ul style="list-style: none; padding-left: 0;">
+        {loadSimpleCard.data.features.map(feature => 
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
+            ✓ {feature}
+          </li>
+        )}
+      </ul>
+    </div>
+  : <div></div>}
+  
+  {loadSimpleCard.data.lastRefresh ? 
+    <div class="alert alert-success mt-3">
+      Component refreshed at {loadSimpleCard.data.lastRefresh}
+    </div>
+  : <div></div>}
+</div>
+
+<script server>
+  async function refresh(formData, request) {
+    return {
+      success: true,
+      refreshed: true,
+      message: 'SimpleCard component refreshed!'
+    };
+  }
+</script>

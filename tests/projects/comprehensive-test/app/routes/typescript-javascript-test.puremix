@@ -1,0 +1,1312 @@
+<layout>main</layout>
+
+<imports>
+  import { validateFinancialData, formatCurrency } from '../controllers/financial-validator.js'
+  import ConditionalTestComponent from '../components/ConditionalTestComponent.puremix'
+</imports>
+
+<loader>
+  async function loadTypeScriptJavaScriptTest(request, actionResult) {
+    // Mock user data (TypeScript interfaces removed for server compatibility)
+    // User shape: { id, name, email, isActive, preferences: { theme, notifications }, balance, membershipType }
+    // TestScenario shape: { name, data, expectedResult, testType }
+
+    const users = [
+      {
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        isActive: true,
+        preferences: { theme: 'dark', notifications: true },
+        balance: 2500.75,
+        membershipType: 'premium'
+      },
+      {
+        id: 2,
+        name: "Jane Smith",
+        email: "jane@example.com",
+        isActive: false,
+        preferences: { theme: 'light', notifications: false },
+        balance: 150.25,
+        membershipType: 'basic'
+      },
+      {
+        id: 3,
+        name: "Alice Johnson",
+        email: "alice@enterprise.com",
+        isActive: true,
+        preferences: { theme: 'dark', notifications: true },
+        balance: 10000.00,
+        membershipType: 'enterprise'
+      }
+    ];
+
+    // Test scenarios for template engine conditionals and JavaScript execution
+    const testScenarios = [
+      {
+        name: "Basic Conditional Test",
+        data: { condition: true, message: "Success" },
+        expectedResult: "Should show Success message",
+        testType: 'conditional'
+      },
+      {
+        name: "Nested Conditional Test",
+        data: { user: users[0], showDetails: true },
+        expectedResult: "Should show user details with nested conditions",
+        testType: 'conditional'
+      },
+      {
+        name: "Array Mapping Test",
+        data: { items: users.slice(0, 2) },
+        expectedResult: "Should render first two users",
+        testType: 'conditional'
+      },
+      {
+        name: "JavaScript Block Test",
+        data: { numbers: [1, 2, 3, 4, 5] },
+        expectedResult: "Should execute JavaScript and export results",
+        testType: 'javascript'
+      },
+      {
+        name: "Mixed TypeScript/JavaScript Test",
+        data: { users, threshold: 1000 },
+        expectedResult: "Should combine TS types with JS execution",
+        testType: 'mixed'
+      }
+    ];
+
+    // Complex calculation using TypeScript features
+    const calculateUserMetrics = (users) => {
+      const metrics = {
+        totalUsers: users.length,
+        activeUsers: users.filter(u => u.isActive).length,
+        totalBalance: users.reduce((sum, u) => sum + u.balance, 0),
+        avgBalance: 0,
+        membershipDistribution: {},
+        themePreferences: {}
+      };
+
+      metrics.avgBalance = metrics.totalBalance / metrics.totalUsers;
+
+      // Count memberships and themes
+      users.forEach(user => {
+        metrics.membershipDistribution[user.membershipType] =
+          (metrics.membershipDistribution[user.membershipType] || 0) + 1;
+
+        metrics.themePreferences[user.preferences.theme] =
+          (metrics.themePreferences[user.preferences.theme] || 0) + 1;
+      });
+
+      return metrics;
+    };
+
+    const userMetrics = calculateUserMetrics(users);
+
+    // Show action result if coming from form submission
+    if (actionResult?.success) {
+      return {
+        data: {
+          users,
+          userMetrics,
+          testScenarios,
+          actionResult: actionResult.result,
+          customTestResult: actionResult.testResult
+        },
+        state: {
+          showActionResult: true,
+          testType: actionResult.testType,
+          message: actionResult.message
+        }
+      };
+    }
+
+    return {
+      data: {
+        users,
+        userMetrics,
+        testScenarios,
+        currentTime: new Date().toISOString(),
+        framework: 'PureMix',
+        testingCapabilities: [
+          'TypeScript integration',
+          'JavaScript execution',
+          'Template conditionals',
+          'Python interop',
+          'Component composition'
+        ]
+      },
+      state: {
+        showActionResult: false,
+        currentTab: 'conditionals',
+        debugMode: false
+      }
+    };
+  }
+</loader>
+
+<div class="typescript-javascript-test">
+  <h1>🔧 TypeScript + JavaScript Integration Test</h1>
+  <p class="subtitle">Comprehensive testing of template engine conditionals, JavaScript blocks, and TypeScript features</p>
+
+  <!-- Navigation tabs -->
+  <div class="test-navigation">
+    <button class="nav-tab active" onclick="switchTab" data-tab="conditionals">Template Conditionals</button>
+    <button class="nav-tab" onclick="switchTab" data-tab="javascript">JavaScript Blocks</button>
+    <button class="nav-tab" onclick="switchTab" data-tab="typescript">TypeScript Features</button>
+    <button class="nav-tab" onclick="switchTab" data-tab="mixed">Mixed Tests</button>
+  </div>
+
+  <!-- Action Result Display -->
+  {loadTypeScriptJavaScriptTest.state.showActionResult ?
+    <div class="action-result-panel">
+      <h2>✅ Test Result: {loadTypeScriptJavaScriptTest.state.testType}</h2>
+      <p>{loadTypeScriptJavaScriptTest.state.message}</p>
+
+      {loadTypeScriptJavaScriptTest.data.customTestResult ?
+        <div class="custom-result">
+          <h4>Custom Test Output:</h4>
+          <pre>{JSON.stringify(loadTypeScriptJavaScriptTest.data.customTestResult, null, 2)}</pre>
+        </div>
+      : ''}
+    </div>
+  : ''}
+
+  <!-- Tab Content: Template Conditionals -->
+  <div id="conditionals-tab" class="tab-content active">
+    <h2>🎯 Template Engine Conditional Tests</h2>
+    <p>Testing various conditional expressions and their rendering behavior</p>
+
+    <!-- Basic Conditional Tests -->
+    <div class="test-section">
+      <h3>Basic Conditionals</h3>
+
+      <!-- Test 1: Simple boolean conditional -->
+      <div class="test-case">
+        <h4>Test 1: Simple Boolean</h4>
+        <div class="test-description">Should render "Active" for true condition</div>
+        <div class="test-result">
+          {loadTypeScriptJavaScriptTest.data.users[0].isActive ?
+            <span class="status active">Active</span>
+          :
+            <span class="status inactive">Inactive</span>
+          }
+        </div>
+      </div>
+
+      <!-- Test 2: String comparison -->
+      <div class="test-case">
+        <h4>Test 2: String Comparison</h4>
+        <div class="test-description">Should show different badges for membership types</div>
+        <div class="test-result">
+          {loadTypeScriptJavaScriptTest.data.users[0].membershipType === 'premium' ?
+            <span class="badge premium">Premium Member</span>
+          : loadTypeScriptJavaScriptTest.data.users[0].membershipType === 'enterprise' ?
+            <span class="badge enterprise">Enterprise</span>
+          :
+            <span class="badge basic">Basic Member</span>
+          }
+        </div>
+      </div>
+
+      <!-- Test 3: Nested conditionals with object access -->
+      <div class="test-case">
+        <h4>Test 3: Nested Conditionals</h4>
+        <div class="test-description">Should handle nested conditions and object property access</div>
+        <div class="test-result">
+          {loadTypeScriptJavaScriptTest.data.users[0].isActive ?
+            <div class="user-details">
+              <h5>{loadTypeScriptJavaScriptTest.data.users[0].name}</h5>
+              <p>Email: {loadTypeScriptJavaScriptTest.data.users[0].email}</p>
+              <p>Balance: {formatCurrency(loadTypeScriptJavaScriptTest.data.users[0].balance)}</p>
+              {loadTypeScriptJavaScriptTest.data.users[0].preferences.notifications ?
+                <p class="notifications-on">🔔 Notifications enabled</p>
+              :
+                <p class="notifications-off">🔕 Notifications disabled</p>
+              }
+              <p>Theme: {loadTypeScriptJavaScriptTest.data.users[0].preferences.theme === 'dark' ? '🌙 Dark' : '☀️ Light'}</p>
+            </div>
+          :
+            <div class="user-inactive">User is inactive</div>
+          }
+        </div>
+      </div>
+
+      <!-- Test 4: Array mapping with conditionals -->
+      <div class="test-case">
+        <h4>Test 4: Array Mapping with Conditionals</h4>
+        <div class="test-description">Should render all users with different styling based on status</div>
+        <div class="test-result">
+          <div class="users-grid">
+            {loadTypeScriptJavaScriptTest.data.users.map(user =>
+              <div class="user-card {user.isActive ? 'active' : 'inactive'}">
+                <h5>{user.name}</h5>
+                <p>{user.email}</p>
+                <div class="user-meta">
+                  {user.isActive ?
+                    <span class="status-badge active">Active</span>
+                  :
+                    <span class="status-badge inactive">Inactive</span>
+                  }
+                  <span class="membership-badge {user.membershipType}">{user.membershipType}</span>
+                </div>
+                <div class="balance">
+                  Balance: {formatCurrency(user.balance)}
+                  {user.balance > 1000 ?
+                    <span class="high-balance">💰</span>
+                  :
+                    <span class="low-balance">💳</span>
+                  }
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <!-- Test 5: Complex nested conditionals (this might show the issue) -->
+      <div class="test-case">
+        <h4>Test 5: Complex Nested Conditionals (Issue Test)</h4>
+        <div class="test-description">This test may reveal the conditional issue with ':' appearing</div>
+        <div class="test-result">
+          {loadTypeScriptJavaScriptTest.data.users.length > 0 ?
+            <div class="complex-conditional">
+              {loadTypeScriptJavaScriptTest.data.users[0].balance > 2000 ?
+                <div class="high-value-user">
+                  <h5>High Value User: {loadTypeScriptJavaScriptTest.data.users[0].name}</h5>
+                  {loadTypeScriptJavaScriptTest.data.users[0].membershipType === 'premium' ?
+                    <p class="premium-message">Premium benefits available</p>
+                  : loadTypeScriptJavaScriptTest.data.users[0].membershipType === 'enterprise' ?
+                    <p class="enterprise-message">Enterprise features unlocked</p>
+                  :
+                    <p class="upgrade-message">Consider upgrading membership</p>
+                  }
+                </div>
+              :
+                <div class="standard-user">
+                  <h5>Standard User: {loadTypeScriptJavaScriptTest.data.users[0].name}</h5>
+                  <p>Current balance: {formatCurrency(loadTypeScriptJavaScriptTest.data.users[0].balance)}</p>
+                </div>
+              }
+            </div>
+          :
+            <div class="no-users">No users available</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Component Test -->
+    <div class="test-section">
+      <h3>Component Conditional Test</h3>
+      <ConditionalTestComponent
+        user={loadTypeScriptJavaScriptTest.data.users[0]}
+        showDetails={true}
+        testMode={true}
+      />
+    </div>
+  </div>
+
+  <!-- Tab Content: JavaScript Blocks -->
+  <div id="javascript-tab" class="tab-content">
+    <h2>⚡ JavaScript Block Execution Tests</h2>
+    <p>Testing JavaScript execution within templates with variable exports</p>
+
+    <div class="test-section">
+      <h3>JavaScript Block Test 1: Array Processing</h3>
+      <div class="js-test">
+        {
+          // JavaScript block for array processing
+          let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+          let evenNumbers = numbers.filter(n => n % 2 === 0);
+          let oddNumbers = numbers.filter(n => n % 2 === 1);
+          let sum = numbers.reduce((a, b) => a + b, 0);
+          let average = sum / numbers.length;
+
+          function categorizeNumber(num) {
+            if (num < 3) return 'small';
+            if (num < 7) return 'medium';
+            return 'large';
+          }
+
+          let categorized = numbers.map(n => ({
+            number: n,
+            category: categorizeNumber(n),
+            isEven: n % 2 === 0
+          }));
+
+          __export = { numbers, evenNumbers, oddNumbers, sum, average, categorized };
+        }
+
+        <div class="js-results">
+          <h4>JavaScript Processing Results</h4>
+          <div class="result-grid">
+            <div class="result-item">
+              <label>Original Numbers:</label>
+              <span>[{numbers.join(', ')}]</span>
+            </div>
+            <div class="result-item">
+              <label>Even Numbers:</label>
+              <span>[{evenNumbers.join(', ')}]</span>
+            </div>
+            <div class="result-item">
+              <label>Odd Numbers:</label>
+              <span>[{oddNumbers.join(', ')}]</span>
+            </div>
+            <div class="result-item">
+              <label>Sum:</label>
+              <span>{sum}</span>
+            </div>
+            <div class="result-item">
+              <label>Average:</label>
+              <span>{average}</span>
+            </div>
+          </div>
+
+          <div class="categorized-numbers">
+            <h5>Categorized Numbers:</h5>
+            {categorized.map(item =>
+              <span class="number-badge {item.category} {item.isEven ? 'even' : 'odd'}">
+                {item.number} ({item.category})
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>JavaScript Block Test 2: Data Transformation</h3>
+      <div class="js-test">
+        {
+          // Complex data transformation
+          let userData = loadTypeScriptJavaScriptTest.data.users;
+          let activeUsers = userData.filter(user => user.isActive);
+          let totalBalance = userData.reduce((sum, user) => sum + user.balance, 0);
+
+          // Group by membership type
+          let membershipGroups = {};
+          userData.forEach(user => {
+            if (!membershipGroups[user.membershipType]) {
+              membershipGroups[user.membershipType] = [];
+            }
+            membershipGroups[user.membershipType].push(user);
+          });
+
+          // Calculate statistics
+          let stats = {
+            totalUsers: userData.length,
+            activeCount: activeUsers.length,
+            inactiveCount: userData.length - activeUsers.length,
+            totalBalance: totalBalance,
+            averageBalance: totalBalance / userData.length,
+            richestUser: userData.reduce((prev, current) =>
+              prev.balance > current.balance ? prev : current
+            )
+          };
+
+          // Create user rankings
+          let usersByBalance = [...userData].sort((a, b) => b.balance - a.balance);
+
+          __export = { userData, activeUsers, membershipGroups, stats, usersByBalance };
+        }
+
+        <div class="js-results">
+          <h4>Data Transformation Results</h4>
+
+          <div class="stats-overview">
+            <div class="stat-card">
+              <h5>Total Users</h5>
+              <span class="stat-value">{stats.totalUsers}</span>
+            </div>
+            <div class="stat-card">
+              <h5>Active Users</h5>
+              <span class="stat-value">{stats.activeCount}</span>
+            </div>
+            <div class="stat-card">
+              <h5>Total Balance</h5>
+              <span class="stat-value">{formatCurrency(stats.totalBalance)}</span>
+            </div>
+            <div class="stat-card">
+              <h5>Average Balance</h5>
+              <span class="stat-value">{formatCurrency(stats.averageBalance)}</span>
+            </div>
+          </div>
+
+          <div class="richest-user">
+            <h5>Richest User:</h5>
+            <div class="user-highlight">
+              {stats.richestUser.name} - {formatCurrency(stats.richestUser.balance)}
+            </div>
+          </div>
+
+          <div class="membership-breakdown">
+            <h5>Membership Distribution:</h5>
+            {Object.keys(membershipGroups).map(type =>
+              <div class="membership-group">
+                <strong>{type}:</strong> {membershipGroups[type].length} users
+                <div class="group-members">
+                  {membershipGroups[type].map(user =>
+                    <span class="member-tag">{user.name}</span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: TypeScript Features -->
+  <div id="typescript-tab" class="tab-content">
+    <h2>📘 TypeScript Integration Features</h2>
+    <p>Demonstrating TypeScript features and type safety within PureMix</p>
+
+    <div class="test-section">
+      <h3>User Metrics (TypeScript Calculated)</h3>
+      <div class="metrics-display">
+        <div class="metric-card">
+          <h4>Total Users</h4>
+          <span class="metric-value">{loadTypeScriptJavaScriptTest.data.userMetrics.totalUsers}</span>
+        </div>
+        <div class="metric-card">
+          <h4>Active Users</h4>
+          <span class="metric-value">{loadTypeScriptJavaScriptTest.data.userMetrics.activeUsers}</span>
+        </div>
+        <div class="metric-card">
+          <h4>Total Balance</h4>
+          <span class="metric-value">{formatCurrency(loadTypeScriptJavaScriptTest.data.userMetrics.totalBalance)}</span>
+        </div>
+        <div class="metric-card">
+          <h4>Average Balance</h4>
+          <span class="metric-value">{formatCurrency(loadTypeScriptJavaScriptTest.data.userMetrics.avgBalance)}</span>
+        </div>
+      </div>
+
+      <div class="distribution-charts">
+        <div class="chart-section">
+          <h4>Membership Distribution</h4>
+          {Object.keys(loadTypeScriptJavaScriptTest.data.userMetrics.membershipDistribution).map(type =>
+            <div class="distribution-bar">
+              <span class="type-label">{type}</span>
+              <div class="bar-container">
+                <div class="bar" style="width: {(loadTypeScriptJavaScriptTest.data.userMetrics.membershipDistribution[type] / loadTypeScriptJavaScriptTest.data.userMetrics.totalUsers) * 100}%"></div>
+              </div>
+              <span class="count">{loadTypeScriptJavaScriptTest.data.userMetrics.membershipDistribution[type]}</span>
+            </div>
+          )}
+        </div>
+
+        <div class="chart-section">
+          <h4>Theme Preferences</h4>
+          {Object.keys(loadTypeScriptJavaScriptTest.data.userMetrics.themePreferences).map(theme =>
+            <div class="distribution-bar">
+              <span class="type-label">{theme}</span>
+              <div class="bar-container">
+                <div class="bar" style="width: {(loadTypeScriptJavaScriptTest.data.userMetrics.themePreferences[theme] / loadTypeScriptJavaScriptTest.data.userMetrics.totalUsers) * 100}%"></div>
+              </div>
+              <span class="count">{loadTypeScriptJavaScriptTest.data.userMetrics.themePreferences[theme]}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Mixed Tests -->
+  <div id="mixed-tab" class="tab-content">
+    <h2>🔀 Mixed TypeScript + JavaScript Tests</h2>
+    <p>Complex scenarios combining TypeScript types with JavaScript execution</p>
+
+    <div class="test-section">
+      <h3>Interactive Test Runner</h3>
+      <form onsubmit="runCustomTest" class="test-form">
+        <div class="form-group">
+          <label>Test Type:</label>
+          <select name="testType" required>
+            <option value="conditional">Conditional Test</option>
+            <option value="javascript">JavaScript Block</option>
+            <option value="typescript">TypeScript Features</option>
+            <option value="mixed">Mixed Test</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Test Data (JSON):</label>
+          <textarea name="testData" rows="4" placeholder='{"key": "value"}' required>{"numbers": [1,2,3,4,5], "threshold": 3}</textarea>
+        </div>
+        <button type="submit" class="btn-test">Run Custom Test</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Framework Information -->
+  <div class="framework-info">
+    <h3>🔧 Framework Information</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <strong>Framework:</strong> {loadTypeScriptJavaScriptTest.data.framework}
+      </div>
+      <div class="info-item">
+        <strong>Test Time:</strong> {loadTypeScriptJavaScriptTest.data.currentTime}
+      </div>
+      <div class="info-item">
+        <strong>Capabilities:</strong>
+        <ul>
+          {loadTypeScriptJavaScriptTest.data.testingCapabilities.map(capability =>
+            <li>{capability}</li>
+          )}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script server>
+  async function switchTab(formData, request) {
+    const tab = formData.tab || 'conditionals';
+    return {
+      success: true,
+      tab: tab,
+      message: `Switched to ${tab} tab`
+    };
+  }
+
+  async function runCustomTest(formData, request) {
+    try {
+      const testType = formData.testType;
+      let testData;
+
+      try {
+        testData = JSON.parse(formData.testData);
+      } catch (e) {
+        return {
+          error: 'Invalid JSON in test data'
+        };
+      }
+
+      // Process the test based on type
+      let testResult = {};
+
+      switch (testType) {
+        case 'conditional':
+          testResult = {
+            type: 'conditional',
+            data: testData,
+            result: 'Conditional test executed',
+            processed: true
+          };
+          break;
+
+        case 'javascript':
+          // Simulate JavaScript processing
+          testResult = {
+            type: 'javascript',
+            data: testData,
+            result: {
+              originalData: testData,
+              processed: Object.keys(testData).length > 0,
+              timestamp: new Date().toISOString()
+            }
+          };
+          break;
+
+        case 'typescript':
+          // TypeScript-style processing with type validation
+          const isValidTypescriptData = typeof testData === 'object' && testData !== null;
+          testResult = {
+            type: 'typescript',
+            data: testData,
+            result: {
+              typeValid: isValidTypescriptData,
+              dataType: typeof testData,
+              keys: isValidTypescriptData ? Object.keys(testData) : [],
+              analysis: 'TypeScript test completed'
+            }
+          };
+          break;
+
+        case 'mixed':
+          // Complex mixed processing
+          testResult = {
+            type: 'mixed',
+            data: testData,
+            result: {
+              typescript_analysis: {
+                type: typeof testData,
+                isObject: typeof testData === 'object',
+                hasKeys: Object.keys(testData || {}).length > 0
+              },
+              javascript_processing: {
+                processed: true,
+                transformed: JSON.stringify(testData),
+                timestamp: Date.now()
+              },
+              mixed_result: 'Successfully combined TypeScript types with JavaScript execution'
+            }
+          };
+          break;
+
+        default:
+          return {
+            error: 'Unknown test type'
+          };
+      }
+
+      return {
+        success: true,
+        testType: testType,
+        testResult: testResult,
+        message: `${testType} test completed successfully`
+      };
+
+    } catch (error) {
+      return {
+        error: `Test execution failed: ${error.message}`
+      };
+    }
+  }
+</script>
+
+<script client>
+  // Client-side tab switching
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const targetTab = e.target.dataset.tab;
+
+      // Update active tab
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+
+      // Show target content, hide others
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(targetTab + '-tab').classList.add('active');
+    });
+  });
+
+  // Enhanced form submission
+  document.querySelector('.test-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const button = e.target.querySelector('.btn-test');
+    const originalText = button.textContent;
+    button.textContent = 'Running...';
+    button.disabled = true;
+
+    try {
+      const formData = new FormData(e.target);
+      const result = await PureMix.call('runCustomTest', Object.fromEntries(formData));
+
+      if (result.error) {
+        alert('❌ Test Error: ' + result.error);
+      } else {
+        // Reload to show results
+        window.location.reload();
+      }
+    } catch (error) {
+      alert('❌ Network Error: ' + error.message);
+    } finally {
+      button.textContent = originalText;
+      button.disabled = false;
+    }
+  });
+
+  // Add some interactive features
+  document.querySelectorAll('.test-case').forEach((testCase, index) => {
+    testCase.addEventListener('click', () => {
+      testCase.classList.toggle('expanded');
+    });
+  });
+</script>
+
+<style>
+.typescript-javascript-test {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+.subtitle {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.test-navigation {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #6c757d;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.nav-tab:hover {
+  color: #007bff;
+  background: #f8f9fa;
+}
+
+.nav-tab.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+  font-weight: 600;
+}
+
+.tab-content {
+  display: none;
+  margin: 2rem 0;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.action-result-panel {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  border-left: 4px solid #28a745;
+}
+
+.custom-result {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.custom-result pre {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+}
+
+.test-section {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.test-case {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.test-case:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+}
+
+.test-case h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+}
+
+.test-description {
+  color: #6c757d;
+  margin: 0.5rem 0;
+  font-style: italic;
+}
+
+.test-result {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #007bff;
+}
+
+.status.active, .status-badge.active {
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.status.inactive, .status-badge.inactive {
+  background: #6c757d;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+
+.badge.premium { background: #6f42c1; }
+.badge.enterprise { background: #fd7e14; }
+.badge.basic { background: #6c757d; }
+
+.user-details {
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.user-details h5 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+}
+
+.notifications-on { color: #28a745; }
+.notifications-off { color: #6c757d; }
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.user-card {
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.user-card.active {
+  border-color: #28a745;
+  background: #f8fff9;
+}
+
+.user-card.inactive {
+  border-color: #6c757d;
+  background: #f8f9fa;
+  opacity: 0.7;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.user-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.membership-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.membership-badge.basic { background: #6c757d; }
+.membership-badge.premium { background: #6f42c1; }
+.membership-badge.enterprise { background: #fd7e14; }
+
+.balance {
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.high-balance { color: #28a745; }
+.low-balance { color: #ffc107; }
+
+.complex-conditional {
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.high-value-user, .standard-user {
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.high-value-user {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-left: 4px solid #ffc107;
+}
+
+.standard-user {
+  background: #f8f9fa;
+  border-left: 4px solid #6c757d;
+}
+
+.premium-message { color: #6f42c1; font-weight: 600; }
+.enterprise-message { color: #fd7e14; font-weight: 600; }
+.upgrade-message { color: #007bff; font-weight: 600; }
+
+.js-test {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.js-results {
+  margin: 1rem 0;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.result-item label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.result-item span {
+  font-family: 'Monaco', 'Consolas', monospace;
+  color: #2c3e50;
+}
+
+.categorized-numbers {
+  margin: 1.5rem 0;
+}
+
+.number-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  margin: 0.2rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.number-badge.small { background: #d4edda; color: #155724; }
+.number-badge.medium { background: #fff3cd; color: #856404; }
+.number-badge.large { background: #f8d7da; color: #721c24; }
+
+.number-badge.even { border: 2px solid #007bff; }
+.number-badge.odd { border: 2px solid #dc3545; }
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stat-card h5 {
+  margin: 0 0 0.5rem 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.user-highlight {
+  background: #007bff;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.membership-breakdown {
+  margin: 1.5rem 0;
+}
+
+.membership-group {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border-left: 3px solid #007bff;
+}
+
+.group-members {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.member-tag {
+  background: #e9ecef;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #495057;
+}
+
+.metrics-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.metric-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+}
+
+.metric-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.distribution-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.chart-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chart-section h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.distribution-bar {
+  display: grid;
+  grid-template-columns: 100px 1fr 50px;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.type-label {
+  font-weight: 600;
+  color: #495057;
+  text-transform: capitalize;
+}
+
+.bar-container {
+  background: #e9ecef;
+  border-radius: 4px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  transition: width 0.3s ease;
+}
+
+.count {
+  text-align: center;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.test-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin: 1rem 0;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-group select, .form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-group select:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.btn-test {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-test:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.btn-test:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.framework-info {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.info-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.info-item {
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+}
+
+.info-item strong {
+  color: #2c3e50;
+}
+
+.info-item ul {
+  margin: 0.5rem 0 0 1rem;
+  color: #495057;
+}
+
+@media (max-width: 768px) {
+  .typescript-javascript-test {
+    padding: 1rem;
+  }
+
+  .test-navigation {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .nav-tab {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .result-grid, .stats-overview, .metrics-display {
+    grid-template-columns: 1fr;
+  }
+
+  .distribution-bar {
+    grid-template-columns: 80px 1fr 40px;
+    gap: 0.5rem;
+  }
+
+  .distribution-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animations */
+.test-case.expanded {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.user-card:hover .membership-badge {
+  transform: scale(1.05);
+}
+
+.number-badge:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+</style>

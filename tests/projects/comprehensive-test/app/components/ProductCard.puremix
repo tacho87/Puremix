@@ -1,0 +1,349 @@
+<loader>
+  async function loadProductCard(request, actionResult) {
+    console.log('🛍️ ProductCard loader called');
+    
+    // Simulate product data fetch
+    await new Promise(resolve => setTimeout(resolve, 80));
+    
+    let product = {
+      id: Math.floor(Math.random() * 1000),
+      name: `Product ${Math.floor(Math.random() * 100)}`,
+      price: (Math.random() * 500 + 50).toFixed(2),
+      stock: Math.floor(Math.random() * 100),
+      rating: (Math.random() * 5).toFixed(1),
+      category: ['Electronics', 'Books', 'Clothing', 'Home'][Math.floor(Math.random() * 4)],
+      image: `https://picsum.photos/300/200?random=${Math.floor(Math.random() * 1000)}`,
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      lastUpdated: new Date().toLocaleTimeString()
+    };
+    
+    // Handle action results
+    if (actionResult?.updated) {
+      product = { ...product, ...actionResult.updatedFields };
+      product.lastUpdated = actionResult.timestamp;
+    }
+    
+    if (actionResult?.stockAdjusted) {
+      product.stock += actionResult.adjustment;
+      product.lastUpdated = actionResult.timestamp;
+    }
+    
+    if (actionResult?.favorited) {
+      product.isFavorite = true;
+    }
+    
+    return {
+      data: { product },
+      state: { 
+        canEdit: true,
+        canAdjustStock: product.stock > 0,
+        showActions: true,
+        isLowStock: product.stock < 10
+      }
+    };
+  }
+</loader>
+
+<div class="product-card">
+  <div class="product-image">
+    <img src="{loadProductCard.data.product.image}" alt="{loadProductCard.data.product.name}">
+    {loadProductCard.state.isLowStock ? 
+      <div class="low-stock-badge">Low Stock!</div> 
+    : <div></div>}
+  </div>
+  
+  <div class="product-info">
+    <div class="product-header">
+      <h4>{loadProductCard.data.product.name}</h4>
+      <div class="product-category">{loadProductCard.data.product.category}</div>
+    </div>
+    
+    <p class="product-description">{loadProductCard.data.product.description}</p>
+    
+    <div class="product-details">
+      <div class="product-price">${loadProductCard.data.product.price}</div>
+      <div class="product-rating">⭐ {loadProductCard.data.product.rating}</div>
+    </div>
+    
+    <div class="product-stock">
+      Stock: <span class="{loadProductCard.state.isLowStock ? 'low-stock' : 'normal-stock'}">
+        {loadProductCard.data.product.stock} units
+      </span>
+    </div>
+    
+    <form onsubmit="ProductCard.updateProduct" class="product-form">
+      <div class="form-row">
+        <input name="name" value="{loadProductCard.data.product.name}" placeholder="Product Name">
+        <input name="price" value="{loadProductCard.data.product.price}" placeholder="Price" type="number" step="0.01">
+      </div>
+      <div class="form-row">
+        <select name="category" value="{loadProductCard.data.product.category}">
+          <option value="Electronics">Electronics</option>
+          <option value="Books">Books</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Home">Home</option>
+        </select>
+        <button type="submit" class="btn-update">💾 Update</button>
+      </div>
+    </form>
+    
+    <div class="product-actions">
+      <button onclick="ProductCard.adjustStock" data-adjustment="10" class="btn-stock-add">
+        ➕ Add Stock
+      </button>
+      <button onclick="ProductCard.adjustStock" data-adjustment="-5" class="btn-stock-remove">
+        ➖ Remove Stock
+      </button>
+      <button onclick="ProductCard.favoriteProduct" class="btn-favorite">
+        ❤️ Favorite
+      </button>
+    </div>
+  </div>
+  
+  <div class="product-footer">
+    <small>Updated: {loadProductCard.data.product.lastUpdated}</small>
+  </div>
+</div>
+
+<script server>
+  async function updateProduct(formData, request) {
+    console.log('💾 ProductCard.updateProduct called:', formData);
+    
+    // Simulate product update
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    return {
+      success: true,
+      updated: true,
+      updatedFields: {
+        name: formData.name,
+        price: parseFloat(formData.price),
+        category: formData.category
+      },
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Product updated successfully'
+    };
+  }
+  
+  async function adjustStock(formData, request) {
+    console.log('📦 ProductCard.adjustStock called:', formData);
+    
+    // Get adjustment from button data attribute
+    const adjustment = parseInt(formData.adjustment || 0);
+    
+    // Simulate stock adjustment
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    return {
+      success: true,
+      stockAdjusted: true,
+      adjustment: adjustment,
+      timestamp: new Date().toLocaleTimeString(),
+      message: `Stock ${adjustment > 0 ? 'increased' : 'decreased'} by ${Math.abs(adjustment)}`
+    };
+  }
+  
+  async function favoriteProduct(formData, request) {
+    console.log('❤️ ProductCard.favoriteProduct called');
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    return {
+      success: true,
+      favorited: true,
+      timestamp: new Date().toLocaleTimeString(),
+      message: 'Product added to favorites'
+    };
+  }
+</script>
+
+<style>
+  .product-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin: 0; /* Remove margin to respect parent container */
+    width: 100%; /* Respect parent width constraints */
+    box-sizing: border-box; /* Include padding in width calculations */
+    display: flex;
+    flex-direction: column;
+    min-height: 300px; /* Reasonable minimum height for masonry */
+  }
+  
+  .product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  }
+  
+  .product-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+  
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .low-stock-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ef4444;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .product-info {
+    padding: 16px;
+  }
+  
+  .product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .product-header h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #1f2937;
+  }
+  
+  .product-category {
+    background: #e5e7eb;
+    color: #6b7280;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  
+  .product-description {
+    color: #6b7280;
+    font-size: 14px;
+    margin: 8px 0;
+    line-height: 1.4;
+  }
+  
+  .product-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 12px 0;
+  }
+  
+  .product-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #059669;
+  }
+  
+  .product-rating {
+    color: #f59e0b;
+  }
+  
+  .product-stock {
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  
+  .low-stock {
+    color: #ef4444;
+    font-weight: bold;
+  }
+  
+  .normal-stock {
+    color: #059669;
+  }
+  
+  .product-form {
+    background: #f9fafb;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 12px 0;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .form-row:last-child {
+    margin-bottom: 0;
+  }
+  
+  .product-form input, .product-form select {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .btn-update {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .product-actions {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  
+  .btn-stock-add, .btn-stock-remove, .btn-favorite {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-stock-add {
+    background: #10b981;
+    color: white;
+  }
+  
+  .btn-stock-remove {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .btn-favorite {
+    background: #f59e0b;
+    color: white;
+  }
+  
+  .btn-stock-add:hover, .btn-stock-remove:hover, .btn-favorite:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  
+  .product-footer {
+    padding: 8px 16px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+  }
+  
+  .product-footer small {
+    color: #6b7280;
+    font-size: 11px;
+  }
+</style>

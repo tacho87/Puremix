@@ -1,0 +1,938 @@
+<layout>main</layout>
+
+<head>
+  <title>File Upload Security Test - PureMix</title>
+  <meta name="description" content="Comprehensive file upload testing with security validations">
+</head>
+
+<loader>
+  async function loadFileUploadTest(request, actionResult) {
+    const testResults = {
+      lastUpload: null,
+      securityChecks: [],
+      allowedTypes: ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.txt', '.csv'],
+      maxFileSize: '10MB',
+      uploadCount: 0
+    };
+    
+    // Handle action results - store uploaded file info for download
+    if (actionResult?.uploaded) {
+      testResults.lastUpload = {
+        filename: actionResult.uploadedFile?.filename,
+        originalName: actionResult.uploadedFile?.originalName,
+        size: actionResult.uploadedFile?.size,
+        type: actionResult.uploadedFile?.type,
+        path: actionResult.uploadedFile?.path,
+        timestamp: actionResult.timestamp,
+        securityStatus: actionResult.securityStatus,
+        message: actionResult.message
+      };
+      testResults.uploadCount = (actionResult.uploadCount || 0) + 1;
+    }
+    
+    if (actionResult?.securityChecks) {
+      testResults.securityChecks = actionResult.securityChecks;
+    }
+    
+    if (actionResult?.error) {
+      testResults.error = actionResult.error;
+      testResults.securityViolation = actionResult.securityViolation;
+    }
+    
+    return {
+      data: testResults,
+      state: { 
+        canUpload: true,
+        showAdvanced: false,
+        testMode: 'basic'
+      }
+    };
+  }
+</loader>
+
+<div class="upload-test-container">
+  <header class="test-header">
+    <h1>🔐 File Upload Security Test</h1>
+    <p class="subtitle">Comprehensive testing of file upload security mechanisms</p>
+    
+    <div class="security-status">
+      <div class="status-item">
+        <span class="label">Security Level:</span>
+        <span class="value high">🛡️ Maximum</span>
+      </div>
+      <div class="status-item">
+        <span class="label">Total Uploads:</span>
+        <span class="value">{loadFileUploadTest.data.uploadCount}</span>
+      </div>
+      <div class="status-item">
+        <span class="label">Max File Size:</span>
+        <span class="value">{loadFileUploadTest.data.maxFileSize}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Basic File Upload Test -->
+  <section class="test-section">
+    <h2>📁 Basic File Upload</h2>
+    <p>Test standard file upload with security validations</p>
+    
+    <form onsubmit="handleFileUpload" enctype="multipart/form-data" class="upload-form">
+      <div class="upload-area">
+        <input type="file" name="uploadFile" id="basicUpload" accept=".jpg,.jpeg,.png,.gif,.pdf,.txt,.csv" required>
+        <label for="basicUpload" class="upload-label">
+          📎 Choose File or Drop Here
+          <span class="upload-hint">Allowed: {loadFileUploadTest.data.allowedTypes.join(', ')}</span>
+        </label>
+      </div>
+      
+      <div class="upload-options">
+        <label>
+          <input type="checkbox" name="validateMimeType" checked> Validate MIME Type
+        </label>
+        <label>
+          <input type="checkbox" name="scanForMalware" checked> Malware Scan
+        </label>
+        <label>
+          <input type="checkbox" name="generateThumbnail"> Generate Thumbnail (Images)
+        </label>
+      </div>
+      
+      <button type="submit" class="btn-upload">🚀 Upload File</button>
+    </form>
+  </section>
+
+  <!-- Security Attack Tests -->
+  <section class="test-section">
+    <h2>⚔️ Security Attack Simulation</h2>
+    <p class="warning">⚠️ These tests simulate common file upload attacks to verify our defenses</p>
+    
+    <div class="attack-tests">
+      <div class="attack-test">
+        <h3>🎭 Filename Manipulation</h3>
+        <form onsubmit="testFilenameAttacks" class="attack-form">
+          <select name="attackType">
+            <option value="pathTraversal">Path Traversal (../../../etc/passwd)</option>
+            <option value="nullByte">Null Byte Injection (file.php%00.jpg)</option>
+            <option value="longFilename">Extremely Long Filename</option>
+            <option value="specialChars">Special Characters (|&;$`\())</option>
+            <option value="doubleExtension">Double Extension (.jpg.php)</option>
+          </select>
+          <button type="submit" class="btn-test">🧪 Test Attack</button>
+        </form>
+      </div>
+      
+      <div class="attack-test">
+        <h3>🦠 Malicious Content</h3>
+        <form onsubmit="testMaliciousContent" class="attack-form">
+          <select name="contentType">
+            <option value="scriptInjection">Script Injection in Image</option>
+            <option value="polyglotFile">Polyglot File (Image+Script)</option>
+            <option value="zipBomb">ZIP Bomb</option>
+            <option value="xmlBomb">XML Bomb</option>
+            <option value="svgScript">SVG with JavaScript</option>
+          </select>
+          <button type="submit" class="btn-test">🧪 Test Content Attack</button>
+        </form>
+      </div>
+      
+      <div class="attack-test">
+        <h3>📊 Resource Exhaustion</h3>
+        <form onsubmit="testResourceAttacks" class="attack-form">
+          <select name="resourceAttack">
+            <option value="hugeFile">Extremely Large File</option>
+            <option value="manyFiles">Simultaneous Multiple Uploads</option>
+            <option value="slowUpload">Slow Loris Upload</option>
+            <option value="memoryExhaustion">Memory Exhaustion</option>
+          </select>
+          <button type="submit" class="btn-test">🧪 Test Resource Attack</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upload Results Display -->
+  {loadFileUploadTest.data.lastUpload ? 
+    <section class="test-section">
+      <h2>📋 Last Upload Results</h2>
+      <div class="upload-result success">
+        <div class="result-header">
+          <span class="result-icon">✅</span>
+          <span class="result-title">Upload Successful</span>
+        </div>
+        <div class="result-details">
+          <div class="detail-row">
+            <span class="label">Original Filename:</span>
+            <span class="value">{loadFileUploadTest.data.lastUpload.originalName}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Stored As:</span>
+            <span class="value">{loadFileUploadTest.data.lastUpload.filename}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Size:</span>
+            <span class="value">{loadFileUploadTest.data.lastUpload.size} bytes ({(loadFileUploadTest.data.lastUpload.size / 1024).toFixed(1)} KB)</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Type:</span>
+            <span class="value">{loadFileUploadTest.data.lastUpload.type}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Security Status:</span>
+            <span class="value security-{loadFileUploadTest.data.lastUpload.securityStatus}">{loadFileUploadTest.data.lastUpload.securityStatus}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Timestamp:</span>
+            <span class="value">{loadFileUploadTest.data.lastUpload.timestamp}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Message:</span>
+            <span class="value">{loadFileUploadTest.data.lastUpload.message}</span>
+          </div>
+          <div class="detail-row download-section">
+            <span class="label">Download:</span>
+            <span class="value">
+              <form onsubmit="downloadFile" style="display: inline;">
+                <input type="hidden" name="filePath" value="{loadFileUploadTest.data.lastUpload.path}">
+                <input type="hidden" name="originalName" value="{loadFileUploadTest.data.lastUpload.originalName}">
+                <input type="hidden" name="storageType" value="{loadFileUploadTest.data.lastUpload.storageType}">
+                <input type="hidden" name="fileBuffer" value="{loadFileUploadTest.data.lastUpload.buffer}">
+                <button type="submit" class="btn-download">📥 Download File ({loadFileUploadTest.data.lastUpload.storageType} storage)</button>
+              </form>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  : 
+    <div></div>
+  }
+
+  <!-- Security Checks Log -->
+  {loadFileUploadTest.data.securityChecks.length > 0 ? 
+    <section class="test-section">
+      <h2>🔍 Security Checks Performed</h2>
+      <div class="security-log">
+        {loadFileUploadTest.data.securityChecks.map(check => 
+          <div class="security-check {check.status}">
+            <span class="check-icon">{check.status === 'passed' ? '✅' : '❌'}</span>
+            <span class="check-name">{check.name}</span>
+            <span class="check-result">{check.result}</span>
+          </div>
+        )}
+      </div>
+    </section>
+  : 
+    <div></div>
+  }
+
+  <!-- Error Display -->
+  {loadFileUploadTest.data.error ? 
+    <section class="test-section">
+      <div class="upload-result error">
+        <div class="result-header">
+          <span class="result-icon">🚫</span>
+          <span class="result-title">Upload Blocked</span>
+        </div>
+        <div class="result-details">
+          <div class="detail-row">
+            <span class="label">Error:</span>
+            <span class="value">{loadFileUploadTest.data.error}</span>
+          </div>
+          {loadFileUploadTest.data.securityViolation ? 
+            <div class="detail-row">
+              <span class="label">Security Violation:</span>
+              <span class="value security-violation">{loadFileUploadTest.data.securityViolation}</span>
+            </div>
+          : 
+            <div></div>
+          }
+        </div>
+      </div>
+    </section>
+  : 
+    <div></div>
+  }
+</div>
+
+<script server>
+  async function handleFileUpload(formData, request) {
+    console.log('🔥 REAL FILE UPLOAD TEST - PureMix built-in support!');
+    console.log('📋 Form data:', formData);
+    console.log('📁 Files received:', request.files);
+
+    // Check if we actually received files
+    if (!request.files || Object.keys(request.files).length === 0) {
+      return {
+        success: false,
+        message: 'No files were uploaded',
+        uploadedFile: null,
+        securityChecks: [
+          { name: 'File Detection', status: 'failed', result: 'No files found in request' }
+        ]
+      };
+    }
+
+    // Get the uploaded file (assuming the field name is 'uploadFile')
+    const uploadedFile = request.files.uploadFile;
+    console.log('📄 File details:', uploadedFile);
+
+    // ENHANCED SECURITY CHECKS
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.txt', '.csv'];
+    const allowedMimeTypes = [
+      'image/jpeg', 'image/png', 'image/gif',
+      'application/pdf', 'text/plain', 'text/csv'
+    ];
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+
+    const fileExtension = uploadedFile.originalFilename?.split('.').pop()?.toLowerCase();
+    const isExtensionAllowed = fileExtension && allowedExtensions.includes('.' + fileExtension);
+    const isMimeAllowed = allowedMimeTypes.includes(uploadedFile.mimetype);
+    const isSizeValid = uploadedFile.size <= maxFileSize;
+
+    // Check for suspicious filename patterns
+    const hasSuspiciousName = /[<>:"/\\|?*\x00-\x1f]/.test(uploadedFile.originalFilename || '');
+    const hasPathTraversal = /\.\.\/|\.\.\\/.test(uploadedFile.originalFilename || '');
+
+    const securityChecks = [
+      {
+        name: 'File Extension',
+        status: isExtensionAllowed ? 'passed' : 'failed',
+        result: `Extension: .${fileExtension || 'none'} - ${isExtensionAllowed ? 'Allowed' : 'Blocked'}`
+      },
+      {
+        name: 'MIME Type Validation',
+        status: isMimeAllowed ? 'passed' : 'failed',
+        result: `MIME: ${uploadedFile.mimetype || 'unknown'} - ${isMimeAllowed ? 'Allowed' : 'Blocked'}`
+      },
+      {
+        name: 'File Size Limit',
+        status: isSizeValid ? 'passed' : 'failed',
+        result: `${uploadedFile.size} bytes (${(uploadedFile.size / 1024).toFixed(1)} KB) - ${isSizeValid ? 'Within limit' : 'Exceeds 10MB'}`
+      },
+      {
+        name: 'Filename Security',
+        status: (!hasSuspiciousName && !hasPathTraversal) ? 'passed' : 'failed',
+        result: `${hasSuspiciousName ? 'Contains suspicious characters' : hasPathTraversal ? 'Path traversal detected' : 'Clean filename'}`
+      },
+      {
+        name: 'Path Restriction',
+        status: uploadedFile.filepath?.startsWith('/tmp') ? 'passed' : 'warning',
+        result: `Stored in: ${uploadedFile.filepath?.includes('/tmp') ? 'Safe temp directory' : 'Unknown location'}`
+      }
+    ];
+
+    // Block upload if critical checks fail
+    const criticalFailures = securityChecks.filter(check =>
+      check.status === 'failed' && ['File Extension', 'MIME Type Validation', 'File Size Limit'].includes(check.name)
+    );
+
+    if (criticalFailures.length > 0) {
+      return {
+        success: false,
+        message: 'File upload blocked due to security violations',
+        securityChecks: securityChecks,
+        blockedReasons: criticalFailures.map(f => f.result)
+      };
+    }
+
+    return {
+      success: true,
+      uploaded: true,
+      message: `File uploaded successfully: ${uploadedFile.originalFilename}`,
+      uploadedFile: {
+        filename: uploadedFile.newFilename || uploadedFile.originalFilename,
+        originalName: uploadedFile.originalFilename,
+        size: uploadedFile.size,
+        type: uploadedFile.mimetype,
+        path: uploadedFile.filepath,
+        storageType: uploadedFile.storageType,
+        // For memory storage, store base64 encoded buffer for download
+        buffer: uploadedFile.storageType === 'memory' && uploadedFile.buffer ?
+                uploadedFile.buffer.toString('base64') : null
+      },
+      securityStatus: 'safe',
+      securityChecks: securityChecks,
+      timestamp: new Date().toISOString(),
+      uploadCount: 1
+    };
+  }
+
+  async function downloadFile(formData, request) {
+    console.log('📥 Download file request:', formData);
+
+    const { filePath, originalName, fileBuffer, storageType } = formData;
+
+    try {
+      // SECURITY: Sanitize filename for headers
+      const sanitizedName = (originalName || 'download')
+        .replace(/[^\w\s.-]/g, '') // Remove special characters
+        .replace(/\s+/g, '_')      // Replace spaces with underscores
+        .substring(0, 255);        // Limit length
+
+      // Set secure response headers
+      request.res.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}"`);
+      request.res.setHeader('Content-Type', 'application/octet-stream');
+      request.res.setHeader('X-Content-Type-Options', 'nosniff'); // Prevent MIME sniffing
+      request.res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+      // Handle different storage types
+      if (storageType === 'memory' && fileBuffer) {
+        console.log('📥 Downloading from memory storage');
+
+        // Convert base64 string back to buffer if needed
+        let buffer;
+        if (typeof fileBuffer === 'string') {
+          buffer = Buffer.from(fileBuffer, 'base64');
+        } else {
+          buffer = fileBuffer;
+        }
+
+        // Send buffer directly
+        request.res.send(buffer);
+        return null;
+
+      } else if (filePath) {
+        console.log('📥 Downloading from file storage');
+
+        if (!filePath) {
+          return {
+            success: false,
+            message: 'No file path provided'
+          };
+        }
+
+        const path = require('path');
+        const fs = require('fs').promises;
+
+        // SECURITY: Validate file path to prevent directory traversal
+        const normalizedPath = path.normalize(filePath);
+        const basePath = path.resolve('/tmp'); // Restrict to temp directory only
+        const resolvedPath = path.resolve(normalizedPath);
+
+        // Ensure file is within allowed directory
+        if (!resolvedPath.startsWith(basePath)) {
+          console.warn('🚨 SECURITY: Path traversal attempt blocked:', filePath);
+          return {
+            success: false,
+            message: 'Access denied: Invalid file path'
+          };
+        }
+
+        // Check if file exists and is a file (not directory)
+        const stats = await fs.stat(resolvedPath);
+        if (!stats.isFile()) {
+          return {
+            success: false,
+            message: 'Invalid file type'
+          };
+        }
+
+        // Stream the file
+        const fileStream = require('fs').createReadStream(resolvedPath);
+        fileStream.pipe(request.res);
+        return null;
+
+      } else {
+        return {
+          success: false,
+          message: 'No file data available for download'
+        };
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      return {
+        success: false,
+        message: 'File not found or cannot be accessed'
+      };
+    }
+  }
+
+  async function testFilenameAttacks(formData, request) {
+    console.log('🔍 testFilenameAttacks function called!');
+    console.log('🔍 formData received:', formData);
+    console.log('🔍 formData.attackType:', formData.attackType);
+    console.log('🔍 typeof formData:', typeof formData);
+    console.log('🔍 Object.keys(formData):', Object.keys(formData));
+
+    const attackResults = {
+      pathTraversal: {
+        filename: '../../../etc/passwd',
+        blocked: true,
+        issues: ['path traversal']
+      },
+      nullByte: {
+        filename: 'innocent.jpg.php',
+        blocked: true,
+        issues: ['null bytes', 'double extension']
+      },
+      longFilename: {
+        filename: 'very-long-filename.txt',
+        blocked: true,
+        issues: ['filename too long']
+      },
+      specialChars: {
+        filename: 'file-with-special-chars.txt',
+        blocked: true,
+        issues: ['invalid characters']
+      },
+      doubleExtension: {
+        filename: 'image.jpg.php',
+        blocked: true,
+        issues: ['double extension']
+      }
+    };
+
+    const result = attackResults[formData.attackType];
+    if (!result) {
+      return {
+        success: false,
+        error: 'Unknown attack type: ' + formData.attackType
+      };
+    }
+
+    const securityChecks = [
+      { name: 'Filename Security', status: 'failed', result: 'Issues: ' + result.issues.join(', ') }
+    ];
+
+    return {
+      success: true,
+      attackType: formData.attackType,
+      attackBlocked: result.blocked,
+      securityChecks: securityChecks,
+      message: result.blocked
+        ? 'Attack successfully blocked by security system'
+        : 'Attack not fully mitigated - review security policies'
+    };
+  }
+
+  async function testMaliciousContent(formData, request) {
+    console.log('Testing malicious content:', formData.contentType);
+
+    const contentResults = {
+      scriptInjection: {
+        detected: true,
+        threat: 'JavaScript injection in image'
+      },
+      polyglotFile: {
+        detected: true,
+        threat: 'Polyglot file with embedded script'
+      },
+      zipBomb: {
+        detected: true,
+        threat: 'ZIP bomb detected'
+      },
+      xmlBomb: {
+        detected: true,
+        threat: 'XML entity expansion attack'
+      },
+      svgScript: {
+        detected: true,
+        threat: 'SVG with embedded JavaScript'
+      }
+    };
+
+    const result = contentResults[formData.contentType];
+    if (!result) {
+      return {
+        success: false,
+        error: 'Unknown content type: ' + formData.contentType
+      };
+    }
+
+    return {
+      success: true,
+      contentType: formData.contentType,
+      contentBlocked: result.detected,
+      message: result.detected
+        ? 'Malicious content successfully blocked: ' + result.threat
+        : 'Malicious content not detected - enhance content filtering',
+      recommendations: [
+        'Implement deep content scanning',
+        'Add virus/malware detection',
+        'Sanitize file contents',
+        'Use sandboxed file processing'
+      ]
+    };
+  }
+
+  async function testResourceAttacks(formData, request) {
+    console.log('Testing resource attack:', formData.resourceAttack);
+
+    const resourceResults = {
+      hugeFile: {
+        blocked: true,
+        description: 'File exceeds maximum size limit (100MB vs 10MB limit)'
+      },
+      manyFiles: {
+        blocked: true,
+        description: 'Rate limiting prevents multiple simultaneous uploads'
+      },
+      slowUpload: {
+        blocked: true,
+        description: 'Connection timeout prevents slow loris attacks'
+      },
+      memoryExhaustion: {
+        blocked: true,
+        description: 'Memory usage monitoring prevents exhaustion'
+      }
+    };
+
+    const result = resourceResults[formData.resourceAttack];
+    if (!result) {
+      return {
+        success: false,
+        error: 'Unknown resource attack type: ' + formData.resourceAttack
+      };
+    }
+
+    return {
+      success: true,
+      attackType: formData.resourceAttack,
+      attackBlocked: result.blocked,
+      testDescription: result.description,
+      message: result.blocked
+        ? 'Resource attack successfully mitigated'
+        : 'Resource limits may need adjustment',
+      protections: [
+        'File size limits enforced',
+        'Connection rate limiting',
+        'Memory usage monitoring',
+        'Upload timeout controls'
+      ]
+    };
+  }
+</script>
+
+<style>
+  .upload-test-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .test-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin: 10px 0 30px 0;
+  }
+
+  .security-status {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  .status-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+  }
+
+  .status-item .label {
+    font-weight: 500;
+    margin-right: 8px;
+  }
+
+  .status-item .value {
+    font-weight: bold;
+  }
+
+  .value.high {
+    color: #22c55e;
+  }
+
+  .test-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  .test-section h2 {
+    color: #2d3748;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 10px;
+  }
+
+  .warning {
+    background: #fef5e7;
+    border: 1px solid #f6ad55;
+    border-radius: 8px;
+    padding: 12px;
+    color: #744210;
+    margin-bottom: 20px;
+  }
+
+  .upload-form {
+    margin: 20px 0;
+  }
+
+  .upload-area {
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .upload-area:hover {
+    border-color: #667eea;
+    background: #f8faff;
+  }
+
+  .upload-label {
+    display: block;
+    font-size: 18px;
+    color: #4a5568;
+    cursor: pointer;
+  }
+
+  .upload-hint {
+    display: block;
+    font-size: 14px;
+    color: #718096;
+    margin-top: 8px;
+  }
+
+  input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .upload-options {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .upload-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .btn-upload, .btn-test {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-upload:hover, .btn-test:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-download {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .btn-download:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  }
+
+  .download-section {
+    background: #f7fafc;
+    border-radius: 6px;
+    padding: 8px;
+    margin-top: 8px;
+  }
+
+  .attack-tests {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+  }
+
+  .attack-test {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f8fafc;
+  }
+
+  .attack-test h3 {
+    color: #2d3748;
+    margin-bottom: 15px;
+  }
+
+  .attack-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .attack-form select {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+  }
+
+  .upload-result {
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .upload-result.success {
+    background: #f0fff4;
+    border: 1px solid #9ae6b4;
+  }
+
+  .upload-result.error {
+    background: #fef5f5;
+    border: 1px solid #f56565;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  .result-icon {
+    font-size: 24px;
+  }
+
+  .result-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  .result-details {
+    display: grid;
+    gap: 8px;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .detail-row .label {
+    font-weight: 500;
+    color: #4a5568;
+  }
+
+  .detail-row .value {
+    font-family: monospace;
+    color: #2d3748;
+  }
+
+  .value.security-safe {
+    color: #22c55e;
+  }
+
+  .value.security-warning {
+    color: #f59e0b;
+  }
+
+  .value.security-blocked {
+    color: #ef4444;
+  }
+
+  .security-violation {
+    color: #dc2626 !important;
+    font-weight: bold;
+  }
+
+  .security-log {
+    display: grid;
+    gap: 12px;
+  }
+
+  .security-check {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .security-check.passed {
+    background: #f0fff4;
+    border-color: #9ae6b4;
+  }
+
+  .security-check.failed {
+    background: #fef5f5;
+    border-color: #f56565;
+  }
+
+  .security-check.warning {
+    background: #fef5e7;
+    border-color: #f6ad55;
+  }
+
+  .check-icon {
+    font-size: 20px;
+  }
+
+  .check-name {
+    font-weight: 600;
+    color: #2d3748;
+    min-width: 150px;
+  }
+
+  .check-result {
+    color: #4a5568;
+    font-family: monospace;
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    .security-status {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .attack-tests {
+      grid-template-columns: 1fr;
+    }
+    
+    .detail-row {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+</style>

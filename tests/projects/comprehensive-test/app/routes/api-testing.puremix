@@ -1,0 +1,730 @@
+<layout>main</layout>
+
+<loader>
+  async function loadApiTests(request) {
+    const baseUrl = `${request.protocol}://${request.get('host')}`;
+    
+    return {
+      data: {
+        baseUrl,
+        endpoints: [
+          {
+            name: 'Users Collection API (JavaScript)',
+            method: 'GET',
+            url: '/api/users',
+            description: 'REST API for users with pagination and search',
+            testData: { page: 1, limit: 5, search: '' }
+          },
+          {
+            name: 'Users Collection API (POST)',
+            method: 'POST', 
+            url: '/api/users',
+            description: 'Create new user',
+            testData: { name: 'Test User', email: 'test@example.com', role: 'user' }
+          },
+          {
+            name: 'Individual User API (JavaScript)',
+            method: 'GET',
+            url: '/api/users/1',
+            description: 'Get specific user by ID',
+            testData: {}
+          },
+          {
+            name: 'Update User API (PUT)', 
+            method: 'PUT',
+            url: '/api/users/1',
+            description: 'Full update of user',
+            testData: { name: 'Updated User', email: 'updated@example.com', role: 'admin' }
+          },
+          {
+            name: 'Patch User API (PATCH)',
+            method: 'PATCH', 
+            url: '/api/users/1',
+            description: 'Partial update of user',
+            testData: { name: 'Patched Name' }
+          },
+          {
+            name: 'Authentication API (TypeScript)',
+            method: 'POST',
+            url: '/api/auth/login',
+            description: 'User login with JWT tokens',
+            testData: { email: 'admin@example.com', password: 'admin123', rememberMe: true }
+          },
+          {
+            name: 'File Upload API (Python)',
+            method: 'POST',
+            url: '/api/upload',
+            description: 'File upload with validation and analysis',
+            testData: { files: 'multipart/form-data', note: 'Use file input below' }
+          },
+          {
+            name: 'Stripe Webhook (Dynamic Route)',
+            method: 'POST',
+            url: '/api/webhook/stripe',
+            description: 'Webhook for Stripe payments',
+            testData: { 
+              type: 'payment_intent.succeeded',
+              data: { object: { amount: 2000, currency: 'usd', customer: 'cus_test' } }
+            }
+          },
+          {
+            name: 'GitHub Webhook (Dynamic Route)',
+            method: 'POST', 
+            url: '/api/webhook/github',
+            description: 'Webhook for GitHub events',
+            testData: {
+              repository: { full_name: 'user/repo' },
+              ref: 'refs/heads/main',
+              commits: [{ id: 'abc123', message: 'Test commit', author: { name: 'Test User' } }]
+            }
+          }
+        ]
+      },
+      state: {
+        showResults: false,
+        activeTest: null
+      }
+    };
+  }
+</loader>
+
+<div class="api-testing-suite">
+  <h1>🧪 Comprehensive API Testing Suite</h1>
+  <p class="description">Testing all API endpoint types: JavaScript REST, TypeScript auth, Python upload, and dynamic webhooks.</p>
+  
+  <div class="base-info">
+    <p><strong>Base URL:</strong> <code>{loadApiTests.data.baseUrl}</code></p>
+    <p><strong>Total Endpoints:</strong> {loadApiTests.data.endpoints.length}</p>
+  </div>
+
+  <div class="test-controls">
+    <button onclick="runAllTests()" class="btn btn-primary">🚀 Test All APIs</button>
+    <button onclick="clearResults()" class="btn btn-secondary">🧹 Clear Results</button>
+  </div>
+
+  <div class="endpoints-grid">
+    {loadApiTests.data.endpoints.map(endpoint => 
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <h3>{endpoint.name}</h3>
+          <span class="method-badge method-{endpoint.method.toLowerCase()}">{endpoint.method}</span>
+        </div>
+        
+        <div class="endpoint-details">
+          <p class="url"><strong>URL:</strong> <code>{endpoint.url}</code></p>
+          <p class="description">{endpoint.description}</p>
+          
+          <details class="test-data">
+            <summary>Test Data</summary>
+            <pre><code>{JSON.stringify(endpoint.testData, null, 2)}</code></pre>
+          </details>
+        </div>
+
+        <div class="endpoint-actions">
+          <button onclick="testSingleEndpoint('{endpoint.url}', '{endpoint.method}')" class="btn btn-sm">
+            🧪 Test This API
+          </button>
+        </div>
+
+        <div id="result-{endpoint.url.replace(/[^a-zA-Z0-9]/g, '_')}" class="test-result" style="display: none;">
+          <!-- Test results will appear here -->
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- File Upload Special Interface -->
+  <div class="file-upload-section">
+    <h3>📁 File Upload Testing (Python API)</h3>
+    <form id="fileUploadForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>Select file to test Python upload API:</label>
+        <input type="file" name="testFile" accept=".txt,.json,.jpg,.png" />
+      </div>
+      <div class="form-group">
+        <label>Additional metadata:</label>
+        <input type="text" name="description" placeholder="File description" />
+      </div>
+      <button type="button" onclick="testFileUpload()" class="btn">
+        📤 Test File Upload
+      </button>
+    </form>
+    <div id="file-upload-result" class="test-result" style="display: none;"></div>
+  </div>
+
+  <!-- Global Test Results -->
+  <div id="global-results" class="global-results" style="display: none;">
+    <h3>🎯 Overall Test Results</h3>
+    <div class="results-summary"></div>
+    <div class="detailed-results"></div>
+  </div>
+</div>
+
+<script server>
+  async function testApiEndpoint(formData, request) {
+    const { endpoint, method, testData } = formData;
+    const apiUrl = `${request.protocol}://${request.get('host')}${endpoint}`;
+    
+    try {
+      // Prepare request options
+      const options = {
+        method: method.toUpperCase(),
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'PureMix-API-Tester/1.0'
+        }
+      };
+      
+      // Add body for non-GET requests
+      if (method.toUpperCase() !== 'GET' && testData) {
+        if (endpoint.includes('/webhook/')) {
+          // Add webhook-specific headers
+          if (endpoint.includes('stripe')) {
+            options.headers['stripe-signature'] = 'test_signature_' + Date.now();
+          } else if (endpoint.includes('github')) {
+            options.headers['x-hub-signature-256'] = 'sha256=test_signature';
+            options.headers['x-github-event'] = 'push';
+          }
+        }
+        
+        options.body = JSON.stringify(JSON.parse(testData));
+      }
+      
+      const response = await fetch(apiUrl, options);
+      const responseData = await response.json();
+      
+      return {
+        success: true,
+        endpoint,
+        method,
+        status: response.status,
+        statusText: response.statusText,
+        data: responseData,
+        timestamp: new Date().toISOString()
+      };
+      
+    } catch (error) {
+      return {
+        success: false,
+        endpoint,
+        method, 
+        error: error.message,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+  
+  async function runBatchTests(formData, request) {
+    const results = [];
+    const baseUrl = `${request.protocol}://${request.get('host')}`;
+    
+    // Define test cases
+    const tests = [
+      { endpoint: '/api/users', method: 'GET', data: {} },
+      { endpoint: '/api/users', method: 'POST', data: { name: 'Batch Test User', email: 'batch@example.com' } },
+      { endpoint: '/api/users/1', method: 'GET', data: {} },
+      { endpoint: '/api/auth/login', method: 'POST', data: { email: 'admin@example.com', password: 'admin123' } },
+      { endpoint: '/api/webhook/stripe', method: 'POST', data: { type: 'payment_intent.succeeded', data: { object: { amount: 1000 } } } },
+      { endpoint: '/api/webhook/github', method: 'POST', data: { repository: { full_name: 'test/repo' }, commits: [] } }
+    ];
+    
+    for (const test of tests) {
+      try {
+        const options = {
+          method: test.method,
+          headers: { 'Content-Type': 'application/json' }
+        };
+        
+        if (test.method !== 'GET') {
+          options.body = JSON.stringify(test.data);
+          
+          // Add webhook headers
+          if (test.endpoint.includes('stripe')) {
+            options.headers['stripe-signature'] = 'test_sig';
+          } else if (test.endpoint.includes('github')) {
+            options.headers['x-hub-signature-256'] = 'sha256=test';
+            options.headers['x-github-event'] = 'push';
+          }
+        }
+        
+        const response = await fetch(baseUrl + test.endpoint, options);
+        const data = await response.json();
+        
+        results.push({
+          endpoint: test.endpoint,
+          method: test.method,
+          status: response.status,
+          success: response.ok,
+          data: data
+        });
+        
+      } catch (error) {
+        results.push({
+          endpoint: test.endpoint,
+          method: test.method,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+    
+    return {
+      success: true,
+      totalTests: tests.length,
+      successful: results.filter(r => r.success).length,
+      failed: results.filter(r => !r.success).length,
+      results: results,
+      timestamp: new Date().toISOString()
+    };
+  }
+</script>
+
+<script client>
+  let testResults = {};
+  
+  async function testSingleEndpoint(url, method) {
+    const resultId = `result-${url.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    const resultDiv = document.getElementById(resultId);
+    
+    // Show loading state
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="loading">🔄 Testing API endpoint...</div>';
+    
+    // Get test data for this endpoint
+    const endpoints = {loadApiTests.data.endpoints};
+    const endpoint = endpoints.find(e => e.url === url && e.method === method);
+    const testData = endpoint ? JSON.stringify(endpoint.testData) : '{}';
+    
+    try {
+      const result = await PureMix.call('testApiEndpoint', {
+        endpoint: url,
+        method: method,
+        testData: testData
+      });
+      
+      testResults[url + '_' + method] = result;
+      
+      if (result.success) {
+        resultDiv.innerHTML = `
+          <div class="result-success">
+            <h4>✅ Success</h4>
+            <p><strong>Status:</strong> ${result.status} ${result.statusText}</p>
+            <details>
+              <summary>Response Data</summary>
+              <pre><code>${JSON.stringify(result.data, null, 2)}</code></pre>
+            </details>
+            <small>Tested at: ${new Date(result.timestamp).toLocaleTimeString()}</small>
+          </div>
+        `;
+      } else {
+        resultDiv.innerHTML = `
+          <div class="result-error">
+            <h4>❌ Failed</h4>
+            <p><strong>Error:</strong> ${result.error}</p>
+            <small>Tested at: ${new Date(result.timestamp).toLocaleTimeString()}</small>
+          </div>
+        `;
+      }
+    } catch (error) {
+      resultDiv.innerHTML = `
+        <div class="result-error">
+          <h4>❌ Test Failed</h4>
+          <p><strong>Error:</strong> ${error.message}</p>
+        </div>
+      `;
+    }
+  }
+  
+  async function runAllTests() {
+    document.querySelector('.test-controls').innerHTML = '<div class="loading">🔄 Running all API tests...</div>';
+    
+    try {
+      const result = await PureMix.call('runBatchTests', {});
+      
+      const globalResults = document.getElementById('global-results');
+      globalResults.style.display = 'block';
+      
+      const summary = globalResults.querySelector('.results-summary');
+      summary.innerHTML = `
+        <div class="summary-stats">
+          <div class="stat success">✅ ${result.successful} Successful</div>
+          <div class="stat failed">❌ ${result.failed} Failed</div>
+          <div class="stat total">📊 ${result.totalTests} Total</div>
+        </div>
+        <p>Batch test completed at: ${new Date(result.timestamp).toLocaleString()}</p>
+      `;
+      
+      const detailed = globalResults.querySelector('.detailed-results');
+      detailed.innerHTML = result.results.map(r => `
+        <div class="batch-result ${r.success ? 'success' : 'error'}">
+          <h4>${r.method} ${r.endpoint}</h4>
+          <p>Status: ${r.status || 'Error'}</p>
+          ${r.success ? 
+            `<details><summary>Response</summary><pre><code>${JSON.stringify(r.data, null, 2)}</code></pre></details>` :
+            `<p class="error-msg">Error: ${r.error}</p>`
+          }
+        </div>
+      `).join('');
+      
+      // Restore controls
+      document.querySelector('.test-controls').innerHTML = `
+        <button onclick="runAllTests()" class="btn btn-primary">🚀 Test All APIs</button>
+        <button onclick="clearResults()" class="btn btn-secondary">🧹 Clear Results</button>
+      `;
+      
+    } catch (error) {
+      alert('Batch testing failed: ' + error.message);
+      location.reload();
+    }
+  }
+  
+  async function testFileUpload() {
+    const form = document.getElementById('fileUploadForm');
+    const fileInput = form.querySelector('input[type="file"]');
+    const resultDiv = document.getElementById('file-upload-result');
+    
+    if (!fileInput.files[0]) {
+      alert('Please select a file to upload');
+      return;
+    }
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<div class="loading">📤 Uploading file to Python API...</div>';
+    
+    try {
+      const formData = new FormData(form);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        resultDiv.innerHTML = `
+          <div class="result-success">
+            <h4>✅ File Upload Success</h4>
+            <p><strong>Message:</strong> ${result.message}</p>
+            <details>
+              <summary>Upload Details</summary>
+              <pre><code>${JSON.stringify(result, null, 2)}</code></pre>
+            </details>
+          </div>
+        `;
+      } else {
+        resultDiv.innerHTML = `
+          <div class="result-error">
+            <h4>❌ Upload Failed</h4>
+            <p><strong>Error:</strong> ${result.error}</p>
+            <p><strong>Message:</strong> ${result.message || 'Unknown error'}</p>
+          </div>
+        `;
+      }
+    } catch (error) {
+      resultDiv.innerHTML = `
+        <div class="result-error">
+          <h4>❌ Upload Error</h4>
+          <p><strong>Error:</strong> ${error.message}</p>
+        </div>
+      `;
+    }
+  }
+  
+  function clearResults() {
+    // Clear individual results
+    document.querySelectorAll('.test-result').forEach(div => {
+      div.style.display = 'none';
+      div.innerHTML = '';
+    });
+    
+    // Clear global results
+    document.getElementById('global-results').style.display = 'none';
+    
+    testResults = {};
+  }
+</script>
+
+<style>
+  .api-testing-suite {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .description {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .base-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .base-info code {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Consolas', monospace;
+  }
+  
+  .test-controls {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 10px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn:hover {
+    background: #0056b3;
+  }
+  
+  .btn-secondary {
+    background: #6c757d;
+  }
+  
+  .btn-secondary:hover {
+    background: #545b62;
+  }
+  
+  .btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  
+  .endpoints-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+  
+  .endpoint-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .endpoint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .endpoint-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .method-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .method-get {
+    background: #28a745;
+    color: white;
+  }
+  
+  .method-post {
+    background: #007bff;
+    color: white;
+  }
+  
+  .method-put {
+    background: #ffc107;
+    color: black;
+  }
+  
+  .method-patch {
+    background: #17a2b8;
+    color: white;
+  }
+  
+  .method-delete {
+    background: #dc3545;
+    color: white;
+  }
+  
+  .endpoint-details .url {
+    font-family: 'Monaco', 'Consolas', monospace;
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 10px 0;
+  }
+  
+  .endpoint-details code {
+    background: none;
+    color: #e83e8c;
+  }
+  
+  .test-data {
+    margin: 10px 0;
+  }
+  
+  .test-data pre {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    overflow-x: auto;
+  }
+  
+  .endpoint-actions {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  .test-result {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+  }
+  
+  .result-success {
+    border-color: #28a745;
+    background: #d4edda;
+  }
+  
+  .result-error {
+    border-color: #dc3545;
+    background: #f8d7da;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+  }
+  
+  .file-upload-section {
+    background: #e7f3ff;
+    padding: 25px;
+    border-radius: 8px;
+    margin: 30px 0;
+    border-left: 4px solid #007bff;
+  }
+  
+  .form-group {
+    margin: 15px 0;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .form-group input {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .global-results {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 40px;
+    border: 2px solid #6c757d;
+  }
+  
+  .summary-stats {
+    display: flex;
+    gap: 20px;
+    margin: 15px 0;
+  }
+  
+  .stat {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+    min-width: 120px;
+  }
+  
+  .stat.success {
+    background: #d4edda;
+    color: #155724;
+  }
+  
+  .stat.failed {
+    background: #f8d7da;
+    color: #721c24;
+  }
+  
+  .stat.total {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+  
+  .batch-result {
+    margin: 15px 0;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #ddd;
+  }
+  
+  .batch-result.success {
+    border-left-color: #28a745;
+    background: #d4edda;
+  }
+  
+  .batch-result.error {
+    border-left-color: #dc3545;
+    background: #f8d7da;
+  }
+  
+  .batch-result h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+  }
+  
+  .error-msg {
+    color: #721c24;
+    font-weight: 500;
+  }
+  
+  details summary {
+    cursor: pointer;
+    padding: 5px 0;
+    font-weight: 500;
+  }
+  
+  details pre {
+    background: rgba(0,0,0,0.05);
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    overflow-x: auto;
+    margin: 5px 0;
+  }
+</style>
