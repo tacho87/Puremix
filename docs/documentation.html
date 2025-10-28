@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PureMix Documentation - Complete Framework Guide</title>
+  <meta name="description" content="Complete documentation for PureMix framework - routing, loaders, actions, Python integration, components, and more.">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</head>
+<body class="docs-page">
+  <!-- Navigation -->
+  <nav class="navbar docs-navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <a href="index.html" class="brand-link">
+          <span class="logo">🎯</span>
+          <span class="brand-name">PureMix</span>
+        </a>
+        <span class="version-badge">v0.1.0-alpha.1</span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="documentation.html" class="active">Documentation</a>
+        <a href="https://github.com/sponsors/tacho87" target="_blank" class="sponsor-link">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.25 2.5c-1.336 0-2.75 1.164-2.75 3 0 2.15 1.58 4.144 3.365 5.682A20.565 20.565 0 008 13.393a20.561 20.561 0 003.135-2.211C12.92 9.644 14.5 7.65 14.5 5.5c0-1.836-1.414-3-2.75-3-1.373 0-2.609.986-3.029 2.456a.75.75 0 01-1.442 0C6.859 3.486 5.623 2.5 4.25 2.5zM8 14.25l-.345.666-.002-.001-.006-.003-.018-.01a7.643 7.643 0 01-.31-.17 22.075 22.075 0 01-3.434-2.414C2.045 10.731 0 8.35 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.85-2.045 5.231-3.885 6.818a22.08 22.08 0 01-3.744 2.584l-.018.01-.006.003h-.002L8 14.25zm0 0l.345.666a.752.752 0 01-.69 0L8 14.25z"/>
+          </svg>
+          Sponsor
+        </a>
+        <a href="https://github.com/tacho87/Puremix" target="_blank" class="github-link">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-layout">
+    <!-- Sidebar -->
+    <aside class="docs-sidebar">
+      <div class="sidebar-content">
+        <div class="sidebar-section">
+          <h3>Getting Started</h3>
+          <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#quick-start">Quick Start</a></li>
+            <li><a href="#project-structure">Project Structure</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Core Concepts</h3>
+          <ul>
+            <li><a href="#routing">File-Based Routing</a></li>
+            <li><a href="#loaders">Loaders (Data Fetching)</a></li>
+            <li><a href="#actions">Actions (Mutations)</a></li>
+            <li><a href="#templates">Templates & Expressions</a></li>
+            <li><a href="#components">Components</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Python Integration</h3>
+          <ul>
+            <li><a href="#python-overview">Python Overview</a></li>
+            <li><a href="#python-script-tags">Script Tags</a></li>
+            <li><a href="#python-modules">Standalone Modules</a></li>
+            <li><a href="#python-imports">ES6 Imports</a></li>
+            <li><a href="#python-global">Global Functions</a></li>
+            <li><a href="#python-inline">Inline Execution</a></li>
+            <li><a href="#python-ml">ML Libraries</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>API Development</h3>
+          <ul>
+            <li><a href="#api-handlers">API Handlers</a></li>
+            <li><a href="#api-rest">REST APIs</a></li>
+            <li><a href="#api-rpc">RPC APIs</a></li>
+            <li><a href="#api-python">Python APIs</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Advanced Topics</h3>
+          <ul>
+            <li><a href="#javascript-blocks">JavaScript Blocks</a></li>
+            <li><a href="#client-runtime">Client Runtime</a></li>
+            <li><a href="#dom-diffing">DOM Diffing</a></li>
+            <li><a href="#layouts">Layouts</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Deployment</h3>
+          <ul>
+            <li><a href="#production">Production Setup</a></li>
+            <li><a href="#pm2">PM2 Process Manager</a></li>
+            <li><a href="#docker">Docker Deployment</a></li>
+            <li><a href="#nginx">Nginx Configuration</a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="docs-main">
+      <div class="docs-content">
+        <!-- Introduction -->
+        <section id="introduction" class="docs-section">
+          <h1>PureMix Documentation</h1>
+          <p class="lead">
+            PureMix is a server-side rendering framework inspired by <a href="https://remix.run" target="_blank">Remix</a>,
+            that lets you build web applications using HTML syntax while seamlessly mixing JavaScript, TypeScript, and Python in the same file.
+          </p>
+          <div class="important-note">
+            <strong>⚠️ Alpha Version:</strong> PureMix is currently in alpha (v0.1.0-alpha.1). APIs may change before stable release.
+          </div>
+        </section>
+
+        <!-- Installation -->
+        <section id="installation" class="docs-section">
+          <h2>Installation</h2>
+          <p>Install PureMix globally using npm:</p>
+          <pre><code class="language-bash">npm install -g puremix@alpha</code></pre>
+
+          <p>Or use npx to run commands without installing:</p>
+          <pre><code class="language-bash">npx puremix@alpha create my-app</code></pre>
+
+          <h3>Requirements</h3>
+          <ul>
+            <li><strong>Node.js 22+</strong> - Native TypeScript support</li>
+            <li><strong>Python 3.8+</strong> (optional) - For Python integration features</li>
+          </ul>
+        </section>
+
+        <!-- Quick Start -->
+        <section id="quick-start" class="docs-section">
+          <h2>Quick Start</h2>
+
+          <h3>Create a New Project</h3>
+          <pre><code class="language-bash">puremix create my-app
+cd my-app
+npm install
+npm run dev</code></pre>
+
+          <p>Your app will be running at <code>http://localhost:3000</code></p>
+
+          <h3>Available Templates</h3>
+          <ul>
+            <li><strong>basic</strong> - Modern Tailwind CSS with animations</li>
+            <li><strong>minimal</strong> - Clean responsive CSS, zero dependencies</li>
+            <li><strong>advanced</strong> - Full MongoDB + authentication + admin panel</li>
+          </ul>
+
+          <pre><code class="language-bash">puremix create my-app --template basic</code></pre>
+        </section>
+
+        <!-- Project Structure -->
+        <section id="project-structure" class="docs-section">
+          <h2>Project Structure</h2>
+          <pre><code class="language-bash">my-app/
+├── app/
+│   ├── routes/           # File-based routing
+│   │   ├── index.puremix # Home page (/)
+│   │   ├── about.puremix # About page (/about)
+│   │   └── products/
+│   │       ├── index.puremix  # /products
+│   │       └── [id].puremix   # /products/:id
+│   ├── components/       # Reusable components
+│   ├── layouts/          # Layout templates
+│   ├── lib/              # Utility functions
+│   └── services/         # Business logic & Python modules
+├── public/               # Static assets
+├── puremix.config.js     # Framework configuration
+└── package.json</code></pre>
+        </section>
+
+        <!-- Routing -->
+        <section id="routing" class="docs-section">
+          <h2>File-Based Routing</h2>
+          <p>
+            PureMix uses file structure to define URL routes automatically - inspired by Remix's routing system.
+            No configuration needed.
+          </p>
+
+          <h3>Basic Routes</h3>
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>File Path</th>
+                <th>URL Route</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>app/routes/index.puremix</code></td>
+                <td><code>/</code></td>
+              </tr>
+              <tr>
+                <td><code>app/routes/about.puremix</code></td>
+                <td><code>/about</code></td>
+              </tr>
+              <tr>
+                <td><code>app/routes/products/index.puremix</code></td>
+                <td><code>/products</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Dynamic Parameters</h3>
+          <p>Use square brackets <code>[param]</code> for dynamic route segments:</p>
+
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>File Path</th>
+                <th>URL Pattern</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>products/[id].puremix</code></td>
+                <td><code>/products/:id</code></td>
+                <td><code>/products/123</code></td>
+              </tr>
+              <tr>
+                <td><code>blog/[category]/[slug].puremix</code></td>
+                <td><code>/blog/:category/:slug</code></td>
+                <td><code>/blog/tech/ai-revolution</code></td>
+              </tr>
+              <tr>
+                <td><code>docs/[...slug].puremix</code></td>
+                <td><code>/docs/*</code> (catch-all)</td>
+                <td><code>/docs/api/users/create</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Example: Dynamic Route</h3>
+          <pre><code class="language-markup">&lt;!-- File: app/routes/products/[id].puremix --&gt;
+&lt;loader&gt;
+  async function loadProduct(request) {
+    const productId = request.params.id; // Extract from URL
+    const product = await getProduct(productId);
+
+    return {
+      data: { product }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;div&gt;
+  &lt;h1&gt;{loadProduct.data.product.name}&lt;/h1&gt;
+  &lt;p&gt;Product ID: {params.id}&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+          <h3>Query Parameters</h3>
+          <p>Query parameters are automatically available via <code>request.query</code>:</p>
+          <pre><code class="language-javascript">// URL: /products/123?category=electronics&sort=price
+async function loadProduct(request) {
+  const productId = request.params.id;      // "123"
+  const category = request.query.category;  // "electronics"
+  const sortBy = request.query.sort;        // "price"
+
+  // Use in your logic
+  const product = await getProduct(productId);
+  const related = await getRelatedProducts(category, sortBy);
+
+  return { data: { product, related } };
+}</code></pre>
+        </section>
+
+        <!-- Loaders -->
+        <section id="loaders" class="docs-section">
+          <h2>Loaders (Data Fetching)</h2>
+          <p>
+            Loaders run <strong>on the server</strong> before the page renders. They fetch data from databases,
+            APIs, or any other source and make it available to your templates.
+          </p>
+
+          <div class="important-note">
+            <strong>⚠️ Critical Concept:</strong> The <code>actionResult</code> parameter contains the return value
+            from any action (server function) that executed before the loader. This is how PureMix handles the
+            Remix pattern: <strong>Action → Loader → Render</strong>.
+          </div>
+
+          <h3>Basic Loader</h3>
+          <pre><code class="language-markup">&lt;loader&gt;
+  async function loadPage(request, actionResult) {
+    // Fetch data from database, API, etc.
+    const products = await getProducts();
+
+    // Check if an action just ran
+    const message = actionResult?.success
+      ? 'Product saved successfully!'
+      : null;
+
+    return {
+      data: { products, message }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;div&gt;
+  {loadPage.data.message &&
+    &lt;div class="alert"&gt;{loadPage.data.message}&lt;/div&gt;
+  }
+
+  &lt;h1&gt;Products&lt;/h1&gt;
+  {loadPage.data.products.map(product =&gt;
+    &lt;div class="product"&gt;{product.name}&lt;/div&gt;
+  )}
+&lt;/div&gt;</code></pre>
+
+          <h3>Accessing Loader Data in Templates</h3>
+          <p>Loader data is available using the loader function name:</p>
+          <pre><code class="language-markup">{loadPage.data.user.name}
+{loadDashboard.data.stats.total}
+{loadProducts.data.items.length}</code></pre>
+
+          <h3>Request Object</h3>
+          <p>The <code>request</code> parameter provides access to:</p>
+          <ul>
+            <li><code>request.params</code> - URL parameters (e.g., <code>{id}</code> from <code>[id].puremix</code>)</li>
+            <li><code>request.query</code> - Query string parameters</li>
+            <li><code>request.method</code> - HTTP method (GET, POST, etc.)</li>
+            <li><code>request.headers</code> - HTTP headers</li>
+            <li><code>request.cookies</code> - Parsed cookies</li>
+            <li><code>request.body</code> - Request body (for POST requests)</li>
+          </ul>
+        </section>
+
+        <!-- Actions -->
+        <section id="actions" class="docs-section">
+          <h2>Actions (Mutations)</h2>
+          <p>
+            Actions are server-side functions that handle mutations (create, update, delete operations).
+            They run in <code>&lt;script server&gt;</code> blocks and are triggered by forms or AJAX calls.
+          </p>
+
+          <div class="important-note">
+            <strong>⚠️ Important:</strong> When an action runs, its return value is passed to the loader as
+            <code>actionResult</code>. The loader then re-executes with this data, allowing you to show
+            success messages, updated data, or handle errors.
+          </div>
+
+          <h3>Basic Action</h3>
+          <pre><code class="language-markup">&lt;loader&gt;
+  async function loadProducts(request, actionResult) {
+    const products = await getProducts();
+    const message = actionResult?.success
+      ? 'Product created successfully!'
+      : actionResult?.error;
+
+    return {
+      data: { products, message }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;div&gt;
+  {loadProducts.data.message &&
+    &lt;div class="alert"&gt;{loadProducts.data.message}&lt;/div&gt;
+  }
+
+  &lt;form onsubmit="createProduct"&gt;
+    &lt;input name="name" placeholder="Product name" required&gt;
+    &lt;input name="price" type="number" placeholder="Price" required&gt;
+    &lt;button type="submit"&gt;Create Product&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/div&gt;
+
+&lt;script server&gt;
+  async function createProduct(formData, request) {
+    try {
+      const product = await saveProduct({
+        name: formData.get('name'),
+        price: parseFloat(formData.get('price'))
+      });
+
+      return {
+        success: true,
+        product
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+&lt;/script&gt;</code></pre>
+
+          <h3>Form Handling</h3>
+          <p>Connect forms to actions using the <code>onsubmit</code> attribute:</p>
+          <pre><code class="language-markup">&lt;form onsubmit="handleSubmit"&gt;
+  &lt;!-- Form fields automatically extracted as FormData --&gt;
+  &lt;input name="email" type="email"&gt;
+  &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;script server&gt;
+  async function handleSubmit(formData, request) {
+    const email = formData.get('email');
+    // Process form submission
+    return { success: true };
+  }
+&lt;/script&gt;</code></pre>
+
+          <h3>AJAX Actions</h3>
+          <p>Call actions from client-side JavaScript using the <code>PureMix.call()</code> API:</p>
+          <pre><code class="language-markup">&lt;button onclick="handleClick()"&gt;Update&lt;/button&gt;
+
+&lt;script&gt;
+  async function handleClick() {
+    const result = await PureMix.call('updateData', {
+      userId: 123,
+      status: 'active'
+    });
+
+    if (result.success) {
+      console.log('Update successful!');
+    }
+  }
+&lt;/script&gt;
+
+&lt;script server&gt;
+  async function updateData(data, request) {
+    await updateUser(data.userId, { status: data.status });
+    return { success: true };
+  }
+&lt;/script&gt;</code></pre>
+        </section>
+
+        <!-- Templates -->
+        <section id="templates" class="docs-section">
+          <h2>Templates & Expressions</h2>
+          <p>
+            PureMix templates use curly braces <code>{}</code> for dynamic expressions. The template engine
+            is AST-based (completely regex-free) for reliable parsing.
+          </p>
+
+          <h3>Simple Expressions</h3>
+          <pre><code class="language-markup">&lt;div&gt;
+  &lt;h1&gt;{user.name}&lt;/h1&gt;
+  &lt;p&gt;{user.email}&lt;/p&gt;
+  &lt;p&gt;Total: ${product.price}&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+          <h3>Conditional Rendering</h3>
+          <pre><code class="language-markup">&lt;!-- Ternary operators --&gt;
+{user.isActive ?
+  &lt;div&gt;Active User&lt;/div&gt; :
+  &lt;div&gt;Inactive&lt;/div&gt;
+}
+
+&lt;!-- Boolean conditions --&gt;
+{user.isAdmin && &lt;div&gt;Admin Panel&lt;/div&gt;}
+
+&lt;!-- Nested conditions --&gt;
+{user.role === 'admin' ?
+  &lt;div&gt;Admin Dashboard&lt;/div&gt; :
+  user.role === 'moderator' ?
+    &lt;div&gt;Moderator Panel&lt;/div&gt; :
+    &lt;div&gt;User Profile&lt;/div&gt;
+}</code></pre>
+
+          <h3>Array Mapping</h3>
+          <pre><code class="language-markup">{products.map(product =&gt;
+  &lt;div class="product-card"&gt;
+    &lt;h3&gt;{product.name}&lt;/h3&gt;
+    &lt;p&gt;${product.price}&lt;/p&gt;
+    &lt;button onclick="addToCart"&gt;Add to Cart&lt;/button&gt;
+  &lt;/div&gt;
+)}</code></pre>
+
+          <h3>JavaScript Blocks</h3>
+          <p>Execute complex JavaScript within templates and export variables:</p>
+          <pre><code class="language-markup">{
+  // Full JavaScript execution
+  let activeUsers = users.filter(u =&gt; u.isActive);
+  let adminCount = activeUsers.filter(u =&gt; u.role === 'admin').length;
+
+  function formatRole(role) {
+    return role.charAt(0).toUpperCase() + role.slice(1);
+  }
+
+  // Export variables to template
+  __export = { activeUsers, adminCount, formatRole };
+}
+
+&lt;div&gt;
+  &lt;h2&gt;Active Users: {activeUsers.length} (Admins: {adminCount})&lt;/h2&gt;
+  {activeUsers.map(user =&gt;
+    &lt;div&gt;{user.name} - {formatRole(user.role)}&lt;/div&gt;
+  )}
+&lt;/div&gt;</code></pre>
+        </section>
+
+        <!-- Components -->
+        <section id="components" class="docs-section">
+          <h2>Components</h2>
+          <p>
+            Components are reusable <code>.puremix</code> files that can be imported and used in other pages
+            or components. They support props, server functions, and client scripts.
+          </p>
+
+          <h3>Creating a Component</h3>
+          <pre><code class="language-markup">&lt;!-- File: app/components/UserCard.puremix --&gt;
+&lt;div class="user-card"&gt;
+  &lt;img src="{user.avatar}" alt="{user.name}"&gt;
+  &lt;h3&gt;{user.name}&lt;/h3&gt;
+  &lt;p&gt;{user.email}&lt;/p&gt;
+
+  {isEditable &&
+    &lt;button onclick="updateUser"&gt;Edit&lt;/button&gt;
+  }
+&lt;/div&gt;
+
+&lt;script server&gt;
+  async function updateUser(formData, request) {
+    // Component-scoped server function
+    const userId = formData.get('userId');
+    await updateUserData(userId);
+    return { success: true };
+  }
+&lt;/script&gt;
+
+&lt;style&gt;
+  .user-card {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+&lt;/style&gt;</code></pre>
+
+          <h3>Using Components</h3>
+          <pre><code class="language-markup">&lt;imports&gt;
+  import UserCard from '../components/UserCard.puremix'
+  import ProductList from '../components/ProductList.puremix'
+&lt;/imports&gt;
+
+&lt;loader&gt;
+  async function loadPage(request) {
+    const users = await getUsers();
+    return { data: { users } };
+  }
+&lt;/loader&gt;
+
+&lt;div&gt;
+  &lt;h1&gt;Team Members&lt;/h1&gt;
+  {loadPage.data.users.map(user =&gt;
+    &lt;UserCard user={user} isEditable={true} /&gt;
+  )}
+&lt;/div&gt;</code></pre>
+
+          <h3>Component Props</h3>
+          <p>Pass data to components using JSX-style syntax:</p>
+          <pre><code class="language-markup">&lt;!-- Passing props --&gt;
+&lt;UserCard
+  user={userData}
+  isActive={true}
+  config={{theme: "dark", showEmail: true}}
+/&gt;
+
+&lt;!-- Accessing props in component --&gt;
+&lt;div&gt;
+  &lt;h3&gt;{user.name}&lt;/h3&gt;
+  {isActive && &lt;span class="badge"&gt;Active&lt;/span&gt;}
+  {config.showEmail && &lt;p&gt;{user.email}&lt;/p&gt;}
+&lt;/div&gt;</code></pre>
+
+          <h3>Component Server Functions</h3>
+          <p>
+            Component server functions are automatically namespaced with the component name to avoid conflicts:
+          </p>
+          <pre><code class="language-javascript">// Automatically available:
+// - ComponentName.functionName
+// - updateUser (if unique globally)
+
+// Call from forms:
+&lt;form onsubmit="UserCard.updateUser"&gt;
+
+// Call from JavaScript:
+await PureMix.call('UserCard.updateUser', data);</code></pre>
+        </section>
+
+        <!-- Python Overview -->
+        <section id="python-overview" class="docs-section">
+          <h2>Python Integration Overview</h2>
+          <p>
+            PureMix provides seamless Python integration as a first-class language alongside JavaScript and TypeScript.
+            Python functions can be called exactly like JavaScript functions, with automatic process pooling and
+            graceful fallbacks.
+          </p>
+
+          <h3>Six Integration Methods</h3>
+          <div class="method-grid">
+            <div class="method-card">
+              <h4>1. Script Tags</h4>
+              <p>Embed Python directly in <code>.puremix</code> files</p>
+            </div>
+            <div class="method-card">
+              <h4>2. Standalone Modules</h4>
+              <p>Auto-discovered <code>.py</code> files</p>
+            </div>
+            <div class="method-card">
+              <h4>3. ES6 Imports</h4>
+              <p>Import Python like JavaScript modules</p>
+            </div>
+            <div class="method-card">
+              <h4>4. Global Functions</h4>
+              <p>Call Python functions globally without imports</p>
+            </div>
+            <div class="method-card">
+              <h4>5. Inline Execution</h4>
+              <p>Dynamic Python code execution</p>
+            </div>
+            <div class="method-card">
+              <h4>6. ML Libraries</h4>
+              <p>Direct NumPy, Pandas, Scikit-learn access</p>
+            </div>
+          </div>
+
+          <h3>Python Process Architecture</h3>
+          <ul>
+            <li><strong>Process Pool:</strong> 4 dedicated Python workers for parallel execution</li>
+            <li><strong>Auto-Discovery:</strong> Recursive scanning of <code>app/</code> directory at startup</li>
+            <li><strong>Graceful Fallbacks:</strong> Framework continues working if Python unavailable</li>
+            <li><strong>Context Sharing:</strong> JavaScript data seamlessly passed to Python functions</li>
+          </ul>
+
+          <pre><code class="language-bash"># Server startup logs
+🚀 PYTHON STARTUP: Spawning 4 worker processes...
+🐍 Python executor initialized: 4 workers ready
+🔍 RECURSIVE PYTHON SCAN: Discovering modules in /app/...
+   📜 services/financial_analyzer: calculate_loan, analyze_portfolio
+   📜 lib/data_processor: validate_data, process_data
+🐍 Python modules: 2/2 modules (4 functions)</code></pre>
+        </section>
+
+        <!-- Python Script Tags -->
+        <section id="python-script-tags" class="docs-section">
+          <h2>Python Script Tags</h2>
+          <p>
+            Embed Python functions directly in your <code>.puremix</code> files using
+            <code>&lt;script server lang="python"&gt;</code> tags.
+          </p>
+
+          <h3>Basic Example</h3>
+          <pre><code class="language-markup">&lt;loader&gt;
+  async function loadDashboard(request) {
+    const salesData = await getSalesData();
+
+    // Call Python function
+    const analysis = await analyze_sales({ sales: salesData });
+
+    return {
+      data: { salesData, analysis }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;div&gt;
+  &lt;h1&gt;Sales Dashboard&lt;/h1&gt;
+  &lt;p&gt;Average: ${analysis.average}&lt;/p&gt;
+  &lt;p&gt;Total: ${analysis.total}&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script server lang="python"&gt;
+def analyze_sales(data, js_context=None):
+    """Analyze sales data using Python"""
+    import statistics
+
+    sales = [item['amount'] for item in data.get('sales', [])]
+
+    return {
+        'success': True,
+        'average': statistics.mean(sales) if sales else 0,
+        'total': sum(sales),
+        'count': len(sales)
+    }
+&lt;/script&gt;</code></pre>
+
+          <h3>With Pandas and NumPy</h3>
+          <pre><code class="language-markup">&lt;script server lang="python"&gt;
+def calculate_loan(data, js_context=None):
+    """Calculate loan amortization with pandas"""
+    import pandas as pd
+    import numpy as np
+
+    principal = data.get('principal', 0)
+    rate = data.get('rate', 0) / 100 / 12
+    years = data.get('years', 0)
+    months = years * 12
+
+    # Monthly payment calculation
+    if rate == 0:
+        payment = principal / months
+    else:
+        payment = principal * (rate * (1 + rate)**months) / ((1 + rate)**months - 1)
+
+    # Create amortization schedule
+    schedule = []
+    balance = principal
+
+    for month in range(1, months + 1):
+        interest = balance * rate
+        principal_payment = payment - interest
+        balance -= principal_payment
+
+        schedule.append({
+            'month': month,
+            'payment': round(payment, 2),
+            'principal': round(principal_payment, 2),
+            'interest': round(interest, 2),
+            'balance': round(max(balance, 0), 2)
+        })
+
+    df = pd.DataFrame(schedule)
+
+    return {
+        'success': True,
+        'monthly_payment': round(payment, 2),
+        'total_paid': round(payment * months, 2),
+        'total_interest': round((payment * months) - principal, 2),
+        'schedule': df.to_dict('records')
+    }
+&lt;/script&gt;</code></pre>
+
+          <h3>Function Signature</h3>
+          <p>Python server functions should follow this pattern:</p>
+          <pre><code class="language-python">def function_name(data, js_context=None):
+    """
+    Args:
+        data: Input data from JavaScript (dict)
+        js_context: Optional additional context from JavaScript
+
+    Returns:
+        dict: Result object (must be JSON-serializable)
+    """
+    # Your Python code here
+
+    return {
+        'success': True,
+        'result': processed_data
+    }</code></pre>
+        </section>
+
+        <!-- Python Modules -->
+        <section id="python-modules" class="docs-section">
+          <h2>Standalone Python Modules</h2>
+          <p>
+            Create independent Python files in your <code>app/</code> directory. PureMix automatically discovers
+            and registers all Python modules at server startup.
+          </p>
+
+          <h3>Creating a Module</h3>
+          <pre><code class="language-python"># File: app/services/financial_analyzer.py
+
+def calculate_loan_amortization(data, js_context=None):
+    """Calculate loan amortization schedule"""
+    principal = data.get('principal', 0)
+    rate = data.get('rate', 0) / 100 / 12
+    years = data.get('years', 0)
+
+    # Complex calculations...
+
+    return {
+        'success': True,
+        'monthly_payment': monthly_payment,
+        'total_interest': total_interest,
+        'schedule': payment_schedule
+    }
+
+def analyze_investment_portfolio(data, js_context=None):
+    """Analyze investment portfolio performance"""
+    import pandas as pd
+    import numpy as np
+
+    df = pd.DataFrame(data.get('investments', []))
+
+    return {
+        'success': True,
+        'total_value': float(df['value'].sum()),
+        'roi': float(df['roi'].mean())
+    }</code></pre>
+
+          <h3>Using Python Modules</h3>
+          <pre><code class="language-javascript">// Method 1: Direct execution
+const analysis = await request.python.executeFile(
+  './app/services/financial_analyzer.py',
+  'calculate_loan_amortization',
+  { principal: 300000, rate: 4.5, years: 30 }
+);</code></pre>
+
+          <h3>Auto-Discovery at Startup</h3>
+          <pre><code class="language-bash">🔍 RECURSIVE PYTHON SCAN: Discovering modules in /app/...
+   📜 controllers/user_controller: get_user_profile, update_user_settings
+   📜 lib/data_processor: process_data, validate_data
+   📜 services/financial_analyzer: calculate_loan, analyze_portfolio
+   📜 services/ml_analyzer: analyze_dataset, train_model
+🐍 Python modules: 4/4 modules (12 functions)</code></pre>
+        </section>
+
+        <!-- Python ES6 Imports -->
+        <section id="python-imports" class="docs-section">
+          <h2>ES6 Python Imports</h2>
+          <p>
+            <strong>Revolutionary feature:</strong> Import Python modules using standard ES6 import syntax.
+            Python functions become callable exactly like JavaScript functions.
+          </p>
+
+          <h3>Import Python Like JavaScript</h3>
+          <pre><code class="language-markup">&lt;imports&gt;
+  import { validate_data, process_data } from '../lib/data_processor'
+  import { calculate_loan } from '../services/financial_analyzer'
+  import { format_text } from '../lib/utils/string_helpers'
+&lt;/imports&gt;
+
+&lt;loader&gt;
+  async function loadPage(request) {
+    // Call Python functions exactly like JavaScript!
+    const validation = await validate_data({
+      user_id: request.params.id,
+      email: request.query.email
+    });
+
+    const processed = await process_data(validation);
+
+    const loan = await calculate_loan({
+      principal: 300000,
+      rate: 4.5,
+      years: 30
+    });
+
+    return {
+      data: { validation, processed, loan }
+    };
+  }
+&lt;/loader&gt;</code></pre>
+
+          <h3>How It Works</h3>
+          <ul>
+            <li><strong>Smart Module Resolution:</strong> ImportResolver detects <code>.py</code> files automatically</li>
+            <li><strong>Pre-loaded References:</strong> Python modules loaded at server startup (no import overhead)</li>
+            <li><strong>Language Transparency:</strong> No difference between calling Python or JavaScript functions</li>
+            <li><strong>Type Safety:</strong> Return values automatically unwrapped from Python execution context</li>
+          </ul>
+        </section>
+
+        <!-- Python Global Functions -->
+        <section id="python-global" class="docs-section">
+          <h2>Global Python Functions</h2>
+          <p>
+            <strong>Ultimate convenience:</strong> All Python functions are automatically available globally
+            without any imports. Just call them like regular JavaScript functions.
+          </p>
+
+          <h3>No Imports Required</h3>
+          <pre><code class="language-markup">&lt;loader&gt;
+  async function loadPage(request) {
+    // Call Python functions directly - no imports needed!
+    const validation = await validate_data({
+      user_id: 12345
+    });
+
+    const processed = await process_data(validation);
+
+    const formatted = await format_text({
+      text: 'hello world'
+    });
+
+    return {
+      data: { validation, processed, formatted }
+    };
+  }
+&lt;/loader&gt;</code></pre>
+
+          <h3>Global Function Registry</h3>
+          <p>At server startup, all Python functions are registered globally:</p>
+          <pre><code class="language-bash">🔍 FILE PARSER: Adding 36 global Python functions to compilation context
+📋 Available functions:
+   - validate_data
+   - process_data
+   - calculate_loan
+   - analyze_portfolio
+   - format_text
+   - ...</code></pre>
+
+          <h3>Architecture Benefits</h3>
+          <ul>
+            <li><strong>Zero Configuration:</strong> Functions available immediately after server starts</li>
+            <li><strong>No Import Overhead:</strong> Pre-registered at startup for instant access</li>
+            <li><strong>Namespace Protection:</strong> Conflicts handled with <code>module_function</code> fallback</li>
+            <li><strong>Performance:</strong> Direct process pool access without module resolution</li>
+          </ul>
+        </section>
+
+        <!-- Python Inline -->
+        <section id="python-inline" class="docs-section">
+          <h2>Inline Python Execution</h2>
+          <p>
+            Execute dynamic Python code at runtime using <code>request.python.call()</code>.
+            Perfect for ad-hoc calculations or runtime code generation.
+          </p>
+
+          <h3>Basic Inline Execution</h3>
+          <pre><code class="language-javascript">const result = await request.python.call('analyze_data', inputData, `
+  import pandas as pd
+  import numpy as np
+
+  def analyze_data(data, js_context=None):
+    df = pd.DataFrame(data)
+
+    return {
+      'success': True,
+      'mean': float(df['values'].mean()),
+      'std': float(df['values'].std()),
+      'analysis': 'Complete'
+    }
+`);</code></pre>
+
+          <h3>With Complex Logic</h3>
+          <pre><code class="language-markup">&lt;loader&gt;
+  async function loadAnalytics(request) {
+    const rawData = await getRawData();
+
+    // Execute custom Python analysis
+    const analysis = await request.python.call('custom_analysis', rawData, `
+      import pandas as pd
+      import numpy as np
+      from sklearn.linear_model import LinearRegression
+
+      def custom_analysis(data, js_context=None):
+        df = pd.DataFrame(data.get('records', []))
+
+        # Feature engineering
+        df['date'] = pd.to_datetime(df['date'])
+        df['day_of_week'] = df['date'].dt.dayofweek
+
+        # Simple linear regression
+        X = df[['day_of_week']].values
+        y = df['sales'].values
+
+        model = LinearRegression()
+        model.fit(X, y)
+
+        predictions = model.predict(X)
+
+        return {
+          'success': True,
+          'coefficients': model.coef_.tolist(),
+          'predictions': predictions.tolist(),
+          'r_squared': float(model.score(X, y))
+        }
+    `);
+
+    return {
+      data: { rawData, analysis: analysis.data }
+    };
+  }
+&lt;/loader&gt;</code></pre>
+
+          <h3>Use Cases</h3>
+          <ul>
+            <li>Dynamic data analysis with user-defined parameters</li>
+            <li>Runtime code generation and execution</li>
+            <li>Testing Python code without creating files</li>
+            <li>Prototyping ML models before moving to modules</li>
+          </ul>
+        </section>
+
+        <!-- Python ML -->
+        <section id="python-ml" class="docs-section">
+          <h2>ML Library Integration</h2>
+          <p>
+            PureMix provides built-in interfaces for popular Python ML libraries: NumPy, Pandas,
+            Scikit-learn, and TensorFlow.
+          </p>
+
+          <h3>Available Libraries</h3>
+          <pre><code class="language-javascript">// NumPy operations
+const array = await request.python.numpy.array([1, 2, 3, 4, 5]);
+
+// Pandas DataFrame operations
+const df = await request.python.pandas.DataFrame(data);
+
+// Scikit-learn model training
+const model = await request.python.sklearn.train(features, labels);
+
+// TensorFlow operations
+const tensor = await request.python.tensorflow.constant([1, 2, 3]);</code></pre>
+
+          <h3>Complete ML Example</h3>
+          <pre><code class="language-markup">&lt;loader&gt;
+  async function loadMLDashboard(request) {
+    const historicalData = await getHistoricalData();
+
+    // Call Python for ML analysis
+    const prediction = await predict_time_series(historicalData);
+
+    return {
+      data: { historicalData, prediction }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;script server lang="python"&gt;
+def predict_time_series(data, js_context=None):
+    """Time series prediction with pandas and numpy"""
+    import pandas as pd
+    import numpy as np
+    from sklearn.linear_model import LinearRegression
+
+    # Create DataFrame
+    df = pd.DataFrame(data.get('records', []))
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.sort_values('date')
+
+    # Feature engineering
+    df['timestamp'] = df['date'].astype(int) / 10**9
+    df['day_of_week'] = df['date'].dt.dayofweek
+    df['month'] = df['date'].dt.month
+
+    # Prepare features and target
+    X = df[['timestamp', 'day_of_week', 'month']].values
+    y = df['value'].values
+
+    # Train model
+    model = LinearRegression()
+    model.fit(X, y)
+
+    # Make predictions for next 7 days
+    last_date = df['date'].max()
+    future_dates = pd.date_range(
+        start=last_date + pd.Timedelta(days=1),
+        periods=7,
+        freq='D'
+    )
+
+    future_features = np.array([
+        [date.timestamp(), date.dayofweek, date.month]
+        for date in future_dates
+    ])
+
+    predictions = model.predict(future_features)
+
+    return {
+        'success': True,
+        'predictions': [
+            {
+                'date': str(date.date()),
+                'value': float(pred)
+            }
+            for date, pred in zip(future_dates, predictions)
+        ],
+        'r_squared': float(model.score(X, y)),
+        'coefficients': model.coef_.tolist()
+    }
+&lt;/script&gt;</code></pre>
+        </section>
+
+        <!-- API Handlers -->
+        <section id="api-handlers" class="docs-section">
+          <h2>API Handlers</h2>
+          <p>
+            PureMix supports building APIs of any type (REST, RPC, GraphQL, etc.) using handler functions
+            in JavaScript, TypeScript, or Python.
+          </p>
+
+          <h3>Handler Discovery Priority</h3>
+          <p>PureMix searches for handler functions in this order:</p>
+          <ol>
+            <li><code>export default async function handler(req, res)</code></li>
+            <li><code>export async function GET(req, res)</code> (or POST, PUT, DELETE)</li>
+            <li><code>export async function get(req, res)</code> (lowercase)</li>
+            <li><code>export async function handle/process/execute(req, res)</code></li>
+            <li><code>def main(context)</code> (Python)</li>
+          </ol>
+
+          <h3>Single Handler Pattern</h3>
+          <pre><code class="language-javascript">// File: app/routes/api/users.js
+export default async function handler(request, response) {
+  if (request.method !== 'GET') {
+    return response.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const users = await getUsers();
+  return response.status(200).json({
+    success: true,
+    data: users
+  });
+}</code></pre>
+
+          <h3>Multi-Method Handler</h3>
+          <pre><code class="language-javascript">// File: app/routes/api/products/[id].js
+export default async function handler(request, response) {
+  const { method } = request;
+  const { id } = request.params;
+
+  if (method === 'GET') {
+    const product = await getProduct(id);
+    return response.json({ data: product });
+  }
+
+  if (method === 'PUT' || method === 'PATCH') {
+    const updated = await updateProduct(id, request.body);
+    return response.json({ data: updated });
+  }
+
+  if (method === 'DELETE') {
+    await deleteProduct(id);
+    return response.status(204).end();
+  }
+
+  return response.status(405).json({ error: 'Method not allowed' });
+}</code></pre>
+
+          <h3>Separate Method Exports</h3>
+          <pre><code class="language-javascript">// File: app/routes/api/products.js
+export async function GET(request, response) {
+  const products = await getProducts();
+  return response.json({ data: products });
+}
+
+export async function POST(request, response) {
+  const newProduct = await createProduct(request.body);
+  return response.status(201).json({ data: newProduct });
+}</code></pre>
+        </section>
+
+        <!-- REST APIs -->
+        <section id="api-rest" class="docs-section">
+          <h2>REST APIs</h2>
+          <p>Build RESTful APIs using file-based routing and standard HTTP methods.</p>
+
+          <h3>REST Resource Pattern</h3>
+          <pre><code class="language-bash">app/routes/api/
+├── products/
+│   ├── index.js          # GET /api/products, POST /api/products
+│   └── [id].js           # GET/PUT/DELETE /api/products/:id
+├── users/
+│   ├── index.js          # User collection
+│   └── [id]/
+│       ├── index.js      # Single user
+│       └── profile.js    # /api/users/:id/profile</code></pre>
+
+          <h3>Complete REST Example</h3>
+          <pre><code class="language-javascript">// File: app/routes/api/products/[id].js
+export default async function handler(request, response) {
+  const { method } = request;
+  const { id } = request.params;
+
+  // GET /api/products/:id
+  if (method === 'GET') {
+    try {
+      const product = await db.products.findById(id);
+
+      if (!product) {
+        return response.status(404).json({
+          error: 'Product not found'
+        });
+      }
+
+      return response.json({
+        success: true,
+        data: product
+      });
+    } catch (error) {
+      return response.status(500).json({
+        error: error.message
+      });
+    }
+  }
+
+  // PUT /api/products/:id
+  if (method === 'PUT') {
+    try {
+      const updated = await db.products.update(id, request.body);
+
+      return response.json({
+        success: true,
+        data: updated
+      });
+    } catch (error) {
+      return response.status(400).json({
+        error: error.message
+      });
+    }
+  }
+
+  // DELETE /api/products/:id
+  if (method === 'DELETE') {
+    try {
+      await db.products.delete(id);
+      return response.status(204).end();
+    } catch (error) {
+      return response.status(500).json({
+        error: error.message
+      });
+    }
+  }
+
+  return response.status(405).json({
+    error: 'Method not allowed'
+  });
+}</code></pre>
+        </section>
+
+        <!-- RPC APIs -->
+        <section id="api-rpc" class="docs-section">
+          <h2>RPC APIs</h2>
+          <p>Build RPC-style APIs where methods are called via a single endpoint.</p>
+
+          <h3>RPC Endpoint</h3>
+          <pre><code class="language-javascript">// File: app/routes/api/rpc.js
+export default async function handler(request, response) {
+  if (request.method !== 'POST') {
+    return response.status(405).json({ error: 'POST required' });
+  }
+
+  const { method, params } = request.body;
+
+  switch (method) {
+    case 'user.create':
+      return response.json(await createUser(params));
+
+    case 'user.get':
+      return response.json(await getUser(params));
+
+    case 'user.update':
+      return response.json(await updateUser(params));
+
+    case 'order.place':
+      return response.json(await placeOrder(params));
+
+    case 'order.status':
+      return response.json(await getOrderStatus(params));
+
+    default:
+      return response.status(400).json({
+        error: 'Unknown method'
+      });
+  }
+}
+
+async function createUser(params) {
+  const user = await db.users.create({
+    email: params.email,
+    name: params.name
+  });
+
+  return {
+    success: true,
+    userId: user.id
+  };
+}
+
+async function getUser(params) {
+  const user = await db.users.findById(params.userId);
+
+  return {
+    success: true,
+    user
+  };
+}</code></pre>
+
+          <h3>Client Usage</h3>
+          <pre><code class="language-javascript">// Client-side RPC calls
+async function callRPC(method, params) {
+  const response = await fetch('/api/rpc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ method, params })
+  });
+
+  return response.json();
+}
+
+// Create user
+const result = await callRPC('user.create', {
+  email: 'user@example.com',
+  name: 'John Doe'
+});
+
+// Get user
+const user = await callRPC('user.get', {
+  userId: result.userId
+});</code></pre>
+        </section>
+
+        <!-- Python APIs -->
+        <section id="api-python" class="docs-section">
+          <h2>Python API Handlers</h2>
+          <p>
+            Build APIs using Python for data-intensive operations, ML inference, or when you
+            prefer Python's ecosystem.
+          </p>
+
+          <h3>Python API Handler</h3>
+          <pre><code class="language-python"># File: app/routes/api/analyze.py
+import json
+
+def main(context):
+    """Python API handler"""
+    request = context.get('request', {})
+    method = request.get('method', 'GET').upper()
+
+    if method != 'POST':
+        return {
+            'status': 405,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({'error': 'Method not allowed'})
+        }
+
+    # Process data with Python libraries
+    data = request.get('body', {})
+    result = process_data(data)
+
+    return {
+        'status': 200,
+        'headers': {'Content-Type': 'application/json'},
+        'body': json.dumps({
+            'success': True,
+            'data': result
+        })
+    }
+
+def process_data(data):
+    """Process data with pandas/numpy"""
+    import pandas as pd
+    import numpy as np
+
+    df = pd.DataFrame(data.get('records', []))
+
+    return {
+        'mean': float(df['value'].mean()),
+        'std': float(df['value'].std()),
+        'count': len(df)
+    }</code></pre>
+
+          <h3>ML Inference API</h3>
+          <pre><code class="language-python"># File: app/routes/api/ml/predict.py
+import json
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+# Load pre-trained model (in production, load from file)
+model = LinearRegression()
+
+def main(context):
+    """ML prediction API endpoint"""
+    request = context.get('request', {})
+
+    if request.get('method') != 'POST':
+        return error_response('POST required', 405)
+
+    try:
+        # Get features from request
+        data = request.get('body', {})
+        features = np.array(data.get('features', [])).reshape(1, -1)
+
+        # Make prediction
+        prediction = model.predict(features)
+
+        return {
+            'status': 200,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({
+                'success': True,
+                'prediction': float(prediction[0]),
+                'model': 'LinearRegression'
+            })
+        }
+    except Exception as e:
+        return error_response(str(e), 400)
+
+def error_response(message, status=400):
+    return {
+        'status': status,
+        'headers': {'Content-Type': 'application/json'},
+        'body': json.dumps({
+            'success': False,
+            'error': message
+        })
+    }</code></pre>
+
+          <h3>Python Context Structure</h3>
+          <pre><code class="language-python">context = {
+    'request': {
+        'method': 'POST',
+        'params': { 'id': '123' },
+        'query': { 'page': '1' },
+        'body': { 'data': [...] },
+        'headers': { 'Content-Type': 'application/json' },
+        'cookies': { 'sessionId': 'abc' }
+    }
+}</code></pre>
+        </section>
+
+        <!-- JavaScript Blocks -->
+        <section id="javascript-blocks" class="docs-section">
+          <h2>JavaScript Blocks</h2>
+          <p>
+            Execute complex JavaScript within templates and export variables for use in HTML.
+            This feature provides full programming language capabilities within your templates.
+          </p>
+
+          <h3>Basic JavaScript Block</h3>
+          <pre><code class="language-markup">{
+  // Full JavaScript execution
+  let numbers = [1, 2, 3, 4, 5];
+  let doubled = numbers.map(n => n * 2);
+  let sum = doubled.reduce((acc, val) => acc + val, 0);
+
+  // Export to template
+  __export = { doubled, sum };
+}
+
+&lt;div&gt;
+  &lt;p&gt;Doubled: {doubled.join(', ')}&lt;/p&gt;
+  &lt;p&gt;Sum: {sum}&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+          <h3>Complex Data Processing</h3>
+          <pre><code class="language-markup">{
+  // Filter and transform data
+  let activeUsers = users.filter(u => u.isActive);
+  let usersByRole = activeUsers.reduce((acc, user) => {
+    acc[user.role] = acc[user.role] || [];
+    acc[user.role].push(user);
+    return acc;
+  }, {});
+
+  // Helper functions
+  function formatRole(role) {
+    return role.charAt(0).toUpperCase() + role.slice(1);
+  }
+
+  function calculateTotal(users) {
+    return users.reduce((sum, u) => sum + u.sales, 0);
+  }
+
+  // Export everything needed
+  __export = {
+    activeUsers,
+    usersByRole,
+    formatRole,
+    calculateTotal
+  };
+}
+
+&lt;div&gt;
+  &lt;h2&gt;Active Users: {activeUsers.length}&lt;/h2&gt;
+
+  {Object.keys(usersByRole).map(role =>
+    &lt;div class="role-section"&gt;
+      &lt;h3&gt;{formatRole(role)}: {usersByRole[role].length}&lt;/h3&gt;
+      &lt;p&gt;Total Sales: ${calculateTotal(usersByRole[role])}&lt;/p&gt;
+
+      {usersByRole[role].map(user =>
+        &lt;div class="user-card"&gt;
+          &lt;h4&gt;{user.name}&lt;/h4&gt;
+          &lt;p&gt;Sales: ${user.sales}&lt;/p&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  )}
+&lt;/div&gt;</code></pre>
+
+          <h3>Available JavaScript Features</h3>
+          <ul>
+            <li><strong>Variables:</strong> <code>let</code>, <code>const</code>, <code>var</code></li>
+            <li><strong>Functions:</strong> Regular and arrow functions</li>
+            <li><strong>Loops:</strong> <code>for</code>, <code>while</code>, <code>for...of</code></li>
+            <li><strong>Conditionals:</strong> <code>if/else</code>, <code>switch</code></li>
+            <li><strong>Array Methods:</strong> <code>.map()</code>, <code>.filter()</code>, <code>.reduce()</code></li>
+            <li><strong>Object Operations:</strong> <code>Object.keys()</code>, <code>Object.entries()</code></li>
+          </ul>
+
+          <h3>Architecture</h3>
+          <p>
+            JavaScript blocks are executed in isolated Node.js closures for security. The execution
+            environment has access to template data but not to Node.js globals like <code>fs</code> or
+            <code>process</code>.
+          </p>
+        </section>
+
+        <!-- Client Runtime -->
+        <section id="client-runtime" class="docs-section">
+          <h2>Client Runtime</h2>
+          <p>
+            PureMix automatically generates a client-side runtime (<code>window.PureMix</code>) that
+            provides AJAX functionality, loader data access, and server function calls.
+          </p>
+
+          <h3>PureMix.call() - AJAX Server Functions</h3>
+          <pre><code class="language-javascript">// Call server functions from client-side
+const result = await PureMix.call('updateUser', {
+  userId: 123,
+  name: 'Updated Name'
+});
+
+if (result.success) {
+  console.log('User updated!');
+}</code></pre>
+
+          <h3>PureMix.data - Loader Data Access</h3>
+          <pre><code class="language-javascript">// Access loader data in client scripts
+const userData = PureMix.data.loadPage.data.user;
+const settings = PureMix.data.loadDashboard.data.settings;
+
+console.log('Current user:', userData.name);
+console.log('Theme:', settings.theme);</code></pre>
+
+          <h3>Complete Client Example</h3>
+          <pre><code class="language-markup">&lt;loader&gt;
+  async function loadUserProfile(request) {
+    const user = await getUser(request.params.id);
+    const settings = await getSettings(user.id);
+
+    return {
+      data: { user, settings }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;div&gt;
+  &lt;h1 id="user-name"&gt;{loadUserProfile.data.user.name}&lt;/h1&gt;
+  &lt;button onclick="handleUpdate()"&gt;Update Name&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  // Client-side JavaScript
+  document.addEventListener('DOMContentLoaded', function() {
+    // Access loader data
+    const user = PureMix.data.loadUserProfile.data.user;
+    console.log('Loaded user:', user.name);
+
+    // Apply theme from settings
+    const theme = PureMix.data.loadUserProfile.data.settings.theme;
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
+    }
+  });
+
+  async function handleUpdate() {
+    const result = await PureMix.call('updateUserName', {
+      userId: PureMix.data.loadUserProfile.data.user.id,
+      name: 'New Name'
+    });
+
+    if (result.success) {
+      // Update UI
+      document.getElementById('user-name').textContent = result.user.name;
+    }
+  }
+&lt;/script&gt;
+
+&lt;script server&gt;
+  async function updateUserName(data, request) {
+    const user = await updateUser(data.userId, {
+      name: data.name
+    });
+
+    return { success: true, user };
+  }
+&lt;/script&gt;</code></pre>
+
+          <h3>API Reference</h3>
+          <ul>
+            <li><code>PureMix.call(functionName, data)</code> - Call server functions via AJAX</li>
+            <li><code>PureMix.data</code> - Access loader results in client scripts</li>
+            <li><code>PureMix.data.{loaderName}.data</code> - Loader data object</li>
+            <li><code>PureMix.data.{loaderName}.state</code> - Loader state object (optional)</li>
+          </ul>
+        </section>
+
+        <!-- DOM Diffing -->
+        <section id="dom-diffing" class="docs-section">
+          <h2>DOM Diffing Algorithm</h2>
+          <p>
+            PureMix implements a sophisticated client-side DOM diffing algorithm that provides
+            React-like update experience without page reloads. This eliminates visual flicker
+            during AJAX updates.
+          </p>
+
+          <h3>Key Features</h3>
+          <ul>
+            <li><strong>Node-Level Diffing:</strong> Only changed DOM nodes are updated</li>
+            <li><strong>Form State Preservation:</strong> Maintains focus, cursor position, and user input</li>
+            <li><strong>Scroll Position Recovery:</strong> Preserves scroll positions across updates</li>
+            <li><strong>Attribute Synchronization:</strong> Efficiently updates only changed attributes</li>
+            <li><strong>Performance:</strong> Sub-10ms update times for typical components</li>
+          </ul>
+
+          <h3>How It Works</h3>
+          <pre><code class="language-javascript">// Automatic diffing during component updates
+// File: lib/client-runtime.ts
+
+function diffAndUpdateDOM(oldElement, newHtml) {
+  // 1. Preserve scroll positions
+  const scrollPositions = preserveScrollPositions(oldElement);
+
+  // 2. Parse new HTML
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = newHtml;
+  const newElement = tempDiv.firstElementChild;
+
+  // 3. Diff nodes recursively
+  diffNodes(oldElement, newElement);
+
+  // 4. Restore scroll positions
+  restoreScrollPositions(oldElement, scrollPositions);
+}</code></pre>
+
+          <h3>Component Updates</h3>
+          <p>When components update via AJAX, the diffing algorithm ensures smooth transitions:</p>
+          <pre><code class="language-markup">&lt;div id="counter-component"&gt;
+  &lt;h2&gt;Count: {count}&lt;/h2&gt;
+  &lt;button onclick="increment"&gt;Increment&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;script server&gt;
+  let count = 0;
+
+  async function increment(formData, request) {
+    count++;
+    return { success: true, count };
+  }
+&lt;/script&gt;
+
+&lt;script&gt;
+  // When increment is called:
+  // 1. Server returns updated count
+  // 2. Component HTML re-rendered
+  // 3. DOM diffing updates ONLY the count value
+  // 4. No flicker, no full page reload
+&lt;/script&gt;</code></pre>
+
+          <h3>Performance Characteristics</h3>
+          <ul>
+            <li><strong>Average Update Time:</strong> 6-10ms for typical components</li>
+            <li><strong>Memory Efficient:</strong> Minimal DOM traversal with intelligent caching</li>
+            <li><strong>Form Friendly:</strong> Preserves active element focus and selection</li>
+            <li><strong>Scroll Aware:</strong> Maintains scroll state across all scrollable elements</li>
+          </ul>
+        </section>
+
+        <!-- Layouts -->
+        <section id="layouts" class="docs-section">
+          <h2>Layouts</h2>
+          <p>
+            Layouts wrap your pages with common HTML structure (headers, footers, navigation).
+            Define layouts once and reuse across multiple pages.
+          </p>
+
+          <h3>Creating a Layout</h3>
+          <pre><code class="language-markup">&lt;!-- File: app/layouts/main.puremix --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;{title || 'My App'}&lt;/title&gt;
+  &lt;link rel="stylesheet" href="/styles/main.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;nav class="navbar"&gt;
+    &lt;a href="/"&gt;Home&lt;/a&gt;
+    &lt;a href="/about"&gt;About&lt;/a&gt;
+    &lt;a href="/products"&gt;Products&lt;/a&gt;
+  &lt;/nav&gt;
+
+  &lt;main&gt;
+    {children}
+  &lt;/main&gt;
+
+  &lt;footer&gt;
+    &lt;p&gt;&copy; 2025 My App&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+          <h3>Using Layouts</h3>
+          <pre><code class="language-markup">&lt;!-- File: app/routes/index.puremix --&gt;
+&lt;layout&gt;main&lt;/layout&gt;
+
+&lt;loader&gt;
+  async function loadPage(request) {
+    return {
+      data: {
+        title: 'Home Page',
+        message: 'Welcome!'
+      }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;div&gt;
+  &lt;h1&gt;{loadPage.data.message}&lt;/h1&gt;
+  &lt;p&gt;This content will be wrapped in the main layout&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+          <h3>Nested Layouts</h3>
+          <pre><code class="language-markup">&lt;!-- File: app/layouts/dashboard.puremix --&gt;
+&lt;layout&gt;main&lt;/layout&gt;
+
+&lt;div class="dashboard-layout"&gt;
+  &lt;aside class="sidebar"&gt;
+    &lt;a href="/dashboard"&gt;Overview&lt;/a&gt;
+    &lt;a href="/dashboard/settings"&gt;Settings&lt;/a&gt;
+    &lt;a href="/dashboard/analytics"&gt;Analytics&lt;/a&gt;
+  &lt;/aside&gt;
+
+  &lt;div class="dashboard-content"&gt;
+    {children}
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+          <h3>Dynamic Layout Properties</h3>
+          <pre><code class="language-markup">&lt;!-- Pass data to layout from page --&gt;
+&lt;layout&gt;main&lt;/layout&gt;
+
+&lt;loader&gt;
+  async function loadPage(request) {
+    return {
+      data: {
+        title: 'Product Details',
+        showNav: true,
+        theme: 'dark'
+      }
+    };
+  }
+&lt;/loader&gt;</code></pre>
+        </section>
+
+        <!-- Production -->
+        <section id="production" class="docs-section">
+          <h2>Production Setup</h2>
+          <p>
+            Deploy PureMix applications to production with simple commands. No build step required -
+            Node.js 22+ has native TypeScript support.
+          </p>
+
+          <h3>Basic Production Start</h3>
+          <pre><code class="language-bash"># Set environment and start server
+NODE_ENV=production puremix start --port 3000 --host 0.0.0.0</code></pre>
+
+          <h3>Environment Variables</h3>
+          <pre><code class="language-bash"># Create .env.production
+NODE_ENV=production
+PORT=3000
+HOST=0.0.0.0
+DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+PYTHON_WORKERS=4
+VERBOSE_DEBUG=false</code></pre>
+
+          <h3>Health Checks</h3>
+          <pre><code class="language-javascript">// File: app/routes/health.js
+export default async function handler(request, response) {
+  const status = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    python: pythonExecutor.available(),
+    workers: pythonPool.getWorkerCount()
+  };
+
+  return response.json(status);
+}</code></pre>
+        </section>
+
+        <!-- PM2 -->
+        <section id="pm2" class="docs-section">
+          <h2>PM2 Process Manager</h2>
+          <p>
+            Use PM2 for production process management, including cluster mode, auto-restart,
+            and monitoring.
+          </p>
+
+          <h3>Basic PM2 Usage</h3>
+          <pre><code class="language-bash"># Install PM2
+npm install -g pm2
+
+# Start application
+pm2 start "puremix start" --name my-app
+
+# Check status
+pm2 status
+
+# View logs
+pm2 logs my-app
+
+# Restart
+pm2 restart my-app
+
+# Stop
+pm2 stop my-app</code></pre>
+
+          <h3>Cluster Mode</h3>
+          <pre><code class="language-bash"># Run 4 instances in cluster mode
+pm2 start "puremix start" \
+  --name my-app \
+  --instances 4 \
+  --exec-mode cluster
+
+# Auto-scale based on CPU cores
+pm2 start "puremix start" \
+  --name my-app \
+  --instances max \
+  --exec-mode cluster</code></pre>
+
+          <h3>PM2 Ecosystem File</h3>
+          <pre><code class="language-javascript">// ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'puremix-app',
+    script: 'puremix',
+    args: 'start',
+    instances: 4,
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000,
+      HOST: '0.0.0.0'
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+    merge_logs: true
+  }]
+};
+
+// Start with ecosystem file
+pm2 start ecosystem.config.js</code></pre>
+
+          <h3>Process Management</h3>
+          <pre><code class="language-bash"># Save PM2 process list
+pm2 save
+
+# Restore processes on boot
+pm2 startup
+
+# Monitor processes
+pm2 monit
+
+# Show process info
+pm2 show my-app
+
+# Delete process
+pm2 delete my-app</code></pre>
+        </section>
+
+        <!-- Docker -->
+        <section id="docker" class="docs-section">
+          <h2>Docker Deployment</h2>
+          <p>Deploy PureMix applications using Docker for consistent environments.</p>
+
+          <h3>Dockerfile</h3>
+          <pre><code class="language-dockerfile"># Dockerfile
+FROM node:22-alpine
+
+# Install Python (optional, for Python integration)
+RUN apk add --no-cache python3 py3-pip
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Install PureMix
+RUN npm install -g puremix@alpha
+
+# Copy application files
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Set environment
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
+# Start application
+CMD ["puremix", "start"]</code></pre>
+
+          <h3>Docker Compose</h3>
+          <pre><code class="language-yaml"># docker-compose.yml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://user:pass@db:5432/mydb
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:</code></pre>
+
+          <h3>Build and Run</h3>
+          <pre><code class="language-bash"># Build image
+docker build -t my-puremix-app .
+
+# Run container
+docker run -p 3000:3000 my-puremix-app
+
+# Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f app</code></pre>
+        </section>
+
+        <!-- Nginx -->
+        <section id="nginx" class="docs-section">
+          <h2>Nginx Configuration</h2>
+          <p>Use Nginx as a reverse proxy for PureMix applications with SSL, load balancing, and caching.</p>
+
+          <h3>Basic Reverse Proxy</h3>
+          <pre><code class="language-nginx"># /etc/nginx/sites-available/puremix-app
+server {
+    listen 80;
+    server_name example.com www.example.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Static files
+    location /public/ {
+        alias /var/www/puremix-app/public/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+}</code></pre>
+
+          <h3>SSL with Let's Encrypt</h3>
+          <pre><code class="language-nginx">server {
+    listen 443 ssl http2;
+    server_name example.com www.example.com;
+
+    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name example.com www.example.com;
+    return 301 https://$server_name$request_uri;
+}</code></pre>
+
+          <h3>Load Balancing</h3>
+          <pre><code class="language-nginx">upstream puremix_backend {
+    least_conn;
+    server localhost:3000;
+    server localhost:3001;
+    server localhost:3002;
+    server localhost:3003;
+}
+
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://puremix_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}</code></pre>
+
+          <h3>Enable Configuration</h3>
+          <pre><code class="language-bash"># Enable site
+sudo ln -s /etc/nginx/sites-available/puremix-app /etc/nginx/sites-enabled/
+
+# Test configuration
+sudo nginx -t
+
+# Reload Nginx
+sudo systemctl reload nginx
+
+# Install SSL certificate with Certbot
+sudo certbot --nginx -d example.com -d www.example.com</code></pre>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="docs-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>PureMix Framework</h4>
+          <p>Build web apps with JavaScript & Python in one file.</p>
+          <p class="footer-credits">
+            Inspired by <a href="https://remix.run" target="_blank">Remix</a>
+          </p>
+        </div>
+        <div class="footer-section">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#routing">Routing</a></li>
+            <li><a href="#loaders">Loaders</a></li>
+            <li><a href="#python-overview">Python Integration</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://github.com/tacho87/Puremix" target="_blank">GitHub</a></li>
+            <li><a href="https://github.com/tacho87/Puremix/issues" target="_blank">Issues</a></li>
+            <li><a href="https://remix.run/docs" target="_blank">Remix Docs</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="https://github.com/tacho87/Puremix/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://github.com/tacho87/Puremix/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Anastacio Gianareas. Released under MIT License.</p>
+        <p class="footer-version">v0.1.0-alpha.1</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Highlight active section in sidebar
+    const sections = document.querySelectorAll('.docs-section');
+    const navLinks = document.querySelectorAll('.docs-sidebar a');
+
+    function highlightActiveSection() {
+      let current = '';
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= sectionTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', highlightActiveSection);
+    highlightActiveSection();
+  </script>
+</body>
+</html>
