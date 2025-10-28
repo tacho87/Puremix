@@ -1,6 +1,14 @@
 # PureMix Framework
 
+[![npm version](https://img.shields.io/npm/v/puremix.svg?style=flat-square)](https://www.npmjs.com/package/puremix)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D22.0.0-brightgreen.svg?style=flat-square)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![Python](https://img.shields.io/badge/Python-3.8+-yellow.svg?style=flat-square)](https://www.python.org/)
+
 > **HTML-first full-stack web framework with seamless Python integration**
+
+📚 [Documentation](https://tacho87.github.io/Puremix) | 🚀 [Getting Started](#-quick-start) | 🐍 [Python Integration](#-revolutionary-python-integration) | 💬 [Community](https://github.com/tacho87/Puremix/discussions)
 
 PureMix is a server-side rendering framework that lets you build modern web applications using familiar HTML syntax while seamlessly mixing JavaScript, TypeScript, and Python in your server-side logic.
 
@@ -23,8 +31,8 @@ PureMix is a server-side rendering framework that lets you build modern web appl
 ### Installation
 
 ```bash
-# Install PureMix globally
-npm install -g puremix
+# Install PureMix globally (alpha release)
+npm install -g puremix@alpha
 
 # Create a new project
 puremix create my-app

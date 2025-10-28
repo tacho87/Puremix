@@ -1,12 +1,23 @@
 {
   "name": "puremix",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.1",
   "description": "HTML-first full-stack framework with seamless Python integration",
   "main": "lib/puremix-engine.ts",
   "type": "module",
   "bin": {
     "puremix": "./puremix"
   },
+  "files": [
+    "lib/",
+    "cli/",
+    "templates/",
+    "scripts/",
+    "puremix",
+    "index.ts",
+    "README.md",
+    "LICENSE",
+    "FRAMEWORK_GUIDE.md"
+  ],
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
@@ -60,7 +71,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/puremix/puremix.git"
+    "url": "https://github.com/tacho87/Puremix.git"
+  },
+  "homepage": "https://tacho87.github.io/Puremix",
+  "bugs": {
+    "url": "https://github.com/tacho87/Puremix/issues"
   },
   "author": "Anastacio Gianareas <agianareas@devpath.io>"
 }

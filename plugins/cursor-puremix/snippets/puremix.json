@@ -1,0 +1,160 @@
+{
+  "PureMix Page Template": {
+    "prefix": "puremix-page",
+    "body": [
+      "<layout>${1:main}</layout>",
+      "",
+      "<head>",
+      "  <title>${2:Page Title}</title>",
+      "</head>",
+      "",
+      "<imports>",
+      "  ${3:// import statements}",
+      "</imports>",
+      "",
+      "<loader>",
+      "  async function load${4:Page}(request, actionResult) {",
+      "    ${5:// Fetch data}",
+      "    ",
+      "    return {",
+      "      data: { ${6} }",
+      "    };",
+      "  }",
+      "</loader>",
+      "",
+      "<div>",
+      "  ${0:<h1>{load${4:Page}.data.title}</h1>}",
+      "</div>"
+    ],
+    "description": "Complete PureMix page template"
+  },
+  "PureMix Loader": {
+    "prefix": "loader",
+    "body": [
+      "<loader>",
+      "  async function load${1:Page}(request, actionResult) {",
+      "    ${2:// Fetch data for this page}",
+      "    ",
+      "    return {",
+      "      data: { ${3} }",
+      "    };",
+      "  }",
+      "</loader>"
+    ],
+    "description": "PureMix loader function"
+  },
+  "PureMix Server Action": {
+    "prefix": "action",
+    "body": [
+      "<script server>",
+      "  async function ${1:handleAction}(formData, request) {",
+      "    ${2:// Process form data or mutations}",
+      "    ",
+      "    return {",
+      "      success: ${3:true},",
+      "      ${4}",
+      "    };",
+      "  }",
+      "</script>"
+    ],
+    "description": "PureMix server action function"
+  },
+  "PureMix Python Function": {
+    "prefix": "python-server",
+    "body": [
+      "<script server lang=\"python\">",
+      "  def ${1:process_data}(data, js_context=None):",
+      "    \"\"\"${2:Function description}\"\"\"",
+      "    ${3:# Python code with full library access}",
+      "    ",
+      "    return {",
+      "      'success': True,",
+      "      '${4:result}': ${5}",
+      "    }",
+      "</script>"
+    ],
+    "description": "PureMix Python server function"
+  },
+  "PureMix Component": {
+    "prefix": "puremix-component",
+    "body": [
+      "<imports>",
+      "  ${1:// import statements}",
+      "</imports>",
+      "",
+      "<div class=\"${2:component-name}\">",
+      "  ${0:<h2>{${3:props}.title}</h2>}",
+      "</div>",
+      "",
+      "<script server>",
+      "  async function ${4:handleAction}(formData, request) {",
+      "    return { success: true };",
+      "  }",
+      "</script>"
+    ],
+    "description": "PureMix reusable component"
+  },
+  "PureMix Form with Action": {
+    "prefix": "form-action",
+    "body": [
+      "<form onsubmit=\"${1:handleSubmit}\">",
+      "  <input name=\"${2:fieldName}\" value=\"{${3:loaderData}}\" />",
+      "  <button type=\"submit\">${4:Submit}</button>",
+      "</form>",
+      "",
+      "<script server>",
+      "  async function ${1:handleSubmit}(formData, request) {",
+      "    const ${2:fieldName} = formData.get('${2:fieldName}');",
+      "    ${5:// Process data}",
+      "    ",
+      "    return {",
+      "      success: true,",
+      "      ${6}",
+      "    };",
+      "  }",
+      "</script>"
+    ],
+    "description": "Form with server action"
+  },
+  "PureMix Client Script": {
+    "prefix": "script-client",
+    "body": [
+      "<script client>",
+      "  ${1:// Client-side JavaScript}",
+      "  ",
+      "  document.addEventListener('DOMContentLoaded', function() {",
+      "    ${0}",
+      "  });",
+      "</script>"
+    ],
+    "description": "Client-side script block"
+  },
+  "PureMix Conditional": {
+    "prefix": "conditional",
+    "body": [
+      "{${1:condition} ?",
+      "  <div>${2:true-content}</div> :",
+      "  <div>${3:false-content}</div>",
+      "}"
+    ],
+    "description": "Conditional rendering"
+  },
+  "PureMix Map Loop": {
+    "prefix": "map",
+    "body": [
+      "{${1:items}.map(${2:item} =>",
+      "  <div key={${2:item}.id}>",
+      "    ${0:<h3>{${2:item}.name}</h3>}",
+      "  </div>",
+      ")}"
+    ],
+    "description": "Map loop for rendering lists"
+  },
+  "PureMix Import": {
+    "prefix": "import",
+    "body": [
+      "import { ${2:functionName} } from '${1:../path/to/module}'"
+    ],
+    "description": "Import statement (JavaScript or Python)"
+  }
+}

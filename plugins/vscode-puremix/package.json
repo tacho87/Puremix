@@ -1,0 +1,68 @@
+{
+  "name": "puremix",
+  "displayName": "PureMix",
+  "description": "Syntax highlighting and snippets for PureMix framework (.puremix files)",
+  "version": "0.1.0",
+  "publisher": "puremix",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "puremix",
+    "fullstack",
+    "python",
+    "html",
+    "web framework"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "puremix",
+        "aliases": ["PureMix", "puremix"],
+        "extensions": [".puremix"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "puremix",
+        "scopeName": "text.html.puremix",
+        "path": "./syntaxes/puremix.tmLanguage.json",
+        "embeddedLanguages": {
+          "text.html.basic": "html",
+          "source.js": "javascript",
+          "source.python": "python"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "puremix",
+        "path": "./snippets/puremix.json"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tacho87/Puremix.git",
+    "directory": "plugins/vscode-puremix"
+  },
+  "bugs": {
+    "url": "https://github.com/tacho87/Puremix/issues"
+  },
+  "homepage": "https://tacho87.github.io/Puremix",
+  "license": "MIT",
+  "author": {
+    "name": "Anastacio Gianareas",
+    "email": "agianareas@devpath.io"
+  }
+}

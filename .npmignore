@@ -93,5 +93,14 @@ WHATTODO
 CLAUDE.MD
 CLAUDE-details.MD
 
+# Session notes and temporary documentation
+2025-*.txt
+*-session-*.txt
+*-continued-*.txt
+
 # CLI backup files
 cli/*.backup
+cli/puremix.js.backup
+
+# Plugin development files (published separately)
+plugins/

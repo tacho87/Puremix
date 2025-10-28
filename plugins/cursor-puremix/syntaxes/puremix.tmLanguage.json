@@ -1,0 +1,235 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "PureMix",
+  "scopeName": "text.html.puremix",
+  "patterns": [
+    {
+      "include": "#puremix-blocks"
+    },
+    {
+      "include": "#html-content"
+    }
+  ],
+  "repository": {
+    "puremix-blocks": {
+      "patterns": [
+        {
+          "include": "#layout-block"
+        },
+        {
+          "include": "#head-block"
+        },
+        {
+          "include": "#loading-block"
+        },
+        {
+          "include": "#imports-block"
+        },
+        {
+          "include": "#loader-block"
+        },
+        {
+          "include": "#script-server-python"
+        },
+        {
+          "include": "#script-server-js"
+        },
+        {
+          "include": "#script-client"
+        },
+        {
+          "include": "#template-expressions"
+        }
+      ]
+    },
+    "layout-block": {
+      "name": "meta.tag.puremix.layout",
+      "begin": "(<)(layout)(>)",
+      "end": "(</)(layout)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.layout"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.layout"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "name": "string.unquoted.puremix.layout",
+          "match": "\\w+"
+        }
+      ]
+    },
+    "head-block": {
+      "name": "meta.tag.puremix.head",
+      "begin": "(<)(head)(>)",
+      "end": "(</)(head)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.head"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.head"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "include": "text.html.basic"
+        }
+      ]
+    },
+    "loading-block": {
+      "name": "meta.tag.puremix.loading",
+      "begin": "(<)(loading)(>)",
+      "end": "(</)(loading)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.loading"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.loading"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "include": "text.html.basic"
+        }
+      ]
+    },
+    "imports-block": {
+      "name": "meta.tag.puremix.imports",
+      "begin": "(<)(imports)(>)",
+      "end": "(</)(imports)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.imports"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.imports"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "loader-block": {
+      "name": "meta.tag.puremix.loader",
+      "begin": "(<)(loader)(>)",
+      "end": "(</)(loader)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.loader"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.puremix.loader"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "script-server-python": {
+      "name": "meta.tag.script.puremix.python",
+      "begin": "(<)(script)\\s+(server)\\s+(lang)\\s*=\\s*(['\"])python\\5(>)",
+      "end": "(</)(script)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.script.html"},
+        "3": {"name": "entity.other.attribute-name.puremix"},
+        "4": {"name": "entity.other.attribute-name.puremix"},
+        "5": {"name": "punctuation.definition.string.begin.html"},
+        "6": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.script.html"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "include": "source.python"
+        }
+      ]
+    },
+    "script-server-js": {
+      "name": "meta.tag.script.puremix.server",
+      "begin": "(<)(script)\\s+(server)(>)",
+      "end": "(</)(script)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.script.html"},
+        "3": {"name": "entity.other.attribute-name.puremix"},
+        "4": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.script.html"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "script-client": {
+      "name": "meta.tag.script.puremix.client",
+      "begin": "(<)(script)(?:\\s+(client))?(>)",
+      "end": "(</)(script)(>)",
+      "beginCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.script.html"},
+        "3": {"name": "entity.other.attribute-name.puremix"},
+        "4": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "endCaptures": {
+        "1": {"name": "punctuation.definition.tag.begin.html"},
+        "2": {"name": "entity.name.tag.script.html"},
+        "3": {"name": "punctuation.definition.tag.end.html"}
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "template-expressions": {
+      "name": "meta.embedded.expression.puremix",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {"name": "punctuation.section.embedded.begin.puremix"}
+      },
+      "endCaptures": {
+        "0": {"name": "punctuation.section.embedded.end.puremix"}
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "html-content": {
+      "patterns": [
+        {
+          "include": "text.html.basic"
+        }
+      ]
+    }
+  }
+}

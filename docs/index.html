@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PureMix - HTML-First Framework with Python Integration</title>
+  <meta name="description" content="Build modern web applications with seamless JavaScript/TypeScript/Python integration. Server-side rendering, zero build complexity, revolutionary Python integration.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="PureMix Framework">
+  <meta property="og:description" content="HTML-first full-stack framework with seamless Python integration">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tacho87.github.io/Puremix">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <span class="logo">🎯</span>
+        <span class="brand-name">PureMix</span>
+        <span class="version-badge">v0.1.0-alpha.1</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#python">Python Integration</a>
+        <a href="#loader-action">Loader/Action Flow</a>
+        <a href="#getting-started">Get Started</a>
+        <a href="https://github.com/tacho87/Puremix" target="_blank" class="github-link">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-background">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+    <div class="container hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Build Web Apps with<br>
+          <span class="gradient-text">JavaScript & Python</span><br>
+          <span class="subtitle">Seamlessly Mixed</span>
+        </h1>
+        <p class="hero-description">
+          PureMix is an HTML-first full-stack framework that lets you mix JavaScript, TypeScript, and Python
+          in the same file. Revolutionary Python integration, server-side rendering, zero build complexity.
+        </p>
+        <div class="hero-cta">
+          <a href="#getting-started" class="btn btn-primary">
+            <span>Get Started</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </a>
+          <a href="https://github.com/tacho87/Puremix" class="btn btn-secondary" target="_blank">
+            View on GitHub
+          </a>
+        </div>
+        <div class="hero-code">
+<pre><code class="language-bash">npm install -g puremix@alpha
+puremix create my-app
+cd my-app && npm run dev</code></pre>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="code-window">
+          <div class="window-header">
+            <div class="window-controls">
+              <span class="control close"></span>
+              <span class="control minimize"></span>
+              <span class="control maximize"></span>
+            </div>
+            <span class="window-title">app/routes/index.puremix</span>
+          </div>
+          <div class="window-content">
+<pre><code class="language-markup">&lt;loader>
+  async function loadDashboard(request) {
+    // Call Python for ML analysis
+    const analysis = await analyzeSales(data);
+
+    return {
+      data: { sales: analysis.predictions }
+    };
+  }
+&lt;/loader>
+
+&lt;div class="dashboard">
+  &lt;h1>Sales: ${loadDashboard.data.sales}&lt;/h1>
+&lt;/div>
+
+&lt;script server lang="python">
+  def analyzeSales(data, js_context=None):
+    import pandas as pd
+    import numpy as np
+
+    df = pd.DataFrame(data)
+    return {
+      'predictions': df['sales'].mean()
+    }
+&lt;/script></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="features">
+    <div class="container">
+      <h2 class="section-title">Why PureMix?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🐍</div>
+          <h3>Python Integration</h3>
+          <p>Mix Python and JavaScript seamlessly. Call NumPy, Pandas, and ML libraries directly from your web app.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Zero Build Complexity</h3>
+          <p>Node.js 22+ runs TypeScript natively. No webpack, no bundlers, no configuration headaches.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>HTML-First</h3>
+          <p>Write familiar HTML with server-side logic. No JSX compilation, no virtual DOM, just pure web development.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <h3>Component System</h3>
+          <p>React-style components with props and selective updates. Smart DOM diffing for zero-flicker UI.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Server-Side Rendering</h3>
+          <p>Fast initial page loads with complete SSR. Loader/action pattern for data fetching and mutations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔥</div>
+          <h3>Hot Reload</h3>
+          <p>Instant feedback during development. File watching with automatic server restart and browser refresh.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Python Integration Showcase -->
+  <section id="python" class="python-showcase">
+    <div class="container">
+      <h2 class="section-title">Revolutionary Python Integration</h2>
+      <p class="section-subtitle">
+        PureMix is the only framework that lets you use Python exactly like JavaScript.
+        Six different ways to integrate Python, from inline execution to ES6 imports.
+      </p>
+
+      <div class="python-methods">
+        <!-- Method 1: Script Tags -->
+        <div class="method-card">
+          <div class="method-header">
+            <span class="method-number">1</span>
+            <h3>Script Tag Functions</h3>
+          </div>
+          <p class="method-description">Embed Python functions directly in .puremix files</p>
+          <div class="code-example">
+<pre><code class="language-markup">&lt;script server lang="python">
+  def calculate_roi(data, js_context=None):
+    import numpy as np
+
+    investment = np.array([d['cost'] for d in data])
+    revenue = np.array([d['revenue'] for d in data])
+    roi = ((revenue - investment) / investment) * 100
+
+    return {
+      'success': True,
+      'roi': float(roi.mean()),
+      'breakdown': roi.tolist()
+    }
+&lt;/script>
+
+&lt;form onsubmit="calculate_roi">
+  &lt;button type="submit">Calculate ROI&lt;/button>
+&lt;/form></code></pre>
+          </div>
+        </div>
+
+        <!-- Method 2: Inline Execution -->
+        <div class="method-card">
+          <div class="method-header">
+            <span class="method-number">2</span>
+            <h3>Inline Execution</h3>
+          </div>
+          <p class="method-description">Execute Python code dynamically within loaders</p>
+          <div class="code-example">
+<pre><code class="language-javascript">const result = await request.python.call('analyze', data, `
+  import pandas as pd
+
+  def analyze(data, js_context=None):
+    df = pd.DataFrame(data)
+    stats = df.describe()
+    return {
+      'success': True,
+      'statistics': stats.to_dict()
+    }
+`);</code></pre>
+          </div>
+        </div>
+
+        <!-- Method 3: ES6 Imports -->
+        <div class="method-card highlight">
+          <div class="method-header">
+            <span class="method-number">3</span>
+            <h3>ES6 Import Syntax 🎉</h3>
+            <span class="badge">Revolutionary</span>
+          </div>
+          <p class="method-description">Import Python functions like JavaScript modules!</p>
+          <div class="code-example">
+<pre><code class="language-javascript">// Import Python functions using standard ES6 syntax!
+import { validate_data, analyze_portfolio } from '../lib/data_processor'
+import { calculate_loan } from '../services/financial_analyzer'
+
+async function loadPage(request) {
+  // Call Python functions exactly like JavaScript!
+  const validation = await validate_data({ userId: 123 });
+  const analysis = await analyze_portfolio(portfolioData);
+  const loan = await calculate_loan({ principal: 300000 });
+
+  return { data: { validation, analysis, loan } };
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- Method 4: Global Functions -->
+        <div class="method-card">
+          <div class="method-header">
+            <span class="method-number">4</span>
+            <h3>Global Functions (Auto-Discovery)</h3>
+          </div>
+          <p class="method-description">Zero imports needed - Python functions available everywhere</p>
+          <div class="code-example">
+<pre><code class="language-javascript">// No imports required! All Python modules auto-discovered
+async function loadPage(request) {
+  // Call any Python function globally
+  const result = await validate_data({ userId: 123 });
+  const processed = await process_data(result);
+  const formatted = await format_text({ text: 'hello' });
+
+  return { data: { result, processed, formatted } };
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="python-benefits">
+        <h3>Why Python Integration Matters</h3>
+        <div class="benefits-grid">
+          <div class="benefit">
+            <div class="benefit-icon">📊</div>
+            <h4>Data Science</h4>
+            <p>Use Pandas, NumPy, Matplotlib directly in your web apps</p>
+          </div>
+          <div class="benefit">
+            <div class="benefit-icon">🤖</div>
+            <h4>Machine Learning</h4>
+            <p>Integrate Scikit-learn, TensorFlow, PyTorch models</p>
+          </div>
+          <div class="benefit">
+            <div class="benefit-icon">🔬</div>
+            <h4>Scientific Computing</h4>
+            <p>Leverage SciPy, SymPy for complex calculations</p>
+          </div>
+          <div class="benefit">
+            <div class="benefit-icon">📈</div>
+            <h4>Financial Analysis</h4>
+            <p>Build trading platforms, risk models, portfolio analyzers</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loader/Action Flow -->
+  <section id="loader-action" class="loader-action-flow">
+    <div class="container">
+      <h2 class="section-title">Loader/Action Flow</h2>
+      <p class="section-subtitle">
+        Understanding PureMix's data fetching and mutation pattern
+      </p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>HTTP Request</h3>
+            <p>User visits /products/123 or submits a form</p>
+            <div class="step-code">
+<pre><code class="language-http">GET /products/123
+POST /products/123</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Route Resolution</h3>
+            <p>File-based routing matches URL to .puremix file</p>
+            <div class="step-code">
+<pre><code class="language-plaintext">app/routes/products/[id].puremix</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step highlight">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Action Execution (POST only)</h3>
+            <p>Server function processes form data or API mutations</p>
+            <div class="step-code">
+<pre><code class="language-javascript">&lt;script server>
+  async function updateProduct(formData, request) {
+    const product = await saveProduct({
+      id: request.params.id,
+      name: formData.get('name'),
+      price: formData.get('price')
+    });
+
+    return {
+      success: true,
+      product,
+      message: 'Product updated!'
+    };
+  }
+&lt;/script></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step highlight">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Loader Execution</h3>
+            <p>Fetch data for rendering (receives action result if POST)</p>
+            <div class="step-code">
+<pre><code class="language-javascript">&lt;loader>
+  async function loadProduct(request, actionResult) {
+    const productId = request.params.id;
+    const product = await getProduct(productId);
+
+    return {
+      data: {
+        product,
+        // Include action result for feedback
+        updateSuccess: actionResult?.success,
+        message: actionResult?.message
+      }
+    };
+  }
+&lt;/loader></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h3>Template Rendering</h3>
+            <p>Server-side rendering with loader data</p>
+            <div class="step-code">
+<pre><code class="language-markup">&lt;div>
+  {loadProduct.data.updateSuccess ?
+    &lt;div class="success">{loadProduct.data.message}&lt;/div> :
+    null
+  }
+
+  &lt;h1>{loadProduct.data.product.name}&lt;/h1>
+  &lt;p>Price: ${loadProduct.data.product.price}&lt;/p>
+
+  &lt;form onsubmit="updateProduct">
+    &lt;input name="name" value="{loadProduct.data.product.name}">
+    &lt;input name="price" value="{loadProduct.data.product.price}">
+    &lt;button type="submit">Update&lt;/button>
+  &lt;/form>
+&lt;/div></code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-step">
+          <div class="step-number">6</div>
+          <div class="step-content">
+            <h3>HTML Response</h3>
+            <p>Complete rendered page sent to browser</p>
+            <div class="step-code">
+<pre><code class="language-http">HTTP/1.1 200 OK
+Content-Type: text/html
+
+&lt;!DOCTYPE html>
+&lt;html>...&lt;/html></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-benefits">
+        <h3>Key Benefits of This Pattern</h3>
+        <div class="benefits-list">
+          <div class="benefit-item">
+            <span class="benefit-check">✓</span>
+            <div>
+              <strong>Progressive Enhancement</strong>
+              <p>Works without JavaScript, enhanced with JavaScript</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span class="benefit-check">✓</span>
+            <div>
+              <strong>Type-Safe</strong>
+              <p>TypeScript support for request, formData, and responses</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span class="benefit-check">✓</span>
+            <div>
+              <strong>SEO-Friendly</strong>
+              <p>Complete HTML rendered server-side</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span class="benefit-check">✓</span>
+            <div>
+              <strong>Fast Initial Load</strong>
+              <p>No client-side data fetching waterfall</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Getting Started -->
+  <section id="getting-started" class="getting-started">
+    <div class="container">
+      <h2 class="section-title">Get Started in 3 Minutes</h2>
+
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Step 1</span>
+            <h3>Install PureMix</h3>
+          </div>
+          <div class="step-content">
+<pre><code class="language-bash">npm install -g puremix@alpha</code></pre>
+            <p class="step-note">Requires Node.js 22+ for native TypeScript support</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Step 2</span>
+            <h3>Create Your App</h3>
+          </div>
+          <div class="step-content">
+<pre><code class="language-bash">puremix create my-app
+
+# Choose template:
+# - basic: Tailwind CSS with animations
+# - minimal: Zero dependencies
+# - advanced: MongoDB + authentication</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-badge">Step 3</span>
+            <h3>Start Development</h3>
+          </div>
+          <div class="step-content">
+<pre><code class="language-bash">cd my-app
+npm run dev
+
+# Server starts at http://localhost:3000
+# Hot reload enabled - changes reflect instantly!</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="next-steps">
+        <h3>Next Steps</h3>
+        <div class="resources">
+          <a href="https://github.com/tacho87/Puremix/blob/main/FRAMEWORK_GUIDE.md" class="resource-link" target="_blank">
+            <span class="resource-icon">📚</span>
+            <div>
+              <strong>Framework Guide</strong>
+              <p>Complete tutorial with examples</p>
+            </div>
+          </a>
+          <a href="https://github.com/tacho87/Puremix/blob/main/CLAUDE.MD" class="resource-link" target="_blank">
+            <span class="resource-icon">🤖</span>
+            <div>
+              <strong>AI Assistant Guide</strong>
+              <p>For LLM-assisted development</p>
+            </div>
+          </a>
+          <a href="https://github.com/tacho87/Puremix/issues" class="resource-link" target="_blank">
+            <span class="resource-icon">💬</span>
+            <div>
+              <strong>Report Issues</strong>
+              <p>Bug reports and feature requests</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="logo">🎯</span>
+          <span class="brand-name">PureMix</span>
+          <p class="footer-tagline">HTML-first framework with Python integration</p>
+        </div>
+        <div class="footer-links">
+          <div class="link-column">
+            <h4>Documentation</h4>
+            <a href="https://github.com/tacho87/Puremix/blob/main/README.md" target="_blank">README</a>
+            <a href="https://github.com/tacho87/Puremix/blob/main/FRAMEWORK_GUIDE.md" target="_blank">Framework Guide</a>
+            <a href="https://github.com/tacho87/Puremix/blob/main/CHANGELOG.md" target="_blank">Changelog</a>
+          </div>
+          <div class="link-column">
+            <h4>Community</h4>
+            <a href="https://github.com/tacho87/Puremix" target="_blank">GitHub</a>
+            <a href="https://github.com/tacho87/Puremix/issues" target="_blank">Issues</a>
+            <a href="https://github.com/tacho87/Puremix/discussions" target="_blank">Discussions</a>
+          </div>
+          <div class="link-column">
+            <h4>Resources</h4>
+            <a href="https://github.com/tacho87/Puremix/tree/main/templates" target="_blank">Templates</a>
+            <a href="https://github.com/tacho87/Puremix/tree/main/examples" target="_blank">Examples</a>
+            <a href="https://www.npmjs.com/package/puremix" target="_blank">npm Package</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Anastacio Gianareas. Released under MIT License.</p>
+        <p class="footer-version">v0.1.0-alpha.1</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
