@@ -10,10 +10,10 @@ PureMix is a server-side rendering framework that seamlessly mixes **JavaScript/
 
 ### Core Philosophy
 
-- **File-based routing** (like Next.js)
+- **File-based routing** (inspired by Remix)
 - **Server-first** with progressive enhancement
 - **Language agnostic** - Use JS, TS, or Python anywhere
-- **Zero config** - Sensible defaults, optional customization
+- **Sensible defaults** - Sensible defaults, optional customization
 - **Client-agnostic** - Use vanilla JS, React, Vue, Svelte, or any framework
 
 ### What Makes PureMix Different
@@ -24,7 +24,7 @@ PureMix combines the best of both worlds:
 - **Progressive Enhancement** - Add interactivity with any client framework
 - **Multi-Language** - JavaScript, TypeScript, and Python in the same file
 - **Smart DOM Diffing** - React-like updates without a virtual DOM
-- **Zero Build Step** - Development without webpack/vite (optional for production)
+- **No Build Step** - Development without webpack/vite (optional for production)
 
 ---
 
@@ -440,6 +440,8 @@ app/routes/docs/[...path].puremix     → /docs/*
 
 Loaders run **on the server** before the page renders.
 
+**⚠️ Important:** The `actionResult` parameter contains the return value from any action (server function) that executed before the loader. This is how PureMix handles the Remix pattern: **Action → Loader → Render**.
+
 ### Basic Loader
 
 ```html
@@ -448,8 +450,13 @@ Loaders run **on the server** before the page renders.
     // Fetch data from database, API, etc.
     const products = await getProducts();
 
+    // Check if an action just ran
+    const message = actionResult?.success
+      ? 'Product saved successfully!'
+      : null;
+
     return {
-      data: { products }
+      data: { products, message }
     };
   }
 </loader>
@@ -2118,6 +2125,238 @@ export default {
 ```
 
 ---
+
+
+---
+
+## 🚀 Production Deployment
+
+### Running in Production
+
+PureMix uses a simple command for production deployment:
+
+```bash
+# Direct production start
+NODE_ENV=production puremix start --port 3000 --host 0.0.0.0
+
+# With environment file
+NODE_ENV=production PORT=8080 puremix start
+```
+
+### PM2 Process Management
+
+For production environments, use PM2 for process management:
+
+```bash
+# Basic PM2 start
+pm2 start "puremix start" --name my-app
+
+# With environment variables
+pm2 start "puremix start" \
+  --name my-app \
+  --env production \
+  --log ./logs/app.log
+
+# Cluster mode (multiple instances)
+pm2 start "puremix start" \
+  --name my-app \
+  --instances 4 \
+  --exec-mode cluster
+
+# Save PM2 configuration
+pm2 save
+
+# Auto-restart on reboot
+pm2 startup
+```
+
+### Docker Deployment
+
+**Dockerfile:**
+
+```dockerfile
+FROM node:22-alpine
+
+# Install Python (optional, for Python features)
+RUN apk add --no-cache python3 py3-pip
+
+WORKDIR /app
+
+# Install Python packages (if using Python features)
+COPY requirements.txt* ./
+RUN if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+# Install Node dependencies
+COPY package*.json ./
+RUN npm ci --production
+
+# Copy application code
+COPY . .
+
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Run production server
+CMD ["puremix", "start", "--host", "0.0.0.0"]
+```
+
+**docker-compose.yml:**
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - SESSION_SECRET=${SESSION_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+```
+
+### Systemd Service
+
+For Linux servers, create a systemd service:
+
+```ini
+# /etc/systemd/system/puremix-app.service
+[Unit]
+Description=PureMix Application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/my-app
+Environment="NODE_ENV=production"
+Environment="PORT=3000"
+Environment="SESSION_SECRET=your-secret-key"
+ExecStart=/usr/bin/puremix start
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# Enable and start service
+sudo systemctl enable puremix-app
+sudo systemctl start puremix-app
+sudo systemctl status puremix-app
+
+# View logs
+sudo journalctl -u puremix-app -f
+```
+
+### Nginx Reverse Proxy
+
+```nginx
+# /etc/nginx/sites-available/my-app
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Static files (if serving from PureMix)
+    location /public {
+        alias /var/www/my-app/public;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+```
+
+### Environment Variables
+
+**Production .env file:**
+
+```bash
+NODE_ENV=production
+PORT=3000
+SESSION_SECRET=your-very-secret-key-change-this
+
+# Database
+DATABASE_URL=postgresql://user:pass@localhost:5432/myapp
+
+# Python (if using Python features)
+PYTHON_PATH=/usr/bin/python3
+
+# Logging
+VERBOSE_DEBUG=false
+
+# Optional: External services
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+REDIS_URL=redis://localhost:6379
+```
+
+### Health Check Endpoint
+
+Add a health check route for monitoring:
+
+```javascript
+// app/routes/health.js
+export default async function handler(request, response) {
+  // Check database connection, Python availability, etc.
+  const health = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    env: process.env.NODE_ENV
+  };
+
+  return response.status(200).json(health);
+}
+```
+
+### Performance Tips
+
+1. **Enable gzip compression:**
+```javascript
+// Add to puremix.config.js or use nginx compression
+import compression from 'compression';
+app.use(compression());
+```
+
+2. **Set appropriate session max age:**
+```javascript
+session: {
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: true,                 // HTTPS only in production
+    sameSite: 'strict'
+  }
+}
+```
+
+3. **Use PM2 cluster mode for multi-core servers**
+
+4. **Monitor with PM2 Plus or similar tools**
 
 ## 🚀 Common Patterns
 

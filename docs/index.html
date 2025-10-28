@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PureMix - HTML-First Framework with Python Integration</title>
-  <meta name="description" content="Build modern web applications with seamless JavaScript/TypeScript/Python integration. Server-side rendering, zero build complexity, revolutionary Python integration.">
+  <meta name="description" content="Build modern web applications with seamless JavaScript/TypeScript/Python integration. Server-side rendering, simple development, native Python integration.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="PureMix Framework">
@@ -59,11 +59,11 @@
         <h1 class="hero-title">
           Build Web Apps with<br>
           <span class="gradient-text">JavaScript & Python</span><br>
-          <span class="subtitle">Seamlessly Mixed</span>
+          <span class="subtitle">in One File</span>
         </h1>
         <p class="hero-description">
           PureMix is an HTML-first full-stack framework that lets you mix JavaScript, TypeScript, and Python
-          in the same file. Revolutionary Python integration, server-side rendering, zero build complexity.
+          in the same file. Native Python integration, server-side rendering, simple development.
         </p>
         <div class="hero-cta">
           <a href="#getting-started" class="btn btn-primary">
@@ -136,8 +136,8 @@ cd my-app && npm run dev</code></pre>
         </div>
         <div class="feature-card">
           <div class="feature-icon">⚡</div>
-          <h3>Zero Build Complexity</h3>
-          <p>Node.js 22+ runs TypeScript natively. No webpack, no bundlers, no configuration headaches.</p>
+          <h3>Simple Development</h3>
+          <p>Node.js 22+ runs TypeScript natively. No webpack, no bundlers, no complex configuration.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🎯</div>
@@ -166,10 +166,10 @@ cd my-app && npm run dev</code></pre>
   <!-- Python Integration Showcase -->
   <section id="python" class="python-showcase">
     <div class="container">
-      <h2 class="section-title">Revolutionary Python Integration</h2>
+      <h2 class="section-title">Native Python Integration</h2>
       <p class="section-subtitle">
-        PureMix is the only framework that lets you use Python exactly like JavaScript.
-        Six different ways to integrate Python, from inline execution to ES6 imports.
+        PureMix is a framework that lets you use Python using familiar ES6 import syntax.
+        Multiple ways to use Python, from inline execution to ES6 imports.
       </p>
 
       <div class="python-methods">
@@ -229,7 +229,7 @@ cd my-app && npm run dev</code></pre>
           <div class="method-header">
             <span class="method-number">3</span>
             <h3>ES6 Import Syntax 🎉</h3>
-            <span class="badge">Revolutionary</span>
+            <span class="badge">Native</span>
           </div>
           <p class="method-description">Import Python functions like JavaScript modules!</p>
           <div class="code-example">
@@ -238,7 +238,7 @@ import { validate_data, analyze_portfolio } from '../lib/data_processor'
 import { calculate_loan } from '../services/financial_analyzer'
 
 async function loadPage(request) {
-  // Call Python functions exactly like JavaScript!
+  // Call Python functions using familiar ES6 import syntax!
   const validation = await validate_data({ userId: 123 });
   const analysis = await analyze_portfolio(portfolioData);
   const loan = await calculate_loan({ principal: 300000 });
@@ -302,8 +302,11 @@ async function loadPage(request) {
     <div class="container">
       <h2 class="section-title">Loader/Action Flow</h2>
       <p class="section-subtitle">
-        Understanding PureMix's data fetching and mutation pattern
+        Understanding PureMix's data fetching and mutation pattern (inspired by Remix)
       </p>
+      <div class="important-note">
+        <strong>⚠️ Important:</strong> Action results are passed to the loader. When a form submits and calls an action (<code>&lt;script server&gt;</code>), the action's return value becomes available as <code>actionResult</code> in the loader function. The loader then runs again with this data.
+      </div>
 
       <div class="flow-diagram">
         <div class="flow-step">
@@ -574,6 +577,7 @@ npm run dev
       </div>
       <div class="footer-bottom">
         <p>&copy; 2025 Anastacio Gianareas. Released under MIT License.</p>
+        <p class="footer-credits">Inspired by <a href="https://remix.run" target="_blank" rel="noopener">Remix</a> - Enhanced with Python integration</p>
         <p class="footer-version">v0.1.0-alpha.1</p>
       </div>
     </div>

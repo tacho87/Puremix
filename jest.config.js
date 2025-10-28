@@ -7,7 +7,6 @@ export default {
   transform: {
     '^.+\\.ts$': ['ts-jest', {
       useESM: true,
-      isolatedModules: true,
       diagnostics: {
         ignoreCodes: [1343, 7030, 18046, 2339]
       },
