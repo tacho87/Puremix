@@ -29,6 +29,9 @@
         </a>
         <span class="version-badge">v0.1.0-alpha.1</span>
       </div>
+      <button class="mobile-menu-toggle" aria-label="Toggle menu">
+        ☰
+      </button>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="documentation.html" class="active">Documentation</a>
@@ -100,6 +103,7 @@
           <h3>Advanced Topics</h3>
           <ul>
             <li><a href="#javascript-blocks">JavaScript Blocks</a></li>
+            <li><a href="#best-practices">Best Practices</a></li>
             <li><a href="#client-runtime">Client Runtime</a></li>
             <li><a href="#dom-diffing">DOM Diffing</a></li>
             <li><a href="#layouts">Layouts</a></li>
@@ -111,6 +115,7 @@
           <ul>
             <li><a href="#production">Production Setup</a></li>
             <li><a href="#pm2">PM2 Process Manager</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
             <li><a href="#docker">Docker Deployment</a></li>
             <li><a href="#nginx">Nginx Configuration</a></li>
           </ul>
@@ -408,6 +413,38 @@ async function loadProduct(request) {
   }
 &lt;/script&gt;</code></pre>
 
+          <h3>ActionResult Flow-Through Pattern</h3>
+          <p>The loader receives actionResult as the second parameter, allowing conditional data loading based on action outcomes:</p>
+          <pre><code class="language-javascript">&lt;loader&gt;
+  async function loadPage(request, actionResult) {
+    // Check if coming from an action
+    if (actionResult && actionResult.success) {
+      return {
+        data: {
+          message: "Operation succeeded!",
+          result: actionResult.data,
+          timestamp: new Date().toISOString()
+        },
+        state: { showSuccess: true }
+      };
+    }
+
+    // Check for errors from action
+    if (actionResult && actionResult.error) {
+      return {
+        data: { message: actionResult.error },
+        state: { showError: true }
+      };
+    }
+
+    // Default data when no action was triggered
+    return {
+      data: await loadDefaultData(),
+      state: { showSuccess: false, showError: false }
+    };
+  }
+&lt;/loader&gt;</code></pre>
+
           <h3>Form Handling</h3>
           <p>Connect forms to actions using the <code>onsubmit</code> attribute:</p>
           <pre><code class="language-markup">&lt;form onsubmit="handleSubmit"&gt;
@@ -465,22 +502,31 @@ async function loadProduct(request) {
 &lt;/div&gt;</code></pre>
 
           <h3>Conditional Rendering</h3>
-          <pre><code class="language-markup">&lt;!-- Ternary operators --&gt;
+          <p>Both HTML elements and string literals work in conditional expressions:</p>
+          <pre><code class="language-markup">&lt;!-- HTML element conditionals --&gt;
 {user.isActive ?
   &lt;div&gt;Active User&lt;/div&gt; :
   &lt;div&gt;Inactive&lt;/div&gt;
 }
 
+&lt;!-- String literal conditionals --&gt;
+&lt;p&gt;Status: {user.isActive ? "Active" : "Inactive"}&lt;/p&gt;
+&lt;p&gt;Theme: {user.theme === 'dark' ? '🌙 Dark' : '☀️ Light'}&lt;/p&gt;
+
 &lt;!-- Boolean conditions --&gt;
 {user.isAdmin && &lt;div&gt;Admin Panel&lt;/div&gt;}
 
-&lt;!-- Nested conditions --&gt;
+&lt;!-- Nested conditions (multiple levels supported) --&gt;
 {user.role === 'admin' ?
   &lt;div&gt;Admin Dashboard&lt;/div&gt; :
   user.role === 'moderator' ?
     &lt;div&gt;Moderator Panel&lt;/div&gt; :
     &lt;div&gt;User Profile&lt;/div&gt;
 }</code></pre>
+
+          <div class="important-note">
+            <strong>✅ Flexible Conditionals:</strong> You can return HTML elements, string literals, or mix both patterns. The template engine handles all conditional expression types.
+          </div>
 
           <h3>Array Mapping</h3>
           <pre><code class="language-markup">{products.map(product =&gt;
@@ -512,6 +558,58 @@ async function loadProduct(request) {
     &lt;div&gt;{user.name} - {formatRole(user.role)}&lt;/div&gt;
   )}
 &lt;/div&gt;</code></pre>
+
+          <h3>Template Processing Boundaries</h3>
+          <div class="important-note">
+            <strong>⚠️ Critical Rule:</strong> Template expressions <code>{...}</code> are only processed in HTML templates, NOT in script tags.
+          </div>
+
+          <p>Understanding where template expressions are processed is essential for correct usage:</p>
+
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>Context</th>
+                <th>Template Processing</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>HTML Templates</strong></td>
+                <td>✅ Processed</td>
+                <td><code>&lt;h1&gt;{user.name}&lt;/h1&gt;</code></td>
+              </tr>
+              <tr>
+                <td><strong>Client Scripts</strong></td>
+                <td>❌ NOT Processed</td>
+                <td><code>&lt;script&gt;</code> tags</td>
+              </tr>
+              <tr>
+                <td><strong>Server Scripts</strong></td>
+                <td>❌ NOT Processed</td>
+                <td><code>&lt;script server&gt;</code> tags</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>Accessing Loader Data in Client Scripts</h4>
+          <p>Client scripts must use <code>PureMix.data</code> to access loader data:</p>
+          <pre><code class="language-javascript">// ❌ WRONG: Template expressions don't work in scripts
+const name = '{user.name}';  // This stays as literal string!
+
+// ✅ CORRECT: Use PureMix.data
+const userData = PureMix.data.loadPage?.data?.user;
+const name = userData?.name || 'Guest';
+
+// Access loader data safely
+if (PureMix.data && PureMix.data.loadPage) {
+  console.log('User:', PureMix.data.loadPage.data.user.name);
+}</code></pre>
+
+          <div class="important-note">
+            <strong>🔒 Security Note:</strong> This separation prevents unintended server data exposure and maintains clear boundaries between server and client contexts.
+          </div>
         </section>
 
         <!-- Components -->
@@ -572,20 +670,37 @@ async function loadProduct(request) {
 &lt;/div&gt;</code></pre>
 
           <h3>Component Props</h3>
-          <p>Pass data to components using JSX-style syntax:</p>
-          <pre><code class="language-markup">&lt;!-- Passing props --&gt;
+          <p>Pass data to components using JSX-style syntax. Components receive props as the third parameter in their loader function:</p>
+          <pre><code class="language-markup">&lt;!-- Parent page: Passing props --&gt;
 &lt;UserCard
   user={userData}
   isActive={true}
   config={{theme: "dark", showEmail: true}}
 /&gt;
 
-&lt;!-- Accessing props in component --&gt;
-&lt;div&gt;
-  &lt;h3&gt;{user.name}&lt;/h3&gt;
-  {isActive && &lt;span class="badge"&gt;Active&lt;/span&gt;}
-  {config.showEmail && &lt;p&gt;{user.email}&lt;/p&gt;}
+&lt;!-- Component file: UserCard.puremix --&gt;
+&lt;loader&gt;
+  async function loadUserCard(request, actionResult, props) {
+    // Props are passed as third parameter!
+    const user = props?.user || { name: 'Guest', email: 'guest@example.com' };
+    const isActive = props?.isActive ?? false;
+    const config = props?.config || {};
+
+    return {
+      data: { user, isActive, config }
+    };
+  }
+&lt;/loader&gt;
+
+&lt;div class="user-card"&gt;
+  &lt;h3&gt;{loadUserCard.data.user.name}&lt;/h3&gt;
+  {loadUserCard.data.isActive && &lt;span class="badge"&gt;Active&lt;/span&gt;}
+  {loadUserCard.data.config.showEmail && &lt;p&gt;{loadUserCard.data.user.email}&lt;/p&gt;}
 &lt;/div&gt;</code></pre>
+
+          <div class="important-note">
+            <strong>💡 Props Pattern:</strong> The third parameter in the component's loader function receives all props passed from the parent. Use optional chaining (<code>props?.user</code>) for safe access and provide fallback values.
+          </div>
 
           <h3>Component Server Functions</h3>
           <p>
@@ -1504,6 +1619,124 @@ def error_response(message, status=400):
           </p>
         </section>
 
+        <!-- Best Practices -->
+        <section id="best-practices" class="docs-section">
+          <h2>Best Practices</h2>
+          <p>Production-ready patterns and recommendations based on real-world usage:</p>
+
+          <h3>Safe Data Access</h3>
+          <p>Use optional chaining to prevent errors when accessing nested data:</p>
+          <pre><code class="language-markup">&lt;!-- ✅ RECOMMENDED: Optional chaining --&gt;
+&lt;h1&gt;{loadPage?.data?.user?.name || 'Guest'}&lt;/h1&gt;
+&lt;p&gt;{loadPage?.data?.user?.profile?.bio || 'No bio available'}&lt;/p&gt;
+
+&lt;!-- ❌ AVOID: Direct access without safety --&gt;
+&lt;h1&gt;{loadPage.data.user.name}&lt;/h1&gt;  &lt;!-- Error if user is undefined --&gt;</code></pre>
+
+          <h3>Error Handling in Loaders</h3>
+          <p>Wrap async operations in try-catch blocks for graceful error handling:</p>
+          <pre><code class="language-javascript">async function loadPage(request) {
+  try {
+    const data = await fetchData();
+    const analysis = await processData(data);
+
+    return {
+      data: { analysis, success: true }
+    };
+  } catch (error) {
+    console.error('Loader error:', error.message);
+
+    return {
+      data: {
+        error: error.message,
+        success: false
+      },
+      state: { hasError: true }
+    };
+  }
+}</code></pre>
+
+          <h3>Python Fallback Handling</h3>
+          <p>Handle cases where Python libraries may not be available:</p>
+          <pre><code class="language-javascript">async function loadAnalytics(request) {
+  try {
+    const result = await analyze_dataset(data);
+
+    if (result.__pythonUnavailable || result.__pythonError) {
+      // Fallback to JavaScript implementation
+      return {
+        data: { result: await jsAnalyze(data), method: 'JavaScript' }
+      };
+    }
+
+    return { data: { result, method: 'Python' } };
+  } catch (error) {
+    return { data: { error: error.message } };
+  }
+}</code></pre>
+
+          <h3>Component Isolation</h3>
+          <p>Keep components self-contained with their own data fetching:</p>
+          <pre><code class="language-markup">&lt;!-- Component loader handles its own data --&gt;
+&lt;loader&gt;
+  async function loadComponent(request, actionResult, props) {
+    // Use props if provided, otherwise fetch default data
+    const data = props?.data || await fetchDefaultData();
+
+    return {
+      data: { ...data },
+      state: { initialized: true }
+    };
+  }
+&lt;/loader&gt;</code></pre>
+
+          <h3>Form Validation</h3>
+          <p>Validate data both client-side and server-side:</p>
+          <pre><code class="language-javascript">&lt;script server&gt;
+  async function handleSubmit(formData, request) {
+    const email = formData.get('email');
+    const name = formData.get('name');
+
+    // Server-side validation
+    if (!email || !email.includes('@')) {
+      return {
+        success: false,
+        error: 'Invalid email address'
+      };
+    }
+
+    if (!name || name.trim().length < 2) {
+      return {
+        success: false,
+        error: 'Name must be at least 2 characters'
+      };
+    }
+
+    // Process valid data
+    const result = await saveUser({ email, name });
+    return { success: true, data: result };
+  }
+&lt;/script&gt;</code></pre>
+
+          <h3>Performance Optimization</h3>
+          <ul>
+            <li><strong>Minimize loader complexity:</strong> Keep loaders focused and fast</li>
+            <li><strong>Use component selective updates:</strong> Update only what changed</li>
+            <li><strong>Cache expensive operations:</strong> Store results when appropriate</li>
+            <li><strong>Leverage Python process pools:</strong> Let the framework handle parallelization</li>
+            <li><strong>Optional chaining:</strong> Reduces runtime errors and improves stability</li>
+          </ul>
+
+          <h3>Security Considerations</h3>
+          <ul>
+            <li><strong>Validate all user input:</strong> Never trust client data</li>
+            <li><strong>Use parameterized queries:</strong> Prevent SQL injection</li>
+            <li><strong>Sanitize HTML output:</strong> Framework handles this automatically</li>
+            <li><strong>Check authentication in loaders:</strong> Verify <code>request.session.user</code></li>
+            <li><strong>Rate limit server functions:</strong> Prevent abuse of AJAX endpoints</li>
+          </ul>
+        </section>
+
         <!-- Client Runtime -->
         <section id="client-runtime" class="docs-section">
           <h2>Client Runtime</h2>
@@ -1870,6 +2103,131 @@ pm2 show my-app
 pm2 delete my-app</code></pre>
         </section>
 
+        <!-- Troubleshooting -->
+        <section id="troubleshooting" class="docs-section">
+          <h2>Troubleshooting</h2>
+          <p>Common issues and solutions when working with PureMix:</p>
+
+          <h3>Template Expressions Not Working</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> <code>{user.name}</code> shows as literal string "{user.name}"
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Check if inside script tags:</strong> Template expressions don't work in <code>&lt;script&gt;</code> tags</li>
+            <li><strong>Use PureMix.data instead:</strong> <code>const userData = PureMix.data.loadPage?.data?.user;</code></li>
+            <li><strong>Verify loader is running:</strong> Check console for loader execution logs</li>
+          </ul>
+          <pre><code class="language-javascript">// ❌ Won't work in script tags
+const name = '{user.name}';
+
+// ✅ Correct approach
+const userData = PureMix.data.loadPage?.data?.user;
+const name = userData?.name || 'Guest';</code></pre>
+
+          <h3>Component Props Not Updating</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> Props changes don't reflect in component
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Check loader signature:</strong> Ensure third parameter is named <code>props</code></li>
+            <li><strong>Verify props usage:</strong> Access via <code>props?.user</code> not direct <code>user</code></li>
+            <li><strong>Return props in data:</strong> Must return props in loader's data object</li>
+          </ul>
+          <pre><code class="language-javascript">// ✅ Correct component loader
+async function loadComponent(request, actionResult, props) {
+  const user = props?.user || defaultUser;
+  return { data: { user } };
+}</code></pre>
+
+          <h3>Python Function Not Found</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> "Python function not available" error
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Check server startup logs:</strong> Look for "Python modules: X/X modules" message</li>
+            <li><strong>Verify file location:</strong> Python files must be in <code>app/</code> directory</li>
+            <li><strong>Check function name:</strong> Ensure function is defined with <code>def</code></li>
+            <li><strong>Restart server:</strong> Python files are scanned at startup</li>
+          </ul>
+          <pre><code class="language-bash"># Check if Python is available
+python3 --version
+
+# Restart development server to rescan
+npm run dev</code></pre>
+
+          <h3>Server Function 404 Errors</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> Server function calls return 404
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Check function name:</strong> Must match <code>onsubmit</code> or <code>PureMix.call()</code> name</li>
+            <li><strong>Verify script tag:</strong> Function must be in <code>&lt;script server&gt;</code> block</li>
+            <li><strong>Component namespacing:</strong> Use <code>ComponentName.functionName</code> for component functions</li>
+            <li><strong>Check console:</strong> Look for function registration messages</li>
+          </ul>
+
+          <h3>Loader Data Undefined</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> <code>loadPage.data.user</code> is undefined
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Use optional chaining:</strong> <code>{loadPage?.data?.user?.name}</code></li>
+            <li><strong>Provide fallbacks:</strong> <code>{loadPage?.data?.user?.name || 'Guest'}</code></li>
+            <li><strong>Check loader return:</strong> Must return object with <code>data</code> property</li>
+            <li><strong>Verify async/await:</strong> Ensure loader waits for async operations</li>
+          </ul>
+
+          <h3>Hot Reload Not Working</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> Changes don't trigger server restart
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Check file location:</strong> Only <code>app/</code> directory is watched</li>
+            <li><strong>Verify npm script:</strong> Ensure using <code>npm run dev</code></li>
+            <li><strong>Check ignored files:</strong> <code>node_modules/</code>, <code>.git/</code> are ignored</li>
+            <li><strong>Manual restart:</strong> Press Ctrl+C and run <code>npm run dev</code> again</li>
+          </ul>
+
+          <h3>TypeScript Compilation Errors</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> TypeScript errors in <code>.puremix</code> files
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Run type check:</strong> <code>npx tsc --noEmit</code></li>
+            <li><strong>Check imports:</strong> Verify import paths and file extensions</li>
+            <li><strong>Node.js version:</strong> Ensure Node.js 22+ for native TypeScript support</li>
+            <li><strong>Review errors:</strong> Fix reported type mismatches</li>
+          </ul>
+
+          <h3>Performance Issues</h3>
+          <div class="important-note">
+            <strong>❌ Problem:</strong> Slow page loads or server responses
+          </div>
+          <p><strong>✅ Solution:</strong></p>
+          <ul>
+            <li><strong>Optimize loaders:</strong> Reduce database queries and async operations</li>
+            <li><strong>Check Python pools:</strong> Ensure 4 workers are running (check startup logs)</li>
+            <li><strong>Enable caching:</strong> Cache expensive computations</li>
+            <li><strong>Profile code:</strong> Use <code>console.time()</code> to find bottlenecks</li>
+            <li><strong>Review logs:</strong> Set <code>VERBOSE_DEBUG=true</code> for detailed timing</li>
+          </ul>
+
+          <h3>Getting More Help</h3>
+          <ul>
+            <li><strong>Enable verbose logging:</strong> <code>VERBOSE_DEBUG=true npm run dev</code></li>
+            <li><strong>Check GitHub issues:</strong> <a href="https://github.com/tacho87/Puremix/issues" target="_blank">Report bugs or search existing issues</a></li>
+            <li><strong>Review test examples:</strong> See <code>tests/projects/comprehensive-test/</code> for working patterns</li>
+            <li><strong>Read CLAUDE.md:</strong> Comprehensive framework documentation in repository</li>
+          </ul>
+        </section>
+
         <!-- Docker -->
         <section id="docker" class="docs-section">
           <h2>Docker Deployment</h2>
@@ -2112,7 +2470,7 @@ sudo certbot --nginx -d example.com -d www.example.com</code></pre>
 
     // Highlight active section in sidebar
     const sections = document.querySelectorAll('.docs-section');
-    const navLinks = document.querySelectorAll('.docs-sidebar a');
+    const sidebarLinks = document.querySelectorAll('.docs-sidebar a');
 
     function highlightActiveSection() {
       let current = '';
@@ -2125,7 +2483,7 @@ sudo certbot --nginx -d example.com -d www.example.com</code></pre>
         }
       });
 
-      navLinks.forEach(link => {
+      sidebarLinks.forEach(link => {
         link.classList.remove('active');
         if (link.getAttribute('href') === `#${current}`) {
           link.classList.add('active');
@@ -2135,6 +2493,39 @@ sudo certbot --nginx -d example.com -d www.example.com</code></pre>
 
     window.addEventListener('scroll', highlightActiveSection);
     highlightActiveSection();
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (mobileMenuToggle) {
+      mobileMenuToggle.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        this.setAttribute('aria-expanded', navLinks.classList.contains('active'));
+      });
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.navbar')) {
+        navLinks.classList.remove('active');
+        if (mobileMenuToggle) {
+          mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        }
+      }
+    });
+
+    // Close mobile menu when clicking any link
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function() {
+        if (navLinks.classList.contains('active')) {
+          navLinks.classList.remove('active');
+          if (mobileMenuToggle) {
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+    });
   </script>
 </body>
 </html>

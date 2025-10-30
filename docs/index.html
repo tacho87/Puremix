@@ -32,6 +32,9 @@
         <span class="brand-name">PureMix</span>
         <span class="version-badge">v0.1.0-alpha.1</span>
       </div>
+      <button class="mobile-menu-toggle" aria-label="Toggle menu">
+        ☰
+      </button>
       <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#python">Python Integration</a>
@@ -101,17 +104,26 @@ cd my-app && npm run dev</code></pre>
           <div class="window-content">
 <pre><code class="language-markup">&lt;loader>
   async function loadDashboard(request) {
+    // Fetch sales data from database
+    const salesData = await getSalesData(
+      request.query.timeframe || 'month'
+    );
+
     // Call Python for ML analysis
-    const analysis = await analyzeSales(data);
+    const analysis = await analyzeSales(salesData);
 
     return {
-      data: { sales: analysis.predictions }
+      data: {
+        sales: analysis.predictions,
+        confidence: analysis.confidence_score
+      }
     };
   }
 &lt;/loader>
 
 &lt;div class="dashboard">
-  &lt;h1>Sales: ${loadDashboard.data.sales}&lt;/h1>
+  &lt;h1>Sales Forecast: ${loadDashboard.data.sales}&lt;/h1>
+  &lt;p>Confidence: {loadDashboard.data.confidence}%&lt;/p>
 &lt;/div>
 
 &lt;script server lang="python">
@@ -120,8 +132,12 @@ cd my-app && npm run dev</code></pre>
     import numpy as np
 
     df = pd.DataFrame(data)
+    predictions = float(df['sales'].mean())
+    std_dev = float(df['sales'].std())
+
     return {
-      'predictions': df['sales'].mean()
+      'predictions': predictions,
+      'confidence_score': round(95 - (std_dev / predictions * 100), 2)
     }
 &lt;/script></code></pre>
           </div>
@@ -598,7 +614,33 @@ npm run dev
         if (target) {
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+        // Close mobile menu after clicking
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks.classList.contains('active')) {
+          navLinks.classList.remove('active');
+        }
       });
+    });
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (mobileMenuToggle) {
+      mobileMenuToggle.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        this.setAttribute('aria-expanded', navLinks.classList.contains('active'));
+      });
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.navbar')) {
+        navLinks.classList.remove('active');
+        if (mobileMenuToggle) {
+          mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        }
+      }
     });
   </script>
 </body>
