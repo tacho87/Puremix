@@ -12,7 +12,107 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tacho87.github.io/Puremix">
 
-  <!-- Styles -->
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1',
+            'primary-dark': '#4f46e5',
+            'primary-light': '#818cf8',
+            secondary: '#8b5cf6',
+            accent: '#06b6d4',
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif'],
+            mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', 'Source Code Pro', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Animations -->
+  <style>
+    @keyframes gradient {
+  
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+  
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+  
+    .animate-gradient {
+      background-size: 200% 200%;
+      animation: gradient 3s ease infinite;
+    }
+  
+    /* Responsive code blocks */
+    pre {
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    pre code {
+      display: block;
+      white-space: pre;
+      word-wrap: normal;
+      overflow-wrap: normal;
+      font-size: 0.9em !important;
+    }
+  
+    /* Override Prism.js font-size for all language classes */
+    code[class*="language-"],
+    pre[class*="language-"] {
+      font-size: 0.9em !important;
+      max-width: 100% !important;
+      width: auto !important;
+      box-sizing: border-box !important;
+    }
+  
+    /* Force mobile responsiveness for all Prism code elements */
+    pre[class*="language-"],
+    code[class*="language-"],
+    .language-markup,
+    .language-javascript,
+    .language-python,
+    .language-typescript {
+      max-width: 100% !important;
+      width: 100% !important;
+      overflow-x: auto !important;
+      white-space: pre !important;
+      word-wrap: normal !important;
+      box-sizing: border-box !important;
+    }
+  
+    /* Mobile code block optimization */
+    @media (max-width: 768px) {
+      pre {
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+  
+      pre code {
+        font-size: 0.75rem;
+      }
+  
+      /* Extra mobile fixes for Prism */
+      code[class*="language-"],
+      pre[class*="language-"] {
+        font-size: 0.75rem !important;
+        padding: 0.75rem !important;
+      }
+    }
+  </style>
+  
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
 
   <!-- Syntax Highlighting -->
@@ -25,83 +125,145 @@
 </head>
 <body>
   <!-- Navigation -->
-  <nav class="navbar">
-    <div class="container">
-      <div class="nav-brand">
-        <span class="logo">🎯</span>
-        <span class="brand-name">PureMix</span>
-        <span class="version-badge">v0.1.0-alpha.1</span>
+  <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Brand -->
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🎯</span>
+          <span class="font-bold text-xl">PureMix</span>
+          <span
+            class="hidden sm:inline-block bg-primary-light text-white px-2 py-1 rounded text-xs font-semibold">v0.1.0-alpha.1</span>
+        </div>
+<!-- Desktop Navigation -->
+<div class="hidden md:flex items-center gap-6">
+  <a href="#features" class="text-gray-700 hover:text-primary font-medium transition-colors">Features</a>
+  <a href="#python" class="text-gray-700 hover:text-primary font-medium transition-colors">Python Integration</a>
+  <a href="documentation.html" class="text-gray-700 hover:text-primary font-medium transition-colors">Documentation
+    📖</a>
+  <a href="#getting-started" class="text-gray-700 hover:text-primary font-medium transition-colors">Get Started</a>
+  <a href="https://github.com/sponsors/tacho87" target="_blank"
+    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition-all hover:-translate-y-0.5 shadow-md">
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+      <path
+        d="M4.25 2.5c-1.336 0-2.75 1.164-2.75 3 0 2.15 1.58 4.144 3.365 5.682A20.565 20.565 0 008 13.393a20.561 20.561 0 003.135-2.211C12.92 9.644 14.5 7.65 14.5 5.5c0-1.836-1.414-3-2.75-3-1.373 0-2.609.986-3.029 2.456a.75.75 0 01-1.442 0C6.859 3.486 5.623 2.5 4.25 2.5zM8 14.25l-.345.666-.002-.001-.006-.003-.018-.01a7.643 7.643 0 01-.31-.17 22.075 22.075 0 01-3.434-2.414C2.045 10.731 0 8.35 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.85-2.045 5.231-3.885 6.818a22.08 22.08 0 01-3.744 2.584l-.018.01-.006.003h-.002L8 14.25zm0 0l.345.666a.752.752 0 01-.69 0L8 14.25z" />
+    </svg>
+    <span>Sponsor</span>
+  </a>
+  <a href="https://github.com/tacho87/Puremix" target="_blank"
+    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-700 transition-colors">
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+      <path
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+    </svg>
+    <span>GitHub</span>
+  </a>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="md:hidden mobile-menu-toggle p-2 text-gray-700 hover:text-primary" aria-label="Toggle menu">
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+</button>
       </div>
-      <button class="mobile-menu-toggle" aria-label="Toggle menu">
-        ☰
-      </button>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#python">Python Integration</a>
-        <a href="documentation.html" class="docs-link">Documentation</a>
-        <a href="#getting-started">Get Started</a>
-        <a href="https://github.com/sponsors/tacho87" target="_blank" class="sponsor-link">
-          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M4.25 2.5c-1.336 0-2.75 1.164-2.75 3 0 2.15 1.58 4.144 3.365 5.682A20.565 20.565 0 008 13.393a20.561 20.561 0 003.135-2.211C12.92 9.644 14.5 7.65 14.5 5.5c0-1.836-1.414-3-2.75-3-1.373 0-2.609.986-3.029 2.456a.75.75 0 01-1.442 0C6.859 3.486 5.623 2.5 4.25 2.5zM8 14.25l-.345.666-.002-.001-.006-.003-.018-.01a7.643 7.643 0 01-.31-.17 22.075 22.075 0 01-3.434-2.414C2.045 10.731 0 8.35 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.85-2.045 5.231-3.885 6.818a22.08 22.08 0 01-3.744 2.584l-.018.01-.006.003h-.002L8 14.25zm0 0l.345.666a.752.752 0 01-.69 0L8 14.25z"/>
-          </svg>
-          Sponsor
-        </a>
-        <a href="https://github.com/tacho87/Puremix" target="_blank" class="github-link">
-          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-          </svg>
-          GitHub
-        </a>
-      </div>
+      
+      <!-- Mobile Navigation -->
+      <div class="nav-links !hidden flex-col border-t border-gray-200 py-4 md:!hidden">
+        <div class="flex flex-col gap-2">
+          <a href="#features" class="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded transition-colors">Features</a>
+          <a href="#python" class="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded transition-colors">Python Integration</a>
+          <a href="documentation.html"
+            class="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded transition-colors">Documentation 📖</a>
+          <a href="#getting-started" class="px-4 py-2 text-gray-700 hover:bg-gray-50 rounded transition-colors">Get
+            Started</a>
+          <a href="https://github.com/sponsors/tacho87" target="_blank"
+            class="inline-flex items-center justify-center gap-2 mx-4 mt-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg font-semibold">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M4.25 2.5c-1.336 0-2.75 1.164-2.75 3 0 2.15 1.58 4.144 3.365 5.682A20.565 20.565 0 008 13.393a20.561 20.561 0 003.135-2.211C12.92 9.644 14.5 7.65 14.5 5.5c0-1.836-1.414-3-2.75-3-1.373 0-2.609.986-3.029 2.456a.75.75 0 01-1.442 0C6.859 3.486 5.623 2.5 4.25 2.5zM8 14.25l-.345.666-.002-.001-.006-.003-.018-.01a7.643 7.643 0 01-.31-.17 22.075 22.075 0 01-3.434-2.414C2.045 10.731 0 8.35 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.85-2.045 5.231-3.885 6.818a22.08 22.08 0 01-3.744 2.584l-.018.01-.006.003h-.002L8 14.25zm0 0l.345.666a.752.752 0 01-.69 0L8 14.25z" />
+              </svg>
+            <span>Sponsor</span>
+            </a>
+          <a href="https://github.com/tacho87/Puremix" target="_blank"
+            class="inline-flex items-center justify-center gap-2 mx-4 px-4 py-2 bg-gray-900 text-white rounded-lg font-semibold">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+            <span>GitHub</span>
+            </a>
+            </div>
+            </div>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-background">
-      <div class="blob blob-1"></div>
-      <div class="blob blob-2"></div>
-      <div class="blob blob-3"></div>
-    </div>
-    <div class="container hero-content">
-      <div class="hero-text">
-        <h1 class="hero-title">
-          Build Web Apps with<br>
-          <span class="gradient-text">JavaScript & Python</span><br>
-          <span class="subtitle">in One File</span>
-        </h1>
-        <p class="hero-description">
-          PureMix is an HTML-first full-stack framework that lets you mix JavaScript, TypeScript, and Python
-          in the same file. Native Python integration, server-side rendering, simple development.
-        </p>
-        <div class="hero-cta">
-          <a href="#getting-started" class="btn btn-primary">
-            <span>Get Started</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-            </svg>
-          </a>
-          <a href="https://github.com/tacho87/Puremix" class="btn btn-secondary" target="_blank">
-            View on GitHub
-          </a>
-        </div>
-        <div class="hero-code">
-<pre><code class="language-bash">npm install -g puremix@alpha
+  <section
+    class="relative min-h-screen flex items-center py-20 overflow-hidden bg-gradient-to-br from-white via-indigo-50/30 to-purple-50/30">
+    <!-- Animated Background Blobs -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-3xl animate-pulse">
+      </div>
+      <div
+        class="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-3xl animate-pulse"
+        style="animation-delay: 1s;"></div>
+      <div
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-secondary/10 to-accent/10 rounded-full blur-3xl animate-pulse"
+        style="animation-delay: 2s;"></div>
+      </div>
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
+          <!-- Left Column: Text Content -->
+          <div class="text-center lg:text-left space-y-8">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+              Build Web Apps with<br>
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent animate-gradient">
+              JavaScript & Python
+            </span><br>
+            <span class="text-2xl sm:text-3xl lg:text-4xl text-gray-600 font-normal">in One File</span>
+            </h1>
+<p class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+  PureMix is an HTML-first full-stack framework that lets you mix JavaScript, TypeScript, and Python
+  in the same file. Native Python integration, server-side rendering, simple development.
+</p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+  <a href="#getting-started"
+    class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-primary-dark text-white rounded-lg font-semibold hover:from-primary-dark hover:to-primary transition-all hover:-translate-y-1 shadow-lg hover:shadow-xl">
+    <span>Get Started</span>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd"
+        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+        clip-rule="evenodd" />
+      </svg>
+      </a>
+            <a href="https://github.com/tacho87/Puremix" target="_blank"
+              class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-50 transition-all border-2 border-gray-200 hover:border-gray-300">
+              <span>View on GitHub</span>
+            </a>
+            </div>
+<div class="bg-gray-900 rounded-lg p-4 shadow-xl max-w-xl mx-auto lg:mx-0">
+  <pre class="text-left"><code class="language-bash text-sm">npm install -g puremix@alpha
 puremix create my-app
 cd my-app && npm run dev</code></pre>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <div class="code-window">
-          <div class="window-header">
-            <div class="window-controls">
-              <span class="control close"></span>
-              <span class="control minimize"></span>
-              <span class="control maximize"></span>
-            </div>
-            <span class="window-title">app/routes/index.puremix</span>
           </div>
-          <div class="window-content">
+          </div>
+<!-- Right Column: Code Window -->
+<div class="relative">
+  <div class="bg-gray-900 rounded-xl shadow-2xl overflow-hidden border border-gray-700">
+    <!-- Window Header -->
+    <div class="bg-gray-800 px-4 py-3 flex items-center justify-between border-b border-gray-700">
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+        <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+        <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+      </div>
+              <span class="text-gray-400 text-sm font-mono">app/routes/index.puremix</span>
+              <div class="w-16"></div>
+              </div>
+            <!-- Window Content -->
+            <div class="p-6 overflow-x-auto">
 <pre><code class="language-markup">&lt;loader>
   async function loadDashboard(request) {
     // Fetch sales data from database
@@ -140,6 +302,7 @@ cd my-app && npm run dev</code></pre>
       'confidence_score': round(95 - (std_dev / predictions * 100), 2)
     }
 &lt;/script></code></pre>
+            </div>
           </div>
         </div>
       </div>
@@ -147,39 +310,86 @@ cd my-app && npm run dev</code></pre>
   </section>
 
   <!-- Features Grid -->
-  <section id="features" class="features">
-    <div class="container">
-      <h2 class="section-title">Why PureMix?</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🐍</div>
-          <h3>Python Integration</h3>
-          <p>Mix Python and JavaScript seamlessly. Call NumPy, Pandas, and ML libraries directly from your web app.</p>
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">Why PureMix?</h2>
+  
+      <!-- Editorial List Design (Non-AI Template) -->
+      <div class="max-w-4xl mx-auto divide-y divide-gray-200">
+        <!-- Feature 1 -->
+        <div class="py-8 hover:bg-gray-50 transition-colors">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <span class="text-2xl">🐍</span>
+              <span>Python Integration</span>
+            </h3>
+            <p class="text-gray-600 md:col-span-2">
+              Mix Python and JavaScript seamlessly. Call NumPy, Pandas, and ML libraries directly from your web app.
+            </p>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Simple Development</h3>
-          <p>Node.js 22+ runs TypeScript natively. No webpack, no bundlers, no complex configuration.</p>
+  
+        <!-- Feature 2 -->
+        <div class="py-8 hover:bg-gray-50 transition-colors">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <span class="text-2xl">⚡</span>
+              <span>Simple Development</span>
+            </h3>
+            <p class="text-gray-600 md:col-span-2">
+              Node.js 22+ runs TypeScript natively. No webpack, no bundlers, no complex configuration.
+            </p>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <h3>HTML-First</h3>
-          <p>Write familiar HTML with server-side logic. No JSX compilation, no virtual DOM, just pure web development.</p>
+  
+        <!-- Feature 3 -->
+        <div class="py-8 hover:bg-gray-50 transition-colors">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <span class="text-2xl">🎯</span>
+              <span>HTML-First</span>
+            </h3>
+            <p class="text-gray-600 md:col-span-2">
+              Write familiar HTML with server-side logic. No JSX compilation, no virtual DOM, just pure web development.
+            </p>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">🧩</div>
-          <h3>Component System</h3>
-          <p>React-style components with props and selective updates. Smart DOM diffing for zero-flicker UI.</p>
+  
+        <!-- Feature 4 -->
+        <div class="py-8 hover:bg-gray-50 transition-colors">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <span class="text-2xl">🧩</span>
+              <span>Component System</span>
+            </h3>
+            <p class="text-gray-600 md:col-span-2">
+              React-style components with props and selective updates. Smart DOM diffing for zero-flicker UI.
+            </p>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">🚀</div>
-          <h3>Server-Side Rendering</h3>
-          <p>Fast initial page loads with complete SSR. Loader/action pattern for data fetching and mutations.</p>
+<!-- Feature 5 -->
+<div class="py-8 hover:bg-gray-50 transition-colors">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+      <span class="text-2xl">🚀</span>
+      <span>Server-Side Rendering</span>
+    </h3>
+    <p class="text-gray-600 md:col-span-2">
+      Fast initial page loads with complete SSR. Loader/action pattern for data fetching and mutations.
+    </p>
+  </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔥</div>
-          <h3>Hot Reload</h3>
-          <p>Instant feedback during development. File watching with automatic server restart and browser refresh.</p>
+<!-- Feature 6 -->
+<div class="py-8 hover:bg-gray-50 transition-colors">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+    <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+      <span class="text-2xl">🔥</span>
+      <span>Hot Reload</span>
+    </h3>
+    <p class="text-gray-600 md:col-span-2">
+      Instant feedback during development. File watching with automatic server restart and browser refresh.
+    </p>
+  </div>
         </div>
       </div>
     </div>
@@ -194,16 +404,17 @@ cd my-app && npm run dev</code></pre>
         Multiple ways to use Python, from inline execution to ES6 imports.
       </p>
 
-      <div class="python-methods">
+      <div class="">
         <!-- Method 1: Script Tags -->
-        <div class="method-card">
-          <div class="method-header">
-            <span class="method-number">1</span>
-            <h3>Script Tag Functions</h3>
+        <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="inline-flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full font-bold text-sm">1</span>
+            <h3 class="text-lg font-semibold text-gray-900 m-0">Script Tag Functions</h3>
           </div>
-          <p class="method-description">Embed Python functions directly in .puremix files</p>
-          <div class="code-example">
-<pre><code class="language-markup">&lt;script server lang="python">
+          <p class="text-gray-600 mb-4">Embed Python functions directly in .puremix files</p>
+          <div class="bg-gray-900 rounded-lg overflow-x-auto">
+            <pre class="m-0 p-4"><code class="language-markup">&lt;script server lang="python">
   def calculate_roi(data, js_context=None):
     import numpy as np
 
@@ -225,14 +436,15 @@ cd my-app && npm run dev</code></pre>
         </div>
 
         <!-- Method 2: Inline Execution -->
-        <div class="method-card">
-          <div class="method-header">
-            <span class="method-number">2</span>
-            <h3>Inline Execution</h3>
+        <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="inline-flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full font-bold text-sm">2</span>
+            <h3 class="text-lg font-semibold text-gray-900 m-0">Inline Execution</h3>
           </div>
-          <p class="method-description">Execute Python code dynamically within loaders</p>
-          <div class="code-example">
-<pre><code class="language-javascript">const result = await request.python.call('analyze', data, `
+          <p class="text-gray-600 mb-4">Execute Python code dynamically within loaders</p>
+          <div class="bg-gray-900 rounded-lg overflow-x-auto">
+            <pre class="m-0 p-4"><code class="language-javascript">const result = await request.python.call('analyze', data, `
   import pandas as pd
 
   def analyze(data, js_context=None):
@@ -247,15 +459,17 @@ cd my-app && npm run dev</code></pre>
         </div>
 
         <!-- Method 3: ES6 Imports -->
-        <div class="method-card highlight">
-          <div class="method-header">
-            <span class="method-number">3</span>
-            <h3>ES6 Import Syntax 🎉</h3>
-            <span class="badge">Native</span>
+        <div
+          class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all border-2 border-primary">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="inline-flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full font-bold text-sm">3</span>
+            <h3 class="text-lg font-semibold text-gray-900 m-0">ES6 Import Syntax 🎉</h3>
+            <span class="px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full">Native</span>
           </div>
-          <p class="method-description">Import Python functions like JavaScript modules!</p>
-          <div class="code-example">
-<pre><code class="language-javascript">// Import Python functions using standard ES6 syntax!
+          <p class="text-gray-600 mb-4">Import Python functions like JavaScript modules!</p>
+          <div class="bg-gray-900 rounded-lg overflow-x-auto">
+            <pre class="m-0 p-4"><code class="language-javascript">// Import Python functions using standard ES6 syntax!
 import { validate_data, analyze_portfolio } from '../lib/data_processor'
 import { calculate_loan } from '../services/financial_analyzer'
 
@@ -271,14 +485,15 @@ async function loadPage(request) {
         </div>
 
         <!-- Method 4: Global Functions -->
-        <div class="method-card">
-          <div class="method-header">
-            <span class="method-number">4</span>
-            <h3>Global Functions (Auto-Discovery)</h3>
+        <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="inline-flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full font-bold text-sm">4</span>
+            <h3 class="text-lg font-semibold text-gray-900 m-0">Global Functions (Auto-Discovery)</h3>
           </div>
-          <p class="method-description">Zero imports needed - Python functions available everywhere</p>
-          <div class="code-example">
-<pre><code class="language-javascript">// No imports required! All Python modules auto-discovered
+          <p class="text-gray-600 mb-4">Zero imports needed - Python functions available everywhere</p>
+          <div class="bg-gray-900 rounded-lg overflow-x-auto">
+            <pre class="m-0 p-4"><code class="language-javascript">// No imports required! All Python modules auto-discovered
 async function loadPage(request) {
   // Call any Python function globally
   const result = await validate_data({ userId: 123 });
@@ -496,7 +711,7 @@ Content-Type: text/html
     <div class="container">
       <h2 class="section-title">Get Started in 3 Minutes</h2>
 
-      <div class="steps">
+      <div class="grid gap-6 max-w-4xl mx-auto mb-12">
         <div class="step-card">
           <div class="step-header">
             <span class="step-badge">Step 1</span>
@@ -538,9 +753,9 @@ npm run dev
         </div>
       </div>
 
-      <div class="next-steps">
-        <h3>Next Steps</h3>
-        <div class="resources">
+      <div class="bg-white rounded-xl p-6 md:p-8 shadow-md max-w-4xl mx-auto">
+        <h3 class="text-2xl md:text-3xl font-bold text-center mb-6">Next Steps</h3>
+        <div class="grid gap-4">
           <a href="https://github.com/tacho87/Puremix/blob/main/FRAMEWORK_GUIDE.md" class="resource-link" target="_blank">
             <span class="resource-icon">📚</span>
             <div>
@@ -605,43 +820,6 @@ npm run dev
     </div>
   </footer>
 
-  <script>
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        // Close mobile menu after clicking
-        const navLinks = document.querySelector('.nav-links');
-        if (navLinks.classList.contains('active')) {
-          navLinks.classList.remove('active');
-        }
-      });
-    });
-
-    // Mobile menu toggle
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (mobileMenuToggle) {
-      mobileMenuToggle.addEventListener('click', function() {
-        navLinks.classList.toggle('active');
-        this.setAttribute('aria-expanded', navLinks.classList.contains('active'));
-      });
-    }
-
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.navbar')) {
-        navLinks.classList.remove('active');
-        if (mobileMenuToggle) {
-          mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        }
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

@@ -6,7 +6,29 @@
   <title>PureMix Documentation - Complete Framework Guide</title>
   <meta name="description" content="Complete documentation for PureMix framework - routing, loaders, actions, Python integration, components, and more.">
 
-  <!-- Styles -->
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1',
+            'primary-dark': '#4f46e5',
+            'primary-light': '#818cf8',
+            secondary: '#8b5cf6',
+            accent: '#06b6d4',
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif'],
+            mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', 'Source Code Pro', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
 
   <!-- Syntax Highlighting -->
@@ -54,6 +76,10 @@
   <div class="docs-layout">
     <!-- Sidebar -->
     <aside class="docs-sidebar">
+      <button class="sidebar-toggle" aria-label="Toggle documentation menu" aria-expanded="false">
+        <span>📚 Documentation Menu</span>
+        <span class="toggle-icon">▼</span>
+      </button>
       <div class="sidebar-content">
         <div class="sidebar-section">
           <h3>Getting Started</h3>
@@ -136,6 +162,53 @@
           <div class="important-note">
             <strong>⚠️ Alpha Version:</strong> PureMix is currently in alpha (v0.1.0-alpha.1). APIs may change before stable release.
           </div>
+
+          <h3>Framework Architecture</h3>
+          <p>
+            <strong>Behind the scenes, PureMix is powered by Node.js and Express.js.</strong> The framework provides a high-level
+            abstraction layer that handles routing, template processing, and Python integration, while Express handles the HTTP server
+            and middleware stack.
+          </p>
+
+          <div class="method-grid">
+            <div class="method-card">
+              <h4>🟢 Node.js Runtime</h4>
+              <p>Node.js 22+ provides native TypeScript support and the JavaScript execution environment for server-side code.</p>
+            </div>
+            <div class="method-card">
+              <h4>⚡ Express.js Server</h4>
+              <p>Express handles HTTP requests, routing, middleware, and serves as the web server foundation.</p>
+            </div>
+            <div class="method-card">
+              <h4>🎨 PureMix Engine</h4>
+              <p>Custom engine layer that processes .puremix files, handles templates, loaders, actions, and component rendering.</p>
+            </div>
+            <div class="method-card">
+              <h4>🐍 Python Bridge</h4>
+              <p>Process pool management system that executes Python code in isolated workers for seamless JavaScript/Python integration.</p>
+            </div>
+          </div>
+
+          <h3>Request Lifecycle</h3>
+          <p>Understanding how PureMix processes requests:</p>
+          <ol>
+            <li><strong>HTTP Request</strong> → Express receives the request (GET, POST, etc.)</li>
+            <li><strong>Route Resolution</strong> → PureMix maps URL to .puremix file using file-based routing</li>
+            <li><strong>Action Execution</strong> → If POST, server functions execute with form data</li>
+            <li><strong>Loader Execution</strong> → Data fetching function runs (receives action results if POST)</li>
+            <li><strong>Template Rendering</strong> → PureMix engine processes HTML with AST-based template interpreter</li>
+            <li><strong>Client Runtime</strong> → Injects browser-side PureMix API for AJAX and component updates</li>
+            <li><strong>HTML Response</strong> → Express sends complete server-rendered HTML to browser</li>
+          </ol>
+
+          <h3>Key Technologies</h3>
+          <ul>
+            <li><strong>Express.js 4.x</strong> - Web server and middleware</li>
+            <li><strong>TypeScript</strong> - Type safety (compiled to JavaScript by Node.js 22+)</li>
+            <li><strong>Python 3.8+</strong> - Optional for data science and ML integration</li>
+            <li><strong>AST Parser</strong> - Custom template engine using Abstract Syntax Trees (no regex)</li>
+            <li><strong>DOM Diffing</strong> - Client-side smart updates inspired by React</li>
+          </ul>
         </section>
 
         <!-- Installation -->
@@ -2527,5 +2600,6 @@ sudo certbot --nginx -d example.com -d www.example.com</code></pre>
       });
     });
   </script>
+  <script src="script.js"></script>
 </body>
 </html>
