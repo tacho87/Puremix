@@ -214,11 +214,11 @@
         <!-- Installation -->
         <section id="installation" class="docs-section">
           <h2>Installation</h2>
-          <p>Install PureMix globally using npm:</p>
-          <pre><code class="language-bash">npm install -g puremix@alpha</code></pre>
+          <p>Create a new PureMix project using npx (recommended):</p>
+          <pre><code class="language-bash">npx puremix create my-app</code></pre>
 
-          <p>Or use npx to run commands without installing:</p>
-          <pre><code class="language-bash">npx puremix@alpha create my-app</code></pre>
+          <p>Or install PureMix globally:</p>
+          <pre><code class="language-bash">npm install -g puremix</code></pre>
 
           <h3>Requirements</h3>
           <ul>
@@ -2323,7 +2323,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # Install PureMix
-RUN npm install -g puremix@alpha
+RUN npm install -g puremix
 
 # Copy application files
 COPY . .

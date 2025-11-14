@@ -23,7 +23,9 @@ if [ ! -f "$CLI_FILE" ]; then
     echo ""
     echo "This usually indicates a broken installation. Try:"
     echo "  npm uninstall -g puremix"
-    echo "  npm install -g puremix@alpha"
+    echo "  npm install -g puremix"
+    echo "Or use without installation:"
+    echo "  npx puremix create my-app"
     exit 1
 fi
 

@@ -1,0 +1,95 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients for modern look -->
+    <linearGradient id="htmlGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E34C26;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F06529;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="jsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F7DF1E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0DB4F;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="pythonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3776AB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4B8BBE;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="mixGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.2"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle with gradient -->
+  <circle cx="256" cy="256" r="240" fill="url(#mixGradient)" opacity="0.1"/>
+
+  <!-- HTML Angle Brackets - Left side -->
+  <g transform="translate(120, 200)" filter="url(#shadow)">
+    <path d="M 0 50 L -30 20 L -30 -20 L 0 -50 L 20 -40 L -10 -10 L -10 10 L 20 40 Z"
+          fill="url(#htmlGradient)" opacity="0.9"/>
+    <path d="M 10 35 L -15 10 L -15 -10 L 10 -35"
+          stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
+  </g>
+
+  <!-- JavaScript Curly Braces - Center -->
+  <g transform="translate(256, 256)" filter="url(#shadow)">
+    <path d="M -30 -60 C -40 -60, -45 -50, -45 -40 C -45 -20, -45 20, -45 40 C -45 50, -40 60, -30 60
+             C -20 60, -15 50, -15 40 L -15 30 C -15 20, -10 10, 0 10
+             C 10 10, 15 20, 15 30 L 15 40 C 15 50, 20 60, 30 60
+             C 40 60, 45 50, 45 40 C 45 20, 45 -20, 45 -40
+             C 45 -50, 40 -60, 30 -60 C 20 -60, 15 -50, 15 -40 L 15 -30
+             C 15 -20, 10 -10, 0 -10 C -10 -10, -15 -20, -15 -30 L -15 -40
+             C -15 -50, -20 -60, -30 -60 Z"
+          fill="url(#jsGradient)" opacity="0.9"/>
+    <!-- Inner highlight -->
+    <circle cx="0" cy="0" r="5" fill="#ffffff" opacity="0.7"/>
+  </g>
+
+  <!-- Python Brackets/Snake - Right side -->
+  <g transform="translate(360, 220)" filter="url(#shadow)">
+    <!-- Python brackets -->
+    <rect x="-25" y="-40" width="15" height="80" rx="3" fill="url(#pythonGradient)" opacity="0.9"/>
+    <rect x="10" y="-40" width="15" height="80" rx="3" fill="url(#pythonGradient)" opacity="0.9"/>
+
+    <!-- Python snake element -->
+    <path d="M -15 -20 Q -25 -10, -20 0 T -10 20 Q 0 25, 5 15 T 10 -5 Q 5 -15, -5 -18 T -15 -20"
+          fill="#FFD43B" opacity="0.8"/>
+  </g>
+
+  <!-- Integration connection lines -->
+  <g opacity="0.3">
+    <line x1="170" y1="220" x2="220" y2="240" stroke="url(#mixGradient)" stroke-width="2"/>
+    <line x1="290" y1="270" x2="340" y2="250" stroke="url(#mixGradient)" stroke-width="2"/>
+
+    <!-- Connection dots -->
+    <circle cx="195" cy="230" r="3" fill="url(#mixGradient)"/>
+    <circle cx="315" cy="260" r="3" fill="url(#mixGradient)"/>
+  </g>
+
+  <!-- PureMix text or brand element -->
+  <text x="256" y="380" font-family="'Segoe UI', Arial, sans-serif" font-size="28"
+        font-weight="600" text-anchor="middle" fill="url(#mixGradient)" opacity="0.8">
+    PureMix
+  </text>
+
+  <!-- Subtitle -->
+  <text x="256" y="405" font-family="'Segoe UI', Arial, sans-serif" font-size="14"
+        font-weight="400" text-anchor="middle" fill="#6366f1" opacity="0.6">
+    Highlighting
+  </text>
+</svg>

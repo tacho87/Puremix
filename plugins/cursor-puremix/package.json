@@ -1,7 +1,7 @@
 {
   "name": "puremix-cursor",
-  "displayName": "PureMix (Cursor)",
-  "description": "Syntax highlighting and snippets for PureMix framework (.puremix files) - Cursor IDE Edition",
+  "displayName": "PureMix Highlighting",
+  "description": "Syntax highlighting and snippets for PureMix framework (.puremix files) with advanced language support",
   "version": "0.1.0",
   "publisher": "puremix",
   "icon": "icon.png",

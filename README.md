@@ -178,19 +178,15 @@ Efficient updates without virtual DOM overhead:
 ### Quick Start
 
 ```bash
-# Install PureMix globally
-npm install -g puremix@alpha
-
 # Create new project
-puremix create my-app
+npx puremix create my-app
 
 # Choose template:
+# - default: Modern SSR application with routing
 # - basic: Modern Tailwind CSS with animations
 # - minimal: Zero dependencies, pure CSS
-# - advanced: Full-stack with auth and database
 
 cd my-app
-npm install
 npm run dev
 ```
 
