@@ -5,6 +5,9 @@ import chokidar from 'chokidar';
 import { WebSocketServer } from 'ws';
 import net from 'net';
 import { loadConfigWithEnvironment } from './config-loader.js';
+import { generateDocs } from './generate-docs.js';
+import fs from 'fs';
+import path from 'path';
 
 interface DevOptions {
   port?: number | string;
@@ -30,7 +33,7 @@ async function findAvailablePort(startPort: number, maxAttempts: number = 10): P
 function checkPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
     const server = net.createServer();
-    
+
     server.once('error', (err: any) => {
       if (err.code === 'EADDRINUSE') {
         resolve(false);
@@ -38,14 +41,47 @@ function checkPortAvailable(port: number): Promise<boolean> {
         resolve(false);
       }
     });
-    
+
     server.once('listening', () => {
       server.close();
       resolve(true);
     });
-    
+
     server.listen(port);
   });
+}
+
+// Helper function to determine if PROJECT_STRUCTURE.md should be regenerated
+function shouldRegenerateProjectStructure(filePath: string): boolean {
+  // Always regenerate for changes to key directories and files
+  const structuralPatterns = [
+    /\/app\//,                    // Any change in app directory
+    /puremix\.config\./,          // Configuration file changes
+    /package\.json$/,             // Package.json changes
+    /\.puremix$/,                 // PureMix route files
+    /\/routes\//,                 // Routes directory changes
+    /\/components\//,             // Components directory changes
+    /\/controllers\//,            // Controllers directory changes
+    /\/models\//,                 // Models directory changes
+    /\/services\//,               // Services directory changes
+    /\/utils\//,                  // Utils directory changes
+    /\/public\//,                 // Public directory changes
+    /\/views\//,                  // Views directory changes
+  ];
+
+  return structuralPatterns.some(pattern => pattern.test(filePath));
+}
+
+// Helper function to regenerate PROJECT_STRUCTURE.md
+async function regenerateProjectStructure(): Promise<void> {
+  try {
+    const cwd = process.cwd();
+    await generateDocs({ appDir: path.join(cwd, 'app') });
+    console.log('📖 PROJECT_STRUCTURE.md regenerated automatically');
+  } catch (error) {
+    // Don't throw - just log warning if regeneration fails
+    throw error;
+  }
 }
 
 export async function devServer(options: DevOptions = {}) {
@@ -54,15 +90,20 @@ export async function devServer(options: DevOptions = {}) {
   // Load configuration with environment-specific overrides
   const config = await loadConfigWithEnvironment();
 
-  // Merge CLI options with config file (CLI options take precedence)
+  // Special handling for hotReload to respect environment-specific configurations
+  // Commander.js automatically sets hotReload: true when --no-hot-reload is defined
+  // We need to respect environment-specific configurations over CLI defaults
+  const cliOptions = { ...options };
+  delete cliOptions.hotReload; // Remove CLI default for hotReload
+
+  // Merge CLI options with config file (config file hotReload takes precedence)
   const mergedConfig = {
     port: 3000,
     host: 'localhost',
-    hotReload: true,
     pythonTimeout: 30000,
     isDev: true, // Always true for dev server
-    ...config, // Config file values
-    ...options  // CLI options override everything
+    ...config, // Config file values (includes hotReload from environment config)
+    ...cliOptions  // CLI options override everything (except hotReload)
   };
 
   // Find available ports for both main server and WebSocket
@@ -80,16 +121,17 @@ export async function devServer(options: DevOptions = {}) {
     port: availablePort
   };
 
+  
   // Create PureMix engine with merged configuration
   const engine = new PureMixEngine(finalConfig);
 
-  // Set up WebSocket for hot reload
+  // Set up WebSocket for hot reload (only if enabled)
   let wss;
   if (finalConfig.hotReload) {
     try {
       wss = new WebSocketServer({ port: wsPort });
       console.log(`🔄 Hot reload server on ws://localhost:${wsPort}`);
-      
+
       wss.on('connection', (ws) => {
         ws.send(JSON.stringify({ type: 'connected' }));
       });
@@ -97,15 +139,19 @@ export async function devServer(options: DevOptions = {}) {
       console.warn(`⚠️  Could not start WebSocket server on port ${wsPort}. Hot reload disabled.`);
       console.warn(`    Error: ${wsError.message}`);
     }
+  } else {
+    console.log('🚀 Hot reload disabled for performance');
   }
 
   try {
     // Start the server
     const server = await engine.start();
     
-    // Set up file watching for hot reload
+    // Set up file watching for hot reload (only if enabled)
     if (finalConfig.hotReload && wss) {
       setupFileWatcher(engine, wss);
+    } else {
+      console.log('📁 File watching disabled for performance');
     }
 
     // Graceful shutdown
@@ -159,7 +205,7 @@ function setupFileWatcher(engine, wss) {
 
   const triggerReload = async (filePath, eventType) => {
     if (isReloading) return;
-    
+
     // Debounce multiple changes
     clearTimeout(reloadTimeout);
     reloadTimeout = setTimeout(async () => {
@@ -186,7 +232,16 @@ function setupFileWatcher(engine, wss) {
         });
         
         console.log('✅ Reload complete\\n');
-        
+
+        // Regenerate PROJECT_STRUCTURE.md if structural changes occurred
+        if (shouldRegenerateProjectStructure(filePath)) {
+          try {
+            await regenerateProjectStructure();
+          } catch (error) {
+            console.warn('⚠️  Could not regenerate PROJECT_STRUCTURE.md:', (error as Error).message);
+          }
+        }
+
       } catch (error) {
         console.error('❌ Reload failed:', error.message);
         

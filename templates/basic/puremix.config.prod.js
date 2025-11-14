@@ -5,6 +5,9 @@ export default {
   // Production mode detection (explicitly set)
   isDev: false,
 
+  // Disable hot reload and file watching in production for performance
+  hotReload: false,
+
   // Production debug settings
   showDebugInProduction: false,
 

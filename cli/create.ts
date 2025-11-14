@@ -90,9 +90,10 @@ export async function createProject(projectName: string, options: CreateOptions 
     // Update scripts to use CLI commands directly (no server.js needed)
     packageJson.scripts = {
       'dev': 'puremix dev',
-      'build': 'puremix build', 
+      'build': 'puremix build',
       'start': 'puremix start',
       'doctor': 'puremix doctor',
+      'generate-docs': 'puremix generate-docs',
       ...packageJson.scripts
     };
     

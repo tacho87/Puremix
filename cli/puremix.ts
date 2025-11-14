@@ -423,6 +423,7 @@ program.on('command:*', function (operands: string[]) {
 });
 
 
+
 // Show help if no command provided
 if (!process.argv.slice(2).length) {
   program.outputHelp();

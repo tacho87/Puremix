@@ -5,6 +5,9 @@ export default {
   // Staging mode detection
   isDev: false,
 
+  // Disable hot reload in staging for performance (production-like behavior)
+  hotReload: false,
+
   // Staging debug settings (limited debugging for troubleshooting)
   showDebugInProduction: true, // Show debug widget in staging for testing
 
