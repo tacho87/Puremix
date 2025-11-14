@@ -29,7 +29,12 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck",
     "test-package": "npm run build && npm run test-package-workflow",
-    "test-package-workflow": "node scripts/test-package.js"
+    "test-package-workflow": "node scripts/test-package.js",
+    "deploy": "npm run build && cd dist && npm publish --tag alpha",
+    "deploy:beta": "npm run build && cd dist && npm publish --tag beta",
+    "deploy:latest": "npm run build && cd dist && npm publish --tag latest",
+    "deploy:alpha": "npm run build && cd dist && npm publish --tag alpha",
+    "deploy:production": "npm run deploy:latest"
   },
   "engines": {
     "node": ">=22.0.0"
