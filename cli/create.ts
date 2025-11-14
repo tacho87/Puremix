@@ -30,9 +30,17 @@ export async function createProject(projectName: string, options: CreateOptions 
   console.log(`🎨 Template: ${template}`);
   console.log(`📦 Package Manager: ${packageManager}`);
   
-  // Check if directory exists
+  // Check if directory exists (allow current directory if it's empty)
   if (fs.existsSync(projectPath)) {
-    throw new Error(`Directory '${projectName}' already exists`);
+    // Allow creating in current directory if it's empty
+    if (projectName === '.') {
+      const files = fs.readdirSync(projectPath);
+      if (files.length > 0) {
+        throw new Error(`Current directory is not empty. Cannot create project here.`);
+      }
+    } else {
+      throw new Error(`Directory '${projectName}' already exists`);
+    }
   }
   
   // Create project directory
@@ -140,10 +148,7 @@ export async function createProject(projectName: string, options: CreateOptions 
       console.warn(`   cd ${projectName} && ${packageManager === 'yarn' ? 'yarn' : 'npm install'}`);
     }
   }
-  
-  // Generate initial CLAUDE.md for the project
-  generateClaudeConfig(projectPath, template, typescript);
-  
+
   // Success message
   console.log('\\n✅ Project created successfully!\\n');
   console.log('🚀 Next steps:');

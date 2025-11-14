@@ -26,7 +26,7 @@ program
 program
   .command('create <project-name>')
   .description('Create a new PureMix project')
-  .option('-t, --template <template>', 'Project template (auto-detected from templates/ directory)', 'basic')
+  .option('-t, --template <template>', 'Project template (auto-detected from templates/ directory)', 'default')
   .option('-p, --package-manager <manager>', 'Package manager (npm, yarn)', 'npm')
   .option('--skip-install', 'Skip dependency installation')
   .option('--typescript', 'Use TypeScript configuration')

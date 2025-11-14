@@ -6,6 +6,13 @@ import { execSync } from 'child_process';
 
 console.log('🧪 Starting npm package test workflow...\n');
 
+// Get current version from package.json
+const packageJsonPath = path.join(process.cwd(), 'package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+const currentVersion = packageJson.version;
+
+console.log(`📦 Current version: ${currentVersion}`);
+
 // Clean and create .tmp folder
 console.log('1️⃣  Setting up test environment...');
 const tmpDir = path.join(process.cwd(), '.tmp');
@@ -25,7 +32,7 @@ fs.cpSync(distDir, packageDir, { recursive: true });
 console.log('3️⃣  Creating npm package...');
 process.chdir(packageDir);
 execSync('npm pack', { stdio: 'inherit' });
-const packageFile = 'puremix-0.1.0-alpha.1.tgz';
+const packageFile = `puremix-${currentVersion}.tgz`;
 
 // Create test project directory
 console.log('4️⃣  Creating test project...');
@@ -42,19 +49,11 @@ execSync(`npm install ${path.join('..', 'npm-package', packageFile)}`, { stdio: 
 
 // Create PureMix project
 console.log('6️⃣  Creating PureMix application...');
-execSync('npx puremix create test-app --template basic', { stdio: 'inherit' });
+execSync('npx puremix create test-app --template default', { stdio: 'inherit' });
 
-// Install dependencies (fix version issue)
+// Install dependencies
 console.log('7️⃣  Installing application dependencies...');
-const appPackageJson = path.join(testProjectDir, 'test-app', 'package.json');
-if (fs.existsSync(appPackageJson)) {
-  const packageContent = fs.readFileSync(appPackageJson, 'utf8');
-  const fixedPackage = packageContent.replace(
-    '"puremix": "^0.0.1"',
-    '"puremix": "^0.1.0-alpha.1"'
-  );
-  fs.writeFileSync(appPackageJson, fixedPackage);
-}
+// Templates now use "puremix": "latest" so no version fixing needed
 
 process.chdir(path.join(testProjectDir, 'test-app'));
 execSync('npm install', { stdio: 'inherit' });
