@@ -27,7 +27,7 @@
  */
 
 import path from 'path';
-import type { ParsedFile } from './types.ts';
+import type { ParsedFile } from './types.js';
 
 interface FunctionInfo {
   name: string;
@@ -119,7 +119,7 @@ class FileParser {
           console.log(`🔍 COMPONENT DEBUG: Found component import: ${componentName} -> ${componentPath} -> ${resolvedPath}`);
           componentImports[componentName] = resolvedPath;
         } 
-        // Check for Python function imports: import { pythonFunction } from './script.py'
+        // Check for Python function imports: import { pythonFunction } from './script.py.js'
         else {
           const pythonMatch = trimmed.match(/^import\s+\{\s*([^}]+)\s*\}\s+from\s+['"`]([^'"`]+\.py)['"`]/);
           if (pythonMatch) {

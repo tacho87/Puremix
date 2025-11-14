@@ -23,7 +23,7 @@
  * - PureMix.events - Event handling utilities
  */
 
-import type { LoaderResults, PureMixRequest, ActionResult } from './types.ts';
+import type { LoaderResults, PureMixRequest, ActionResult } from './types.js';
 
 interface ClientRuntimeOptions {
   version?: string;

@@ -104,3 +104,4 @@ cli/puremix.js.backup
 
 # Plugin development files (published separately)
 plugins/
+.tmp/

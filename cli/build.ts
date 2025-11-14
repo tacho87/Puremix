@@ -148,7 +148,7 @@ function createProductionServer(outputDir: string): void {
   const serverContent = `#!/usr/bin/env node
 
 // PureMix Production Server - Deployment Platform Agnostic
-import PureMixEngine from 'puremix/lib/puremix-engine.ts';
+import PureMixEngine from 'puremix/lib/puremix-engine';
 
 // Production configuration
 const config = {

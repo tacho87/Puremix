@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { createProject } from './create.ts';
-import { devServer } from './dev.ts';
-import { LogManager } from '../lib/log-manager.ts';
+import { createProject } from './create.js';
+import { devServer } from './dev.js';
+import { LogManager } from '../lib/log-manager.js';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -39,16 +39,20 @@ program
     }
   });
 
-// Dev command
+// Dev command with environment support
 program
   .command('dev')
   .description('Start development server with hot reload')
   .option('-p, --port <port>', 'Server port', '3000')
   .option('-h, --host <host>', 'Server host', 'localhost')
+  .option('-e, --env <environment>', 'Environment (development, staging, production)', 'development')
   .option('--no-hot-reload', 'Disable hot reload')
   .option('--python-timeout <ms>', 'Python execution timeout in ms', '30000')
   .action(async (options: any) => {
     try {
+      // Set environment
+      process.env.NODE_ENV = options.env;
+
       await devServer(options);
     } catch (error) {
       console.error('❌ Dev server failed:', (error as Error).message);
@@ -66,29 +70,35 @@ program
   .description('Start production server')
   .option('-p, --port <port>', 'Server port', process.env.PORT || '3000')
   .option('-h, --host <host>', 'Server host', '0.0.0.0')
+  .option('-e, --env <environment>', 'Environment (development, staging, production)', 'production')
   .action(async (options: any) => {
     try {
-      // Set production environment
-      process.env.NODE_ENV = 'production';
-      
+      // Set environment
+      process.env.NODE_ENV = options.env;
+
+      // Load configuration with environment-specific overrides
+      const { loadConfigWithEnvironment } = await import('./config-loader.js');
+      const config = await loadConfigWithEnvironment();
+
       // Import and start the PureMix engine
-      const PureMixEngine = (await import('../lib/puremix-engine.ts')).default;
-      
+      const PureMixEngine = (await import('../lib/puremix-engine.js')).default;
+
       const engine = new PureMixEngine({
-        port: parseInt(options.port),
-        host: options.host,
-        isDev: false,
-        hotReload: false
+        ...config,
+        port: parseInt(options.port) || config.port || 3000,
+        host: options.host || config.host || '0.0.0.0',
+        isDev: options.env !== 'production',
+        hotReload: false // Always disabled for start command
       });
-      
+
       await engine.start();
-      
+
       // Graceful shutdown
       process.on('SIGTERM', () => engine.stop());
       process.on('SIGINT', () => engine.stop());
-      
+
     } catch (error) {
-      console.error('❌ Production server failed:', (error as Error).message);
+      console.error('❌ Server failed:', (error as Error).message);
       process.exit(1);
     }
   });
@@ -100,7 +110,7 @@ program
   .option('-w, --watch', 'Watch for changes and regenerate')
   .action(async (options: any) => {
     try {
-      const { generateDocs } = await import('./generate-docs.ts');
+      const { generateDocs } = await import('./generate-docs.js');
       await generateDocs(options);
     } catch (error) {
       console.error('❌ Documentation generation failed:', (error as Error).message);

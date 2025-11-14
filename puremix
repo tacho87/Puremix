@@ -1,10 +1,31 @@
 #!/usr/bin/env bash
 
 # PureMix CLI Launcher
-# This script runs the PureMix CLI with Node.js 24+ native TypeScript support
+# This script runs the PureMix CLI with Node.js 22+ native TypeScript support
 
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Resolve the real path of this script (handles npm global installation symlinks)
+REAL_SCRIPT_PATH="$(readlink -f "$0")"
 
-# Run the CLI with native TypeScript support (Node.js 24+)
-exec node "$SCRIPT_DIR/cli/puremix.ts" "$@"
+# Get the package directory from the script's real path
+PACKAGE_DIR="$( dirname "$REAL_SCRIPT_PATH" )"
+
+# Path to the CLI TypeScript file (for development) or JavaScript file (for built package)
+CLI_FILE="$PACKAGE_DIR/cli/puremix.ts"
+if [ ! -f "$CLI_FILE" ]; then
+    CLI_FILE="$PACKAGE_DIR/cli/puremix.js"
+fi
+
+# Verify the CLI file exists before trying to run it
+if [ ! -f "$CLI_FILE" ]; then
+    echo "❌ Error: Cannot find PureMix CLI at $CLI_FILE"
+    echo "📁 Package directory: $PACKAGE_DIR"
+    echo "🔍 Script path: $REAL_SCRIPT_PATH"
+    echo ""
+    echo "This usually indicates a broken installation. Try:"
+    echo "  npm uninstall -g puremix"
+    echo "  npm install -g puremix@alpha"
+    exit 1
+fi
+
+# Run the CLI with native TypeScript support (Node.js 22+)
+exec node "$CLI_FILE" "$@"

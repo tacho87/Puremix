@@ -333,7 +333,7 @@ app/
 
 <imports>
   import fs from 'fs'
-  import { getUserById } from '../controllers/users'
+  import { getUserById } from '../controllers/users.js'
 </imports>
 
 <loader>
@@ -530,7 +530,7 @@ Reusable \`.puremix\` components that can be imported into routes or other compo
 **Usage:**
 \`\`\`html
 <imports>
-  import Card from '../components/Card.puremix'
+  import Card from '../components/Card.puremix.js'
 </imports>
 
 <Card title="Hello" description="World" />
@@ -601,7 +601,7 @@ Route is automatically available based on filename!
 
 1. Create a \`.puremix\` file in \`app/components/\`
 2. Define props usage in template: \`{title}\`, \`{description}\`
-3. Import in routes: \`import MyComponent from '../components/MyComponent.puremix'\`
+3. Import in routes: \`import MyComponent from '../components/MyComponent.puremix.js'\`
 4. Use in HTML: \`<MyComponent title="..." description="..." />\`
 
 ## Learn More

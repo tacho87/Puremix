@@ -277,7 +277,7 @@ class ImportResolver {
         const componentRef = {
           __componentPath: finalPath,
           __componentName: componentName,
-          default: componentName // For default imports like: import UserCard from '../components/UserCard'
+          default: componentName // For default imports like: import UserCard from '../components/UserCard.js'
         };
         this.cache.set(cacheKey, componentRef);
         return componentRef;

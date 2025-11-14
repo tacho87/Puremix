@@ -16,5 +16,7 @@ logs
 .playwright-mcp
 .temp
 logs
+.tmp
 
 
+.tmp/

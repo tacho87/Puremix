@@ -25,13 +25,13 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import crypto from 'crypto';
-import FileParser from './file-parser.ts';
-import PythonExecutor from './python-executor.ts';
-import ImportResolver from './import-resolver.ts';
-import { TemplateEngineInterpreter as TemplateEngine } from './template-engine-interpreter.ts';
-import { generateClientRuntime } from './client-runtime.ts';
-import { sanitizer } from './sanitizer.ts';
-import { initializeLogger, getLogger, createLoggingMiddleware, type VerboseDebugConfig } from './debug-logger.ts';
+import FileParser from './file-parser.js';
+import PythonExecutor from './python-executor.js';
+import ImportResolver from './import-resolver.js';
+import { TemplateEngineInterpreter as TemplateEngine } from './template-engine-interpreter.js';
+import { generateClientRuntime } from './client-runtime.js';
+import { sanitizer } from './sanitizer.js';
+import { initializeLogger, getLogger, createLoggingMiddleware, type VerboseDebugConfig } from './debug-logger.js';
 
 // Augment Express Request type for our custom properties
 declare global {
@@ -43,7 +43,7 @@ declare global {
     }
   }
 }
-import type { PureMixRequest, LoaderResults, ComponentInfo, ComponentInstance, ComponentRenderResult, ParsedFile } from './types.ts';
+import type { PureMixRequest, LoaderResults, ComponentInfo, ComponentInstance, ComponentRenderResult, ParsedFile } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

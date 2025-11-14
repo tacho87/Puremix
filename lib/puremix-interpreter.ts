@@ -28,8 +28,8 @@
  * NO text parsing, NO regex - pure computer science AST-based interpretation
  */
 
-// import { getLogger } from './debug-logger';
-// import { JavaScriptExecutor } from './javascript-executor.js';
+// import { getLogger } from './debug-logger.js';
+// import { JavaScriptExecutor } from './javascript-executor.js.js';
 // const log = getLogger();
 const log = { debug: (...args: any[]) => { }, info: (...args: any[]) => { }, warn: (...args: any[]) => { }, error: (...args: any[]) => { } };
 

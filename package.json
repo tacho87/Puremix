@@ -1,6 +1,6 @@
 {
   "name": "puremix",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "HTML-first full-stack framework with seamless Python integration",
   "main": "lib/puremix-engine.ts",
   "type": "module",
@@ -13,7 +13,6 @@
     "templates/",
     "scripts/",
     "puremix",
-    "index.ts",
     "README.md",
     "LICENSE",
     "FRAMEWORK_GUIDE.md"
@@ -26,9 +25,11 @@
     "dev": "node cli/dev.ts",
     "start": "node cli/puremix.ts start",
     "create": "node cli/create.ts",
-    "build": "echo 'No build needed - Node.js 22+ runs TypeScript natively'",
+    "build": "rm -rf dist && npx tsc --project tsconfig.build.json && cp package.json README.md LICENSE FRAMEWORK_GUIDE.md puremix dist/ && cp -r templates scripts dist/",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run typecheck"
+    "prepublishOnly": "npm run typecheck",
+    "test-package": "npm run build && npm run test-package-workflow",
+    "test-package-workflow": "node scripts/test-package.js"
   },
   "engines": {
     "node": ">=22.0.0"

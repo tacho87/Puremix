@@ -1,36 +1,17 @@
 #!/usr/bin/env node
 
-import PureMixEngine from '../lib/puremix-engine.ts';
+import PureMixEngine from '../lib/puremix-engine.js';
 import chokidar from 'chokidar';
 import { WebSocketServer } from 'ws';
 import net from 'net';
-import fs from 'fs';
-import path from 'path';
+import { loadConfigWithEnvironment } from './config-loader.js';
 
 interface DevOptions {
   port?: number | string;
   host?: string;
   hotReload?: boolean;
   pythonTimeout?: number | string;
-}
-
-// Load puremix.config.js if it exists
-async function loadConfig(): Promise<any> {
-  const configPath = path.resolve(process.cwd(), 'puremix.config.js');
-  
-  if (fs.existsSync(configPath)) {
-    try {
-      const config = await import(`file://${configPath}?t=${Date.now()}`);
-      console.log('📋 Loaded configuration from puremix.config.js');
-      return config.default || config;
-    } catch (error) {
-      console.warn('⚠️  Failed to load puremix.config.js:', error.message);
-      console.warn('    Using default configuration');
-      return {};
-    }
-  }
-  
-  return {};
+  env?: string;
 }
 
 // Helper function to find an available port
@@ -70,9 +51,9 @@ function checkPortAvailable(port: number): Promise<boolean> {
 export async function devServer(options: DevOptions = {}) {
   console.log('🔥 Starting PureMix development server...\n');
 
-  // Load configuration from puremix.config.js
-  const config = await loadConfig();
-  
+  // Load configuration with environment-specific overrides
+  const config = await loadConfigWithEnvironment();
+
   // Merge CLI options with config file (CLI options take precedence)
   const mergedConfig = {
     port: 3000,
