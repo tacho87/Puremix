@@ -24,7 +24,7 @@ app/
 ├── public/           # Static assets (CSS, images, JS)
 ├── views/            # Layout templates
 │   └── layouts/
-│       └── main.html # Main layout template
+│       └── main.puremix # Main layout template
 ```
 
 ## Commands

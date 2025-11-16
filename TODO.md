@@ -245,9 +245,9 @@ First public alpha release of PureMix framework.
 
 🎉 Core Features:
 - File-based routing with SSR
-- Revolutionary Python integration (6 methods)
+- Advanced Python integration (6 methods)
 - Smart DOM diffing for zero-flicker updates
-- Component system with React-style props
+- Component system with component props
 - Pure AST-based template engine (regex-free)
 - Production-ready security and performance
 
@@ -283,9 +283,9 @@ This is the first public alpha release of PureMix - an HTML-first full-stack fra
 
 ## ✨ Highlights
 
-- **Revolutionary Python Integration** - 6 different ways to use Python, from inline execution to ES6 imports
+- **Advanced Python Integration** - 6 different ways to use Python, from inline execution to ES6 imports
 - **Pure AST-Based Template Engine** - Completely regex-free with 3,387 lines of sophisticated interpreter
-- **Smart DOM Diffing** - React-like updates without page reload (sub-10ms performance)
+- **Smart DOM Diffing** - Intelligent updates without page reload (sub-10ms performance)
 - **Zero Build Complexity** - Node.js 22+ runs TypeScript natively
 - **Production Ready** - Multi-layer security, comprehensive error handling
 

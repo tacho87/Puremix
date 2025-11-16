@@ -53,7 +53,7 @@ my-app/
 │   │   ├── FeatureCard.puremix
 │   │   └── ContactForm.puremix
 │   ├── views/layouts/       # Layout templates
-│   │   └── main.html       # Main layout
+│   │   └── main.puremix       # Main layout
 │   └── public/             # Static assets
 │       ├── css/
 │       ├── js/
@@ -72,7 +72,7 @@ This template uses Tailwind CSS for styling. You can customize:
 
 1. **Colors & Theme** - Edit `tailwind.config.js` to modify the design system
 2. **Custom Components** - Add new component classes in `app/public/css/style.css`
-3. **Layout** - Modify `app/views/layouts/main.html` for global changes
+3. **Layout** - Modify `app/views/layouts/main.puremix` for global changes
 
 ### Adding New Pages
 

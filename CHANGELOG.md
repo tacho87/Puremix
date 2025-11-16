@@ -17,7 +17,7 @@ This is the first public alpha release of PureMix - an HTML-first full-stack fra
 
 - **File-based Routing** - Next.js-style routing with dynamic parameters and catch-all routes
 - **Server-Side Rendering** - Complete SSR with loader/action pattern
-- **Component System** - React-style components with props and selective updates
+- **Component System** - PureMix components with props and selective updates
 - **Hot Reload** - Development server with file watching and instant updates
 
 #### Template Engine
@@ -47,7 +47,7 @@ Python integration methods:
 
 #### Smart DOM Diffing
 
-- **Zero-Flicker Updates** - React-like updates without page reload
+- **Zero-Flicker Updates** - Intelligent updates without page reload
 - **Form State Preservation** - Maintains focus, cursor position, input values
 - **Scroll Position Recovery** - Persistent scroll state across updates
 

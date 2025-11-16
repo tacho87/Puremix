@@ -46,7 +46,7 @@ my-app/
 │   ├── components/          # Reusable components
 │   │   └── SimpleCard.puremix
 │   ├── views/layouts/       # Layout templates
-│   │   └── main.html       # Main layout
+│   │   └── main.puremix       # Main layout
 │   └── public/             # Static assets
 │       └── css/
 │           └── style.css   # Plain CSS styles

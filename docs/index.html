@@ -109,6 +109,27 @@
         font-size: 0.75rem !important;
         padding: 0.75rem !important;
       }
+
+      /* Prevent horizontal scroll */
+      body {
+        overflow-x: hidden;
+      }
+
+      /* Ensure all content fits mobile viewport */
+      * {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Fix any potential overflow containers */
+      .container,
+      .max-w-7xl,
+      .max-w-6xl,
+      .max-w-5xl,
+      .max-w-4xl {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
     }
   </style>
   
@@ -787,21 +808,21 @@ npm run dev
         <div class="footer-links">
           <div class="link-column">
             <h4>Documentation</h4>
-            <a href="https://github.com/tacho87/Puremix/blob/main/README.md" target="_blank">README</a>
-            <a href="https://github.com/tacho87/Puremix/blob/main/FRAMEWORK_GUIDE.md" target="_blank">Framework Guide</a>
-            <a href="https://github.com/tacho87/Puremix/blob/main/CHANGELOG.md" target="_blank">Changelog</a>
+            <a href="https://github.com/tacho87/Puremix/blob/main/README.md">README</a>
+            <a href="https://github.com/tacho87/Puremix/blob/main/FRAMEWORK_GUIDE.md">Framework Guide</a>
+            <a href="https://github.com/tacho87/Puremix/blob/main/CHANGELOG.md">Changelog</a>
           </div>
           <div class="link-column">
             <h4>Community</h4>
-            <a href="https://github.com/tacho87/Puremix" target="_blank">GitHub</a>
-            <a href="https://github.com/tacho87/Puremix/issues" target="_blank">Issues</a>
-            <a href="https://github.com/tacho87/Puremix/discussions" target="_blank">Discussions</a>
+            <a href="https://github.com/tacho87/PureMix">GitHub</a>
+            <a href="https://github.com/tacho87/Puremix/issues">Issues</a>
+            <a href="https://github.com/tacho87/Puremix/discussions">Discussions</a>
           </div>
           <div class="link-column">
             <h4>Resources</h4>
-            <a href="https://github.com/tacho87/Puremix/tree/main/templates" target="_blank">Templates</a>
-            <a href="https://github.com/tacho87/Puremix/tree/main/examples" target="_blank">Examples</a>
-            <a href="https://www.npmjs.com/package/puremix" target="_blank">npm Package</a>
+            <a href="https://github.com/tacho87/Puremix/tree/main/templates">Templates</a>
+            <a href="https://github.com/tacho87/Puremix/tree/main/examples">Examples</a>
+            <a href="https://www.npmjs.com/package/puremix">npm Package</a>
           </div>
         </div>
       </div>

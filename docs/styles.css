@@ -1207,6 +1207,33 @@ a:hover {
     flex-direction: column;
   }
 
+  /* Responsive tables */
+  .docs-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: normal;
+  }
+
+  .docs-table th,
+  .docs-table td {
+    white-space: normal;
+    word-wrap: break-word;
+    min-width: auto;
+    padding: 0.5rem 0.25rem;
+  }
+
+  /* Prevent horizontal scroll on body */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Ensure all containers are responsive */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .btn {
     width: 100%;
     justify-content: center;

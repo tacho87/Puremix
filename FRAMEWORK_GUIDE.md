@@ -23,7 +23,7 @@ PureMix combines the best of both worlds:
 - **Server-Side Rendering** - Fast initial page loads, SEO-friendly
 - **Progressive Enhancement** - Add interactivity with any client framework
 - **Multi-Language** - JavaScript, TypeScript, and Python in the same file
-- **Smart DOM Diffing** - React-like updates without a virtual DOM
+- **Smart DOM Diffing** - Intelligent updates without page reload
 - **No Build Step** - Development without webpack/vite (optional for production)
 
 ---
@@ -1927,7 +1927,7 @@ export default defineConfig({
   build: {
     outDir: 'public/dist',
     rollupOptions: {
-      input: './src/main.jsx'
+      input: './src/main.js'
     }
   }
 });

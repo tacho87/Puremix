@@ -99,7 +99,7 @@ def analyze_data(data, js_context=None):
 
 ### 🎯 HTML-First Development
 
-Write familiar HTML with server-side logic - no JSX, no build step required.
+Write familiar HTML with server-side logic - no build step required.
 
 ```html
 <div class="products">
@@ -228,7 +228,7 @@ Every page is a single `.puremix` file with these sections:
   }
 </loader>
 
-<!-- HTML Template (supports JSX-like expressions) -->
+<!-- HTML Template (supports template expressions) -->
 <div>
   <h1>{loadPage.data.title}</h1>
 
@@ -1034,7 +1034,7 @@ MIT License - see [LICENSE](LICENSE) file.
 
 ### For JavaScript Developers
 
-- Familiar HTML/JSX syntax
+- Familiar HTML template syntax
 - Add Python capabilities when needed for data science/ML
 - Express.js foundation - use existing middleware
 
