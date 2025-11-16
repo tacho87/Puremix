@@ -49,7 +49,7 @@
           <span class="logo">🎯</span>
           <span class="brand-name">PureMix</span>
         </a>
-        <span class="version-badge">v0.1.0-alpha.1</span>
+        <span class="version-badge" id="current-version">0.1.0-alpha.0.2</span>
       </div>
       <button class="mobile-menu-toggle" aria-label="Toggle menu">
         ☰
@@ -57,6 +57,15 @@
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="documentation.html" class="active">Documentation</a>
+        <div class="version-picker">
+          <button id="version-dropdown-btn" class="version-dropdown-btn">
+            0.1.0-alpha.0.2 <span class="dropdown-arrow">▼</span>
+          </button>
+          <div id="version-dropdown" class="version-dropdown">
+            <a href="/" class="version-item current">0.1.0-alpha.0.2 (Latest)</a>
+            <a href="/0.1.0-alpha.0.2" class="version-item">0.1.0-alpha.0.2</a>
+          </div>
+        </div>
         <a href="https://github.com/sponsors/tacho87" target="_blank" class="sponsor-link">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
             <path d="M4.25 2.5c-1.336 0-2.75 1.164-2.75 3 0 2.15 1.58 4.144 3.365 5.682A20.565 20.565 0 008 13.393a20.561 20.561 0 003.135-2.211C12.92 9.644 14.5 7.65 14.5 5.5c0-1.836-1.414-3-2.75-3-1.373 0-2.609.986-3.029 2.456a.75.75 0 01-1.442 0C6.859 3.486 5.623 2.5 4.25 2.5zM8 14.25l-.345.666-.002-.001-.006-.003-.018-.01a7.643 7.643 0 01-.31-.17 22.075 22.075 0 01-3.434-2.414C2.045 10.731 0 8.35 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.85-2.045 5.231-3.885 6.818a22.08 22.08 0 01-3.744 2.584l-.018.01-.006.003h-.002L8 14.25zm0 0l.345.666a.752.752 0 01-.69 0L8 14.25z"/>
@@ -87,7 +96,7 @@
             <li><a href="#introduction">Introduction</a></li>
             <li><a href="#installation">Installation</a></li>
             <li><a href="#quick-start">Quick Start</a></li>
-            <li><a href="#project-structure">Project Structure</a></li>
+            <li><a href="#folder-structure">Folder Structure</a></li>
           </ul>
         </div>
 
@@ -137,6 +146,15 @@
         </div>
 
         <div class="sidebar-section">
+          <h3>Configuration</h3>
+          <ul>
+            <li><a href="#configuration">Framework Config</a></li>
+            <li><a href="#migration-guide">Migration Guide</a></li>
+            <li><a href="#folder-structure">Folder Structure</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
           <h3>Deployment</h3>
           <ul>
             <li><a href="#production">Production Setup</a></li>
@@ -160,7 +178,7 @@
             that lets you build web applications using HTML syntax while seamlessly mixing JavaScript, TypeScript, and Python in the same file.
           </p>
           <div class="important-note">
-            <strong>⚠️ Alpha Version:</strong> PureMix is currently in alpha (v0.1.0-alpha.1). APIs may change before stable release.
+            <strong>⚠️ Alpha Version:</strong> PureMix is currently in alpha (0.1.0-alpha.0.2). APIs may change before stable release.
           </div>
 
           <h3>Framework Architecture</h3>
@@ -249,26 +267,7 @@ npm run dev</code></pre>
           <pre><code class="language-bash">puremix create my-app --template basic</code></pre>
         </section>
 
-        <!-- Project Structure -->
-        <section id="project-structure" class="docs-section">
-          <h2>Project Structure</h2>
-          <pre><code class="language-bash">my-app/
-├── app/
-│   ├── routes/           # File-based routing
-│   │   ├── index.puremix # Home page (/)
-│   │   ├── about.puremix # About page (/about)
-│   │   └── products/
-│   │       ├── index.puremix  # /products
-│   │       └── [id].puremix   # /products/:id
-│   ├── components/       # Reusable components
-│   ├── layouts/          # Layout templates
-│   ├── lib/              # Utility functions
-│   └── services/         # Business logic & Python modules
-├── public/               # Static assets
-├── puremix.config.js     # Framework configuration
-└── package.json</code></pre>
-        </section>
-
+  
         <!-- Routing -->
         <section id="routing" class="docs-section">
           <h2>File-Based Routing</h2>
@@ -743,13 +742,9 @@ if (PureMix.data && PureMix.data.loadPage) {
 &lt;/div&gt;</code></pre>
 
           <h3>Component Props</h3>
-          <p>Pass data to components using JSX-style syntax. Components receive props as the third parameter in their loader function:</p>
+          <p>Pass data to components using HTML-style syntax. Components receive props as the third parameter in their loader function:</p>
           <pre><code class="language-markup">&lt;!-- Parent page: Passing props --&gt;
-&lt;UserCard
-  user={userData}
-  isActive={true}
-  config={{theme: "dark", showEmail: true}}
-/&gt;
+&lt;UserCard user={userData} isActive={true} config={{theme: "dark", showEmail: true}} /&gt;
 
 &lt;!-- Component file: UserCard.puremix --&gt;
 &lt;loader&gt;
@@ -1905,7 +1900,7 @@ console.log('Theme:', settings.theme);</code></pre>
           <h2>DOM Diffing Algorithm</h2>
           <p>
             PureMix implements a sophisticated client-side DOM diffing algorithm that provides
-            React-like update experience without page reloads. This eliminates visual flicker
+            smooth update experience without page reloads. This eliminates visual flicker
             during AJAX updates.
           </p>
 
@@ -1997,7 +1992,7 @@ function diffAndUpdateDOM(oldElement, newHtml) {
   &lt;/nav&gt;
 
   &lt;main&gt;
-    {children}
+    {content}
   &lt;/main&gt;
 
   &lt;footer&gt;
@@ -2038,7 +2033,7 @@ function diffAndUpdateDOM(oldElement, newHtml) {
   &lt;/aside&gt;
 
   &lt;div class="dashboard-content"&gt;
-    {children}
+    {content}
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
@@ -2059,6 +2054,190 @@ function diffAndUpdateDOM(oldElement, newHtml) {
 &lt;/loader&gt;</code></pre>
         </section>
 
+        <!-- Configuration -->
+        <section id="configuration" class="docs-section">
+          <h2>Configuration</h2>
+          <p>Complete PureMix configuration options and settings:</p>
+          
+          <h3>Configuration Options</h3>
+          <pre><code class="language-javascript">// puremix.config.js
+export default {
+  // Core server settings
+  port: 3000,
+  host: 'localhost',
+  
+  // Environment
+  env: process.env.NODE_ENV || 'development',
+  
+  // Development features
+  hotReload: true,
+  verboseDebug: false,
+  
+  // Python integration
+  python: {
+    enabled: true,
+    pythonPath: 'python3',
+    workers: 4,
+    timeout: 30000,
+    tempDir: '.temp'
+  },
+  
+  // Build and optimization
+  build: {
+    outDir: 'dist',
+    minify: false,
+    sourcemaps: true,
+    target: 'node22'
+  },
+  
+  // Security settings
+  security: {
+    csrfProtection: true,
+    rateLimiting: {
+      enabled: false,
+      windowMs: 15 * 60 * 1000,
+      max: 100
+    },
+    cors: {
+      enabled: false,
+      origin: ['http://localhost:3000'],
+      credentials: true
+    }
+  },
+  
+  // Logging
+  logging: {
+    level: 'info', // 'debug', 'info', 'warn', 'error'
+    file: false,
+    console: true
+  }
+};</code></pre>
+          
+          <h3>Environment Variables</h3>
+          <pre><code class="language-bash"># Development
+NODE_ENV=development
+PORT=3000
+HOST=localhost
+VERBOSE_DEBUG=true
+
+# Production
+NODE_ENV=production
+PORT=3000
+HOST=0.0.0.0
+VERBOSE_DEBUG=false
+
+# Python (optional)
+PYTHON_WORKERS=4
+PYTHON_TIMEOUT=30000
+
+# Database (example)
+DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+
+# Security
+SESSION_SECRET=your-secret-key
+CORS_ORIGIN=https://yourdomain.com</code></pre>
+        </section>
+
+        <!-- Migration Guide -->
+        <section id="migration-guide" class="docs-section">
+          <h2>Migration Guide</h2>
+          <p>How to upgrade between PureMix versions:</p>
+          
+          <h3>From 0.1.0-alpha.0.2 to 0.1.0-alpha.0.2</h3>
+          <ul>
+            <li><strong>Layout Content Variable:</strong> Changed from <code>{children}</code> to <code>{content}</code> in layout files</li>
+            <li><strong>Template Files:</strong> Layout files now use <code>.puremix</code> extension instead of <code>.html</code></li>
+            <li><strong>CSS Build System:</strong> Automatic CSS processing during build and development</li>
+            <li><strong>Versioned Documentation:</strong> Documentation now supports version picker and automatic syncing</li>
+          </ul>
+          
+          <h3>Breaking Changes</h3>
+          <ul>
+            <li><strong>Layout Content:</strong> Update layout files to use <code>{content}</code> instead of <code>{children}</code></li>
+            <li><strong>File Extensions:</strong> Ensure all layout files use <code>.puremix</code> extension</li>
+            <li><strong>Configuration:</strong> New configuration options available in <code>puremix.config.js</code></li>
+          </ul>
+          
+          <h3>Automatic Migration</h3>
+          <p>Run this command to automatically update your project:</p>
+          <pre><code class="language-bash">npx puremix migrate --from 0.1.0-alpha.0.2 --to 0.1.0-alpha.0.2</code></pre>
+        </section>
+
+        <!-- Folder Structure -->
+        <section id="folder-structure" class="docs-section">
+          <h2>Recommended Folder Structure</h2>
+          <p>A well-organized project structure for PureMix applications:</p>
+          
+          <pre><code class="language-bash">my-puremix-app/
+├── app/                           # Main application directory
+│   ├── routes/                   # File-based routing
+│   │   ├── index.puremix         # Home page (/)
+│   │   ├── about.puremix         # About page (/about)
+│   │   ├── products/             # Dynamic routes
+│   │   │   ├── index.puremix     # /products
+│   │   │   └── [id].puremix      # /products/:id
+│   │   └── api/                  # API routes
+│   │       ├── users.js          # /api/users
+│   │       └── products.js       # /api/products
+│   ├── components/               # Reusable components
+│   │   ├── Header.puremix
+│   │   ├── Footer.puremix
+│   │   ├── UserCard.puremix
+│   │   └── ProductList.puremix
+│   ├── layouts/                  # Layout templates
+│   │   ├── main.puremix          # Main layout
+│   │   └── dashboard.puremix     # Dashboard layout
+│   ├── lib/                      # Utility functions
+│   │   ├── database.js           # Database connection
+│   │   ├── auth.js               # Authentication helpers
+│   │   └── utils.js              # General utilities
+│   └── services/                 # Business logic & Python
+│       ├── email.js              # Email service
+│       ├── analytics.py          # Python ML service
+│       └── payments.js           # Payment processing
+├── public/                       # Static assets
+│   ├── css/                      # CSS files
+│   ├── js/                       # Client-side JavaScript
+│   ├── images/                   # Images and icons
+│   └── favicon.ico               # Site icon
+├── logs/                         # Application logs
+│   ├── app.log                   # Application logs
+│   ├── error.log                 # Error logs
+│   └── access.log                # Access logs
+├── tests/                        # Test files
+│   ├── unit/                     # Unit tests
+│   ├── integration/              # Integration tests
+│   └── e2e/                      # End-to-end tests
+├── .gitignore                    # Git ignore patterns
+├── .env.example                  # Environment variables template
+├── puremix.config.js             # Framework configuration
+├── package.json                  # Node.js dependencies
+├── README.md                     # Project documentation
+└── CHANGELOG.md                  # Version history</code></pre>
+          
+          <h3>File Naming Conventions</h3>
+          <ul>
+            <li><strong>Routes:</strong> Use <code>.puremix</code> for pages, <code>.js/.ts</code> for APIs</li>
+            <li><strong>Components:</strong> PascalCase with <code>.puremix</code> extension</li>
+            <li><strong>Layouts:</strong> kebab-case with <code>.puremix</code> extension</li>
+            <li><strong>Utilities:</strong> camelCase with <code>.js/.ts</code> extension</li>
+            <li><strong>Python:</strong> snake_case with <code>.py</code> extension</li>
+          </ul>
+          
+          <h3>Import Patterns</h3>
+          <pre><code class="language-javascript">// Import components
+import Header from '../components/Header.puremix';
+import UserCard from '../components/UserCard.puremix';
+
+// Import utilities
+import { db } from '../lib/database.js';
+import { authenticate } from '../lib/auth.js';
+
+// Import services
+import { sendEmail } from '../services/email.js';
+import { analyzeData } from '../services/analytics.py';</code></pre>
+        </section>
+
         <!-- Production -->
         <section id="production" class="docs-section">
           <h2>Production Setup</h2>
@@ -2069,7 +2248,9 @@ function diffAndUpdateDOM(oldElement, newHtml) {
 
           <h3>Basic Production Start</h3>
           <pre><code class="language-bash"># Set environment and start server
-NODE_ENV=production puremix start --port 3000 --host 0.0.0.0</code></pre>
+NODE_ENV=production npm start</code></pre>
+          <p>Or use the PureMix CLI directly:</p>
+          <pre><code class="language-bash">NODE_ENV=production npx puremix start --port 3000 --host 0.0.0.0</code></pre>
 
           <h3>Environment Variables</h3>
           <pre><code class="language-bash"># Create .env.production
@@ -2524,7 +2705,7 @@ sudo certbot --nginx -d example.com -d www.example.com</code></pre>
       </div>
       <div class="footer-bottom">
         <p>&copy; 2025 Anastacio Gianareas. Released under MIT License.</p>
-        <p class="footer-version">v0.1.0-alpha.1</p>
+        <p class="footer-version">0.1.0-alpha.0.2</p>
       </div>
     </div>
   </footer>
@@ -2566,6 +2747,92 @@ sudo certbot --nginx -d example.com -d www.example.com</code></pre>
 
     window.addEventListener('scroll', highlightActiveSection);
     highlightActiveSection();
+
+    // Version picker functionality
+    const versionDropdownBtn = document.getElementById('version-dropdown-btn');
+    const versionDropdown = document.getElementById('version-dropdown');
+
+    if (versionDropdownBtn && versionDropdown) {
+      versionDropdownBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = versionDropdown.classList.contains('open');
+        
+        // Close dropdown
+        if (isOpen) {
+          versionDropdown.classList.remove('open');
+          versionDropdownBtn.classList.remove('open');
+        } else {
+          // Open dropdown
+          versionDropdown.classList.add('open');
+          versionDropdownBtn.classList.add('open');
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.version-picker')) {
+          versionDropdown.classList.remove('open');
+          versionDropdownBtn.classList.remove('open');
+        }
+      });
+
+      // Close dropdown when pressing Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          versionDropdown.classList.remove('open');
+          versionDropdownBtn.classList.remove('open');
+        }
+      });
+    }
+
+    // Load version configuration
+    async function loadVersionConfig() {
+      try {
+        const response = await fetch('./version-config.json');
+        if (response.ok) {
+          const config = await response.json();
+          updateVersionDisplay(config);
+        }
+      } catch (error) {
+        console.warn('Failed to load version config:', error);
+      }
+    }
+
+    function updateVersionDisplay(config) {
+      // Update current version badges
+      const currentVersionElements = document.querySelectorAll('#current-version, .footer-version');
+      currentVersionElements.forEach(el => {
+        if (el && el.id !== 'version-dropdown-btn') {
+          el.textContent = config.current;
+        }
+      });
+
+      // Update version dropdown button (keep the arrow)
+      const dropdownBtn = document.getElementById('version-dropdown-btn');
+      if (dropdownBtn) {
+        const btnText = dropdownBtn.childNodes[0];
+        if (btnText && btnText.nodeType === Node.TEXT_NODE) {
+          btnText.textContent = config.current + ' ';
+        }
+      }
+
+      // Update version dropdown items
+      const versionDropdown = document.getElementById('version-dropdown');
+      if (versionDropdown && config.versions) {
+        versionDropdown.innerHTML = '';
+        
+        config.versions.forEach(version => {
+          const link = document.createElement('a');
+          link.href = version.documentation;
+          link.className = `version-item ${version.status === 'current' ? 'current' : ''}`;
+          link.textContent = version.version + (version.status === 'current' ? ' (Latest)' : '');
+          versionDropdown.appendChild(link);
+        });
+      }
+    }
+
+    // Initialize version system
+    loadVersionConfig();
 
     // Mobile menu toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');

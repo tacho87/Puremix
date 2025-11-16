@@ -20,3 +20,6 @@ logs
 
 
 .tmp/
+
+# Documentation version folders
+docs/v*/

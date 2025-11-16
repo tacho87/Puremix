@@ -48,6 +48,12 @@
   --radius-sm: 0.375rem;
   --radius: 0.5rem;
   --radius-md: 0.75rem;
+
+  /* Version Picker */
+  --version-picker-bg: var(--gray-800);
+  --version-picker-text: var(--gray-100);
+  --version-picker-hover: var(--gray-700);
+  --version-picker-border: var(--gray-600);
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
 }
@@ -158,6 +164,89 @@ a:hover {
 
 .nav-links a:hover {
   color: var(--primary);
+}
+
+/* Version Picker */
+.version-picker {
+  position: relative;
+  display: inline-block;
+  margin: 0 var(--spacing-sm);
+}
+
+.version-dropdown-btn {
+  background: var(--version-picker-bg);
+  color: var(--version-picker-text);
+  border: 1px solid var(--version-picker-border);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: all 0.2s ease;
+}
+
+.version-dropdown-btn:hover {
+  background: var(--version-picker-hover);
+  border-color: var(--primary);
+}
+
+.dropdown-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.version-dropdown-btn.open .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.version-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--version-picker-bg);
+  border: 1px solid var(--version-picker-border);
+  border-radius: var(--radius);
+  min-width: 200px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: var(--shadow-lg);
+}
+
+.version-dropdown.open {
+  max-height: 300px;
+  overflow-y: auto;
+  opacity: 1;
+  padding: var(--spacing-xs) 0;
+  margin-top: var(--spacing-xs);
+}
+
+.version-item {
+  display: block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--version-picker-text);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+.version-item:hover {
+  background: var(--version-picker-hover);
+}
+
+.version-item.current {
+  background: var(--primary);
+  color: white;
+  font-weight: 500;
+}
+
+.version-item.current:hover {
+  background: var(--primary-dark);
 }
 
 .github-link {

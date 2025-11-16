@@ -1,12 +1,19 @@
 {
-  "current": "v0.1.0-alpha.2",
+  "current": "0.1.0-alpha.0.2",
   "versions": [
     {
-      "version": "v0.1.0-alpha.2",
-      "releaseDate": "2024-01-15",
+      "version": "0.1.0-alpha.0.2",
+      "releaseDate": "2025-11-16",
       "status": "current",
       "documentation": "/",
-      "changelog": "# v0.1.0-alpha.2 (January 15, 2024)\n\n## 🚀 Major Features\n\n### CSS Build System Integration\n- **Integrated CSS build** into npm scripts across all templates\n- **Tailwind CSS, SCSS, and PostCSS** support with automatic processing\n- **Concurrent development** with CSS watch and PureMix dev server\n\n### Enhanced CLI Experience\n- **Interactive template selection** with detailed descriptions\n- **Improved project creation prompts** with feature lists\n- **Better user guidance** for choosing appropriate templates\n\n### SEO Optimization (Documentation Only)\n- **Comprehensive meta tags** for GitHub Pages landing page\n- **Social sharing optimization** for Twitter, LinkedIn, WhatsApp\n- **LLM-friendly structured data** for AI assistant crawling\n- **Open Graph and Twitter Card** implementation\n\n### Development Infrastructure\n- **Comprehensive .gitignore** covering PureMix-specific files\n- **Python integration temp file management**\n- **Development tool exclusions** and deployment scenarios\n\n## 🔧 Improvements\n\n- **Template cleanup** with removal of hardcoded SEO\n- **Streamlined framework** focusing on core functionality\n- **Better documentation structure** and organization\n\n## 🛠️ Technical Details\n\n### CSS Build Integration\n```bash\n# All templates now include CSS processing\nnpm run dev     # Builds CSS and starts dev server\nnpm run build   # Builds CSS for production\nnpm run css:watch # Watch CSS files during development\n```\n\n### Interactive Template Selection\n```bash\n./cli/puremix.ts create my-app\n# Prompts user to choose from:\n# - Basic Template (Tailwind CSS, animations)\n# - Default Template (MongoDB, auth, admin panel)\n# - Minimal Template (Zero dependencies, responsive)\n```\n\n## 📁 Project Structure\n\n```\nPureMix/\n├── docs/                    # Enhanced documentation\n│   ├── index.html          # SEO-optimized landing page\n│   └── version-config.json # Version management\n├── templates/\n│   ├── basic/              # Modern Tailwind CSS template\n│   ├── minimal/            # Zero-dependency template\n│   └── default/            # Full-featured template\n└── cli/\n    └── create.ts           # Enhanced with interactivity\n```"
+      "changelog": "# 0.1.0-alpha.0.2 (11/16/2025)\n\n## 🚀 Release\n\nSee the full changelog in [CHANGELOG.md](../CHANGELOG.md)."
+    },
+    {
+      "version": "v0.1.0-alpha.0.2",
+      "releaseDate": "2025-01-16",
+      "status": "previous",
+      "documentation": "/v0.1.0-alpha.0.2",
+      "changelog": "# v0.1.0-alpha.0.2 (January 16, 2025)\n\n## 🚀 Major Features\n\n### Versioned Documentation System\n- **Automated version synchronization** with package.json\n- **Version picker UI** for easy navigation between documentation versions\n- **Build-time documentation generation** with version tagging\n- **Git-style version management** for documentation releases\n\n### Latest Framework Updates\n- **Production-ready Python integration** with comprehensive error handling\n- **Smart DOM diffing algorithm** for zero-flicker updates\n- **Enhanced template engine** with JavaScript block execution\n- **Improved component system** with props support and selective updates\n\n### Development Experience\n- **Hot reload improvements** with better Python module detection\n- **Enhanced error messages** with actionable debugging information\n- **Performance optimizations** for sub-10ms component updates\n- **Better TypeScript integration** with comprehensive type checking\n\n## 🔧 Improvements\n\n- **Documentation accuracy** with automatic version syncing\n- **Developer onboarding** with comprehensive examples and guides\n- **Production deployment** with optimized build processes\n- **Python workflow** with seamless JavaScript/Python interop\n\n## 🛠️ Technical Details\n\n### Version Management\n```bash\n# Documentation versions are automatically managed\nnpm run build     # Generates versioned documentation\nnpm run dev       # Always shows latest version in development\n```\n\n### Framework Status\n- **Core Features**: 100% production-ready\n- **Python Integration**: 100% functional with process pools\n- **Component System**: 100% working with props and isolation\n- **Template Engine**: 95% reliable with comprehensive documentation"
     },
     {
       "version": "v0.1.0-alpha.1",
