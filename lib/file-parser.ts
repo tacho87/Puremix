@@ -27,7 +27,7 @@
  */
 
 import path from 'path';
-import type { ParsedFile } from './types.js';
+import type { ParsedFile } from './types';
 
 interface FunctionInfo {
   name: string;

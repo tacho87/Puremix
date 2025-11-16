@@ -88,18 +88,20 @@ Puremix/
 │   └── cursor-puremix/
 ├── docs/             # GitHub Pages documentation
 ├── tests/            # Test projects
-└── CLAUDE.MD         # AI assistant guidance
+
 ```
 
 ## Coding Standards
 
 ### TypeScript
+
 - Use TypeScript for all `.ts` files
 - Maintain type safety - avoid `any` when possible
 - Use interfaces for complex types
 - Document public APIs with JSDoc comments
 
 ### Code Style
+
 - 2 spaces for indentation
 - Use single quotes for strings
 - Semicolons required
@@ -107,14 +109,15 @@ Puremix/
 - Add comments for complex logic
 
 ### Documentation
+
 - Update FRAMEWORK_GUIDE.md for new features
-- Update CLAUDE.MD for framework architectural changes
 - Add examples for new functionality
 - Keep documentation clear and concise
 
 ## Areas for Contribution
 
 ### High Priority
+
 - [ ] Unit tests for core modules
 - [ ] Performance optimization
 - [ ] Production build system
@@ -122,6 +125,7 @@ Puremix/
 - [ ] Additional starter templates
 
 ### Medium Priority
+
 - [ ] TypeScript support in loader functions
 - [ ] Static site generation (SSG)
 - [ ] Hot module replacement (HMR)
@@ -129,6 +133,7 @@ Puremix/
 - [ ] Example projects
 
 ### Low Priority
+
 - [ ] Component marketplace
 - [ ] Python package management
 - [ ] Additional ML library interfaces
@@ -138,6 +143,7 @@ Puremix/
 ## Testing
 
 ### Running Tests
+
 ```bash
 # Run integration tests
 npm test
@@ -150,6 +156,7 @@ npx tsc --noEmit
 ```
 
 ### Writing Tests
+
 - Add integration tests for new features
 - Test edge cases
 - Ensure tests are deterministic
@@ -160,6 +167,7 @@ npx tsc --noEmit
 Format: `<type>(<scope>): <subject>`
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -169,6 +177,7 @@ Format: `<type>(<scope>): <subject>`
 - `chore`: Maintenance tasks
 
 **Examples:**
+
 ```
 feat(python): add ES6 import syntax for Python modules
 fix(template): resolve nested conditional rendering issue
@@ -178,16 +187,11 @@ docs(guide): add API versioning strategies section
 ## Documentation Standards
 
 ### FRAMEWORK_GUIDE.md
+
 - Token-friendly for LLMs
 - Clear code examples
 - Progressive disclosure (simple → advanced)
 - Real-world use cases
-
-### CLAUDE.MD
-- Framework architecture details
-- Development guidelines
-- Critical rules and patterns
-- Implementation status
 
 ## Community
 

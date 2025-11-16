@@ -28,9 +28,9 @@
  * NO regex patterns - pure computer science approach
  */
 
-import { PureMixInterpreter } from './puremix-interpreter.js';
-import { getLogger } from './debug-logger.js';
-import type { LoaderResults, PureMixRequest } from './types.js';
+import { PureMixInterpreter } from './puremix-interpreter';
+import { getLogger } from './debug-logger';
+import type { LoaderResults, PureMixRequest } from './types';
 
 const logger = getLogger();
 

@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
+    "module": "ES2022",
     "outDir": "./dist",
     "rootDir": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": false,
     "skipLibCheck": true,
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "node",
     "noEmitOnError": true,
     "emitDeclarationOnly": false,
     "declaration": false,
-    "sourceMap": false
+    "sourceMap": false,
+    "allowImportingTsExtensions": false
   },
   "include": [
     "cli/**/*",

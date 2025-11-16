@@ -127,7 +127,6 @@ Python integration methods:
 
 - **README.md** - Quick start and feature overview
 - **FRAMEWORK_GUIDE.md** (91KB) - Complete tutorial for developers
-- **CLAUDE.MD** (99KB) - AI assistant guidance (for LLM-assisted development)
 - **LICENSE** - MIT license with attribution requirements
 
 ### 🎯 What's Next

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { createProject } from './create.js';
-import { devServer } from './dev.js';
-import { LogManager } from '../lib/log-manager.js';
+import { createProject } from './create';
+import { devServer } from './dev';
+import { LogManager } from '../lib/log-manager';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -77,11 +77,11 @@ program
       process.env.NODE_ENV = options.env;
 
       // Load configuration with environment-specific overrides
-      const { loadConfigWithEnvironment } = await import('./config-loader.js');
+      const { loadConfigWithEnvironment } = await import('./config-loader');
       const config = await loadConfigWithEnvironment();
 
       // Import and start the PureMix engine
-      const PureMixEngine = (await import('../lib/puremix-engine.js')).default;
+      const PureMixEngine = (await import('../lib/puremix-engine')).default;
 
       const engine = new PureMixEngine({
         ...config,
@@ -110,7 +110,7 @@ program
   .option('-w, --watch', 'Watch for changes and regenerate')
   .action(async (options: any) => {
     try {
-      const { generateDocs } = await import('./generate-docs.js');
+      const { generateDocs } = await import('./generate-docs');
       await generateDocs(options);
     } catch (error) {
       console.error('❌ Documentation generation failed:', (error as Error).message);

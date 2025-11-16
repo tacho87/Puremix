@@ -9,7 +9,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { CodeAnalyzer, AnalysisResult } from '../lib/code-analyzer.js';
+import { CodeAnalyzer, AnalysisResult } from '../lib/code-analyzer';
 
 interface GenerateDocsOptions {
   watch?: boolean;

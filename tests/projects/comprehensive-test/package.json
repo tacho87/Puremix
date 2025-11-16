@@ -5,10 +5,10 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "node ../../../cli/puremix.ts dev",
-    "build": "node ../../../cli/puremix.ts build",
-    "start": "node ../../../cli/puremix.ts start",
-    "doctor": "node ../../../cli/puremix.ts doctor"
+    "dev": "../../../puremix dev",
+    "build": "../../../puremix build",
+    "start": "../../../puremix start",
+    "doctor": "../../../puremix doctor"
   },
   "dependencies": {
     "puremix": "file:../../"

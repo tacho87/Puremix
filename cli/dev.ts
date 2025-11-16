@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import PureMixEngine from '../lib/puremix-engine.js';
+import PureMixEngine from '../lib/puremix-engine';
 import chokidar from 'chokidar';
 import { WebSocketServer } from 'ws';
 import net from 'net';
-import { loadConfigWithEnvironment } from './config-loader.js';
-import { generateDocs } from './generate-docs.js';
+import { loadConfigWithEnvironment } from './config-loader';
+import { generateDocs } from './generate-docs';
 import fs from 'fs';
 import path from 'path';
 

@@ -31,6 +31,7 @@
   },
   "include": [
     "lib/**/*",
+    "cli/**/*",
     "index.js",
     "**/*.d.ts"
   ],
@@ -40,7 +41,6 @@
     "templates",
     "scripts",
     ".temp",
-    "cli",
     "**/*.test.js",
     "**/*.spec.js"
   ]

@@ -258,204 +258,7 @@ function createTypeScriptConfig(projectPath) {
   console.log('📝 Created TypeScript configuration');
 }
 
-function generateClaudeConfig(projectPath, template, typescript) {
-  const claudeConfigContent = `# CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
-
-This is a PureMix project using the \`${template}\` template${typescript ? ' with TypeScript support' : ''}.
-
-PureMix is an HTML-first full-stack framework with seamless Python integration using a **config-only approach**.
-
-## Key Commands
-
-\`\`\`bash
-# Development (uses puremix.config.js automatically)
-npm run dev        # Start development server with hot reload
-npm run build      # Build for production  
-npm run start      # Start production server
-${typescript ? 'npm run type-check # Run TypeScript type checking' : ''}
-
-# Direct CLI usage
-puremix dev        # Same as npm run dev
-puremix build      # Same as npm run build  
-puremix doctor     # Health check
-puremix info       # Show project info
-\`\`\`
-
-## Configuration
-
-All framework settings are in **\`puremix.config.js\`** (single source of truth):
-
-\`\`\`javascript
-export default {
-  port: 3000,
-  host: 'localhost',
-  appDir: 'app',
-  isDev: process.env.NODE_ENV !== 'production',
-  hotReload: true,
-  pythonTimeout: 30000,
-  session: {
-    secret: process.env.SESSION_SECRET || 'change-me-in-production',
-    maxAge: 24 * 60 * 60 * 1000
-  }
-};
-\`\`\`
-
-## Project Structure
-
-\`\`\`
-app/
-├── routes/           # .puremix files only (file-based routing)
-│   ├── index.puremix # / route
-│   └── about.puremix # /about route
-├── controllers/      # Business logic (.js, .ts, .py)
-├── models/          # Database schemas
-├── services/        # External API calls
-├── utils/           # Utility functions
-├── public/          # Static assets
-└── views/           # Layout templates
-    └── layouts/
-        └── main.puremix
-\`\`\`
-
-## PureMix File Format (.puremix)
-
-\`\`\`html
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Page Title</title>
-</head>
-<body>
-
-<layout>main</layout>
-
-<loading>
-  <div class="spinner">Loading...</div>
-</loading>
-
-<imports>
-  import fs from 'fs'
-  import { getUserById } from '../controllers/users.js'
-</imports>
-
-<loader>
-  async function loadData(request, actionResult) {
-    const user = await getUserById(request.params.id);
-    
-    return {
-      data: { user },
-      state: { loading: false },
-      loading: false
-    };
-  }
-</loader>
-
-<div>
-  <h1>Hello {loadData.data.user.name}</h1>
-  
-  {if loadData.data.user.isAdmin}
-    <p>Admin user</p>
-  {/if}
-  
-  {#each loadData.data.posts as post}
-    <article>
-      <h2>{post.title}</h2>
-      <p>{post.content}</p>
-    </article>
-  {/each}
-</div>
-
-<script server>
-  async function updateUser(formData, request) {
-    // Server-side function
-    const { name, email } = formData;
-    
-    // Update user logic here
-    
-    return { success: true, message: 'User updated!' };
-  }
-</script>
-
-</body>
-</html>
-\`\`\`
-
-## Framework Features
-
-1. **File-based routing**: Routes are defined by .puremix files in app/routes/
-2. **Server functions**: Define server-side functions in <script server> blocks
-3. **Loaders**: Fetch data with <loader> blocks that run on page load
-4. **Python integration**: Use Python functions seamlessly from JavaScript
-5. **Template engine**: Built-in templating with {expressions} and {if/each} blocks
-6. **Hot reload**: Automatic page refresh during development
-7. **Import system**: Import from Node.js modules or local files
-
-## Routing
-
-- \`index.puremix\` → \`/\`
-- \`about.puremix\` → \`/about\`
-- \`[id].puremix\` → \`/:id\` (dynamic route)
-- \`[...slug].puremix\` → \`/*\` (catch-all route)
-
-## Python Integration
-
-${template.includes('ecommerce') || template.includes('advanced') ? `
-This project supports Python for ML/AI features:
-
-\`\`\`javascript
-// In a server function
-async function analyzeData(data, request) {
-  const result = await request.python.call('analyze', data, \`
-def analyze(data):
-    import pandas as pd
-    df = pd.DataFrame(data)
-    return df.describe().to_dict()
-  \`);
-  
-  return result;
-}
-\`\`\`
-` : ''}
-
-## Development Notes
-
-- The framework uses Express.js internally but abstracts the complexity
-- Server functions run on the server and can be called from client-side code
-- Loaders run on every page request and provide data to templates
-- Use the PureMix client API: \`window.PureMix.call('functionName', data)\`
-- Static files go in \`app/public/\` and are served at \`/public/\`
-
-${template === 'ecommerce' ? `
-## E-commerce Features
-
-This template includes:
-- User authentication with magic links
-- Product management
-- Shopping cart functionality
-- Admin panel
-- MongoDB integration
-- Email service integration
-
-Setup required:
-1. Configure MongoDB connection in .env
-2. Set up email service (optional, will log to console otherwise)
-3. Configure payment processing if needed
-` : ''}
-
-## Deployment
-
-1. Build: \`npm run build\`
-2. Start: \`npm start\`
-3. Ensure Node.js 22+ and Python 3.8+ (optional) are installed on server
-`;
-
-  const claudePath = path.join(projectPath, 'CLAUDE.md');
-  fs.writeFileSync(claudePath, claudeConfigContent);
-}
 
 function generateProjectStructure(projectPath: string, template: string) {
   const projectStructureContent = `# Project Structure
@@ -507,7 +310,6 @@ ${template === 'default' ? `app/
 puremix.config.js       # Framework configuration
 package.json            # Dependencies and scripts
 FRAMEWORK_GUIDE.md      # PureMix framework documentation
-CLAUDE.md               # Claude Code AI assistant configuration
 README.md               # Project documentation
 \`\`\`
 
@@ -536,7 +338,7 @@ Reusable \`.puremix\` components that can be imported into routes or other compo
 **Usage:**
 \`\`\`html
 <imports>
-  import Card from '../components/Card.puremix.js'
+  import Card from '../components/Card.puremix'
 </imports>
 
 <Card title="Hello" description="World" />
@@ -575,8 +377,7 @@ Project dependencies and npm scripts
 ### \`FRAMEWORK_GUIDE.md\`
 Complete framework documentation (copied from node_modules/puremix after installation).
 
-### \`CLAUDE.md\`
-Configuration for Claude Code AI assistant.
+
 
 ## File Types
 
@@ -607,14 +408,13 @@ Route is automatically available based on filename!
 
 1. Create a \`.puremix\` file in \`app/components/\`
 2. Define props usage in template: \`{title}\`, \`{description}\`
-3. Import in routes: \`import MyComponent from '../components/MyComponent.puremix.js'\`
+3. Import in routes: \`import MyComponent from '../components/MyComponent.puremix'\`
 4. Use in HTML: \`<MyComponent title="..." description="..." />\`
 
 ## Learn More
 
 - 📚 **FRAMEWORK_GUIDE.md** - Complete PureMix framework guide
 - 📖 **README.md** - Project-specific documentation
-- 🤖 **CLAUDE.md** - AI assistant configuration
 
 ---
 

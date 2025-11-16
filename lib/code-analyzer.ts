@@ -17,8 +17,8 @@
 
 import fs from 'fs';
 import path from 'path';
-import FileParser from './file-parser.js';
-import ImportResolver from './import-resolver.js';
+import FileParser from './file-parser';
+import ImportResolver from './import-resolver';
 
 export interface RouteInfo {
   url: string;

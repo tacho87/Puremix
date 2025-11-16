@@ -25,13 +25,13 @@ import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import crypto from 'crypto';
-import FileParser from './file-parser.js';
-import PythonExecutor from './python-executor.js';
-import ImportResolver from './import-resolver.js';
-import { TemplateEngineInterpreter as TemplateEngine } from './template-engine-interpreter.js';
-import { generateClientRuntime } from './client-runtime.js';
-import { sanitizer } from './sanitizer.js';
-import { initializeLogger, getLogger, createLoggingMiddleware, type VerboseDebugConfig } from './debug-logger.js';
+import FileParser from './file-parser';
+import PythonExecutor from './python-executor';
+import ImportResolver from './import-resolver';
+import { TemplateEngineInterpreter as TemplateEngine } from './template-engine-interpreter';
+import { generateClientRuntime } from './client-runtime';
+import { sanitizer } from './sanitizer';
+import { initializeLogger, getLogger, createLoggingMiddleware, type VerboseDebugConfig } from './debug-logger';
 
 // Augment Express Request type for our custom properties
 declare global {
@@ -43,7 +43,7 @@ declare global {
     }
   }
 }
-import type { PureMixRequest, LoaderResults, ComponentInfo, ComponentInstance, ComponentRenderResult, ParsedFile } from './types.js';
+import type { PureMixRequest, LoaderResults, ComponentInfo, ComponentInstance, ComponentRenderResult, ParsedFile } from './types';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

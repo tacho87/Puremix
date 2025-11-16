@@ -29,5 +29,11 @@ if [ ! -f "$CLI_FILE" ]; then
     exit 1
 fi
 
-# Run the CLI with native TypeScript support (Node.js 22+)
-exec node "$CLI_FILE" "$@"
+# Run the CLI with appropriate runner
+if [[ "$CLI_FILE" == *.ts ]]; then
+    # Use tsx for TypeScript files
+    exec npx tsx "$CLI_FILE" "$@"
+else
+    # Use node for JavaScript files (production builds)
+    exec node "$CLI_FILE" "$@"
+fi

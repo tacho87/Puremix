@@ -35,7 +35,7 @@ function fixImportsInFile(filePath) {
     content = content.replace(/(from\s+['"])(\.\.?\/[^'"]+)(['"])/g, (match, prefix, importPath, suffix) => {
       // Skip if already has an extension
       if (importPath.match(/\.[a-zA-Z]+$/)) return match;
-      // Add .js for relative imports
+      // Add .js for relative imports (NodeNext ESM requires explicit extensions)
       return `${prefix}${importPath}.js${suffix}`;
     });
   }
