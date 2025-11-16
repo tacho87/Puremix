@@ -403,7 +403,7 @@ async function optimizePureMixFile(filePath: string, options: { obfuscate: boole
               .trim();
           }
         } catch (error) {
-          console.warn(`⚠️  Script optimization failed in ${filePath}:`, error.message);
+          console.warn(`⚠️  Script optimization failed in ${filePath}:`, error instanceof Error ? error.message : String(error));
         }
       }
       
@@ -425,7 +425,7 @@ async function optimizePureMixFile(filePath: string, options: { obfuscate: boole
           preserveLineBreaks: false
         });
       } catch (error) {
-        console.warn(`⚠️  HTML minification failed in ${filePath}:`, error.message);
+        console.warn(`⚠️  HTML minification failed in ${filePath}:`, error instanceof Error ? error.message : String(error));
       }
     }
     
@@ -433,7 +433,7 @@ async function optimizePureMixFile(filePath: string, options: { obfuscate: boole
     fs.writeFileSync(filePath, optimizedContent);
     
   } catch (error) {
-    console.warn(`⚠️  Failed to optimize ${filePath}:`, error.message);
+    console.warn(`⚠️  Failed to optimize ${filePath}:`, error instanceof Error ? error.message : String(error));
   }
 }
 
@@ -515,7 +515,7 @@ async function processStaticAssets(outputDir: string, options: { analyze: boolea
         }
         
       } catch (error) {
-        console.warn(`⚠️  JavaScript processing failed for ${jsFile}:`, error.message);
+        console.warn(`⚠️  JavaScript processing failed for ${jsFile}:`, error instanceof Error ? error.message : String(error));
       }
     }
     
@@ -550,7 +550,7 @@ async function processStaticAssets(outputDir: string, options: { analyze: boolea
           }
         }
       } catch (error) {
-        console.warn('⚠️  Bundle analysis failed:', error.message);
+        console.warn('⚠️  Bundle analysis failed:', error instanceof Error ? error.message : String(error));
       }
     }
   }
@@ -583,7 +583,7 @@ async function processStaticAssets(outputDir: string, options: { analyze: boolea
         }
         
       } catch (error) {
-        console.warn(`⚠️  CSS processing failed for ${cssFile}:`, error.message);
+        console.warn(`⚠️  CSS processing failed for ${cssFile}:`, error instanceof Error ? error.message : String(error));
       }
     }
   }
@@ -648,7 +648,7 @@ async function optimizeClientRuntime(outputDir: string, options: { obfuscate: bo
         fs.writeFileSync(buildRuntimePath, optimizedContent);
       }
     } catch (error) {
-      console.warn('⚠️  Client runtime optimization failed:', error.message);
+      console.warn('⚠️  Client runtime optimization failed:', error instanceof Error ? error.message : String(error));
     }
   }
 }
@@ -988,7 +988,7 @@ async function processCSSBuild(outputDir: string, options: { minify?: boolean; a
 
     console.log('  ✅ CSS build completed');
   } catch (error) {
-    console.warn(`  ⚠️  CSS build failed: ${error.message}`);
+    console.warn(`  ⚠️  CSS build failed: ${error instanceof Error ? error.message : String(error)}`);
     console.warn('     Continuing build without CSS optimization');
   }
 }
@@ -1021,7 +1021,7 @@ async function processSCSS(cssDir: string, options: { minify?: boolean }) {
         execSync(`npx sass ${args.join(' ')}`, { stdio: 'pipe' });
         console.log(`    ✓ Processed ${relativePath}`);
       } catch (fileError) {
-        console.warn(`    ⚠️  Failed to process ${relativePath}: ${fileError.message}`);
+        console.warn(`    ⚠️  Failed to process ${relativePath}: ${fileError instanceof Error ? fileError.message : String(fileError)}`);
       }
     }
   } catch (error) {
@@ -1041,7 +1041,7 @@ async function processTailwindCSS(cssDir: string, options: { minify?: boolean; h
 
     // Find the main CSS file (styles.css, main.css, or index.css)
     const possibleInputs = ['styles.css', 'main.css', 'index.css'];
-    let inputFile = null;
+    let inputFile: string | null = null;
 
     for (const possibleInput of possibleInputs) {
       const inputPath = path.join(cssDir, possibleInput);
@@ -1123,7 +1123,7 @@ async function processRegularCSS(cssDir: string, options: { minify?: boolean }) 
       const relativePath = path.relative(cssDir, cssFile);
       console.log(`    ✓ Processed ${relativePath}`);
     } catch (fileError) {
-      console.warn(`    ⚠️  Failed to process ${path.relative(cssDir, cssFile)}: ${fileError.message}`);
+      console.warn(`    ⚠️  Failed to process ${path.relative(cssDir, cssFile)}: ${fileError instanceof Error ? fileError.message : String(fileError)}`);
     }
   }
 }

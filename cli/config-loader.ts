@@ -27,7 +27,7 @@ export async function loadConfigWithEnvironment(): Promise<any> {
       baseConfig = config.default || config;
       console.log('📋 Loaded base configuration from puremix.config.js');
     } catch (error) {
-      console.warn('⚠️  Failed to load puremix.config.js:', error.message);
+      console.warn('⚠️  Failed to load puremix.config.js:', error instanceof Error ? error.message : String(error));
       console.warn('    Using default configuration');
     }
   }
@@ -42,7 +42,7 @@ export async function loadConfigWithEnvironment(): Promise<any> {
       envConfig = config.default || config;
       console.log(`📋 Loaded ${environment} configuration from puremix.config.${environment}.js`);
     } catch (error) {
-      console.warn(`⚠️  Failed to load puremix.config.${environment}.js:`, error.message);
+      console.warn(`⚠️  Failed to load puremix.config.${environment}.js:`, error instanceof Error ? error.message : String(error));
       console.warn('    Continuing with base configuration only');
     }
   } else if (environment !== 'dev') {

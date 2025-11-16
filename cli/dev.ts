@@ -137,7 +137,7 @@ export async function devServer(options: DevOptions = {}) {
       });
     } catch (wsError) {
       console.warn(`⚠️  Could not start WebSocket server on port ${wsPort}. Hot reload disabled.`);
-      console.warn(`    Error: ${wsError.message}`);
+      console.warn(`    Error: ${wsError instanceof Error ? wsError.message : String(wsError)}`);
     }
   } else {
     console.log('🚀 Hot reload disabled for performance');
@@ -243,12 +243,12 @@ function setupFileWatcher(engine, wss) {
         }
 
       } catch (error) {
-        console.error('❌ Reload failed:', error.message);
+        console.error('❌ Reload failed:', error instanceof Error ? error.message : String(error));
         
         // Notify clients of error
         const errorMessage = JSON.stringify({
           type: 'error',
-          message: error.message,
+          message: error instanceof Error ? error.message : String(error),
           timestamp: Date.now()
         });
         

@@ -590,7 +590,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log('✅ PROJECT_STRUCTURE.md generated successfully');
     console.log(`📁 Location: ${outputPath}`);
   } catch (error) {
-    console.error('❌ Error generating PROJECT_STRUCTURE.md:', error.message);
+    console.error('❌ Error generating PROJECT_STRUCTURE.md:', error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
 }

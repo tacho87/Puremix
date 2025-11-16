@@ -146,9 +146,13 @@ export async function createProject(projectName: string, options: CreateOptions 
   const availableTemplates = getAvailableTemplates(templatesDir);
   
   // Interactive template selection if no template specified or interactive mode
-  let selectedTemplate = template;
+  let selectedTemplate: string | null = template;
   if (!template || interactive) {
     selectedTemplate = await selectTemplateInteractively(availableTemplates);
+  }
+  
+  if (!selectedTemplate) {
+    throw new Error('No template selected');
   }
   
   const templatePath = path.join(templatesDir, selectedTemplate);
@@ -188,7 +192,7 @@ export async function createProject(projectName: string, options: CreateOptions 
   }
 
   // Generate PROJECT_STRUCTURE.md
-  generateProjectStructure(projectPath, template);
+  generateProjectStructure(projectPath, selectedTemplate!);
 
   // Update package.json for config-only approach
   const packageJsonPath = path.join(projectPath, 'package.json');
