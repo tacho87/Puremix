@@ -1,16 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
+  <!-- Basic Meta Tags -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- Title and Description -->
   <title>PureMix - HTML-First Framework with Python Integration</title>
-  <meta name="description" content="Build modern web applications with seamless JavaScript/TypeScript/Python integration. Server-side rendering, simple development, native Python integration.">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="PureMix Framework">
-  <meta property="og:description" content="HTML-first full-stack framework with seamless Python integration">
+  <meta name="description" content="Build modern web applications with seamless JavaScript/TypeScript/Python integration. Server-side rendering, simple development, native Python support. Deploy with PM2, Docker, or any Node.js hosting.">
+  <meta name="keywords" content="PureMix, web framework, server-side rendering, Python integration, JavaScript, TypeScript, full-stack development, HTML-first, web development, backend, frontend, Node.js, Python pandas, numpy">
+  <meta name="author" content="PureMix Framework">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://puremix.dev/">
+  
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://tacho87.github.io/Puremix">
+  <meta property="og:url" content="https://puremix.dev/">
+  <meta property="og:title" content="PureMix - HTML-First Framework with Python Integration">
+  <meta property="og:description" content="Build modern web applications with seamless JavaScript/TypeScript/Python integration. Server-side rendering, simple development, native Python support. Deploy with PM2, Docker, or any Node.js hosting.">
+  <meta property="og:image" content="https://puremix.dev/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PureMix Framework - HTML-first development with Python integration">
+  <meta property="og:site_name" content="PureMix Framework">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://puremix.dev/">
+  <meta property="twitter:title" content="PureMix - HTML-First Framework with Python Integration">
+  <meta property="twitter:description" content="Build modern web applications with seamless JavaScript/TypeScript/Python integration. Server-side rendering, simple development, native Python support.">
+  <meta property="twitter:image" content="https://puremix.dev/images/og-image.jpg">
+  <meta property="twitter:image:alt" content="PureMix Framework - HTML-first development with Python integration">
+  <meta property="twitter:creator" content="@PureMixFramework">
+  <meta property="twitter:site" content="@PureMixFramework">
+  
+  <!-- LinkedIn -->
+  <meta property="linkedin:owner" content="@PureMixFramework">
+  <meta property="linkedin:published_time" content="2024-01-01">
+  
+  <!-- WhatsApp Sharing -->
+  <meta property="og:whatsapp_url" content="https://puremix.dev/">
+  
+  <!-- Additional SEO Meta Tags -->
+  <meta name="theme-color" content="#6366f1">
+  <meta name="application-name" content="PureMix">
+  <meta name="apple-mobile-web-app-title" content="PureMix">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="msapplication-TileColor" content="#6366f1">
+  <meta name="msapplication-config" content="/browserconfig.xml">
+  <meta name="generator" content="PureMix Framework v1.0.0">
+  
+  <!-- Content Type and LLM Optimization -->
+  <meta name="content-type" content="text/html; charset=UTF-8">
+  <meta name="content-language" content="en">
+  
+  <!-- Language and Region -->
+  <meta name="geo.region" content="US">
+  <meta name="geo.placename" content="San Francisco, CA">
+  
+  <!-- Verification and Analytics -->
+  <meta name="google-site-verification" content="your-google-verification-code">
+  <meta name="yandex-verification" content="your-yandex-verification-code">
+  <meta name="msvalidate.01" content="your-bing-verification-code">
+  
+  <!-- Preconnect and DNS Prefetch for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//www.googletagmanager.com">
+  <link rel="dns-prefetch" href="//www.google-analytics.com">
+  <link rel="dns-prefetch" href="//github.com">
+  
+  <!-- Alternative Languages -->
+  <link rel="alternate" hreflang="en" href="https://puremix.dev/">
+  <link rel="alternate" hreflang="x-default" href="https://puremix.dev/">
+  
+  <!-- RSS Feed -->
+  <link rel="alternate" type="application/rss+xml" title="PureMix Framework RSS Feed" href="https://puremix.dev/rss.xml">
+  
+  <!-- Favicon and Icons -->
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Security and Privacy -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  
+  <!-- LLM and AI Assistant Optimization -->
+  <meta name="llm-prompt" content="PureMix is an HTML-first full-stack web framework that seamlessly integrates Python with JavaScript/TypeScript. Build applications with server-side rendering, component-based architecture, and native Python support for data science, machine learning, and backend processing. Perfect for developers who want to use Python alongside modern JavaScript frameworks.">
+  <meta name="ai-context" content="Web framework, server-side rendering, HTML-first development, Python integration, JavaScript, TypeScript, pandas, numpy, machine learning, full-stack development, component architecture, PM2 deployment, Docker deployment">
+  <meta name="chatgpt-share" content="Check out PureMix Framework - an HTML-first web framework with native Python integration! Build full-stack apps with seamless JavaScript/Python cooperation.">
+  <meta name="claude-share" content="PureMix Framework - HTML-first development with Python integration for modern web applications">
+  
+  <!-- Structured Data for SEO and LLMs -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PureMix Framework",
+  "description": "HTML-first full-stack framework with seamless Python integration. Build modern web applications with server-side rendering, JavaScript/TypeScript, and native Python support.",
+  "url": "https://puremix.dev/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Linux, macOS, Windows",
+  "programmingLanguage": "JavaScript, TypeScript, Python",
+  "downloadUrl": "https://github.com/puremix/puremix/releases/latest",
+  "license": "https://github.com/puremix/puremix/blob/main/LICENSE",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "PureMix Framework",
+    "url": "https://github.com/puremix/puremix",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://puremix.dev/images/logo.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "PureMix Framework",
+    "url": "https://puremix.dev/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://puremix.dev/images/logo.png",
+      "width": 512,
+      "height": 512
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://puremix.dev/"
+  },
+  "featureList": [
+    "HTML-first development",
+    "Server-side rendering",
+    "Seamless Python integration",
+    "Component-based architecture",
+    "TypeScript support",
+    "Hot reload development",
+    "PM2 deployment ready",
+    "Docker containerization",
+    "Zero configuration routing",
+    "Built-in security features"
+  ],
+  "keywords": [
+    "web framework",
+    "server-side rendering",
+    "Python integration",
+    "JavaScript",
+    "TypeScript",
+    "HTML-first",
+    "full-stack",
+    "component architecture",
+    "hot reload"
+  ]
+}
+  </script>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>

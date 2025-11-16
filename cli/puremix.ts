@@ -26,10 +26,11 @@ program
 program
   .command('create <project-name>')
   .description('Create a new PureMix project')
-  .option('-t, --template <template>', 'Project template (auto-detected from templates/ directory)', 'default')
+  .option('-t, --template <template>', 'Project template (auto-detected from templates/ directory)', null)
   .option('-p, --package-manager <manager>', 'Package manager (npm, yarn)', 'npm')
   .option('--skip-install', 'Skip dependency installation')
   .option('--typescript', 'Use TypeScript configuration')
+  .option('-i, --interactive', 'Interactive template selection with descriptions')
   .action(async (projectName: string, options: any) => {
     try {
       await createProject(projectName, options);

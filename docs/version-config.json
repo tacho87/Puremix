@@ -1,0 +1,69 @@
+{
+  "current": "v0.1.0-alpha.2",
+  "versions": [
+    {
+      "version": "v0.1.0-alpha.2",
+      "releaseDate": "2024-01-15",
+      "status": "current",
+      "documentation": "/",
+      "changelog": "# v0.1.0-alpha.2 (January 15, 2024)\n\n## 🚀 Major Features\n\n### CSS Build System Integration\n- **Integrated CSS build** into npm scripts across all templates\n- **Tailwind CSS, SCSS, and PostCSS** support with automatic processing\n- **Concurrent development** with CSS watch and PureMix dev server\n\n### Enhanced CLI Experience\n- **Interactive template selection** with detailed descriptions\n- **Improved project creation prompts** with feature lists\n- **Better user guidance** for choosing appropriate templates\n\n### SEO Optimization (Documentation Only)\n- **Comprehensive meta tags** for GitHub Pages landing page\n- **Social sharing optimization** for Twitter, LinkedIn, WhatsApp\n- **LLM-friendly structured data** for AI assistant crawling\n- **Open Graph and Twitter Card** implementation\n\n### Development Infrastructure\n- **Comprehensive .gitignore** covering PureMix-specific files\n- **Python integration temp file management**\n- **Development tool exclusions** and deployment scenarios\n\n## 🔧 Improvements\n\n- **Template cleanup** with removal of hardcoded SEO\n- **Streamlined framework** focusing on core functionality\n- **Better documentation structure** and organization\n\n## 🛠️ Technical Details\n\n### CSS Build Integration\n```bash\n# All templates now include CSS processing\nnpm run dev     # Builds CSS and starts dev server\nnpm run build   # Builds CSS for production\nnpm run css:watch # Watch CSS files during development\n```\n\n### Interactive Template Selection\n```bash\n./cli/puremix.ts create my-app\n# Prompts user to choose from:\n# - Basic Template (Tailwind CSS, animations)\n# - Default Template (MongoDB, auth, admin panel)\n# - Minimal Template (Zero dependencies, responsive)\n```\n\n## 📁 Project Structure\n\n```\nPureMix/\n├── docs/                    # Enhanced documentation\n│   ├── index.html          # SEO-optimized landing page\n│   └── version-config.json # Version management\n├── templates/\n│   ├── basic/              # Modern Tailwind CSS template\n│   ├── minimal/            # Zero-dependency template\n│   └── default/            # Full-featured template\n└── cli/\n    └── create.ts           # Enhanced with interactivity\n```"
+    },
+    {
+      "version": "v0.1.0-alpha.1",
+      "releaseDate": "2023-12-20",
+      "status": "previous",
+      "documentation": "/v0.1.0-alpha.1",
+      "changelog": "# v0.1.0-alpha.1 (December 20, 2023)\n\n## 🚀 Initial Alpha Release\n\n### Core Framework Features\n- **Server-side rendering** with .puremix files\n- **Python integration** with process pools\n- **JavaScript/TypeScript** mixed execution\n- **Component system** with props support\n- **Template engine** with AST-based processing\n\n### Development Tools\n- **CLI tools** for project creation and management\n- **Hot reload** development server\n- **TypeScript compilation** and type checking\n- **Build system** for production deployment\n\n### Templates\n- **Basic template** with modern styling\n- **Minimal template** with zero dependencies\n- **Advanced template** with full features\n\n## 🔧 Technical Architecture\n\n- **Express.js** integration for HTTP routing\n- **AST-based template engine** (regex-free)\n- **Process pool management** for Python workers\n- **Component isolation** and selective updates\n- **DOM diffing algorithm** for smooth updates"
+    }
+  ],
+  "roadmap": {
+    "v0.1.0-beta.1": {
+      "targetDate": "2024-02-15",
+      "features": [
+        "Enhanced Python debugging tools",
+        "Performance monitoring dashboard",
+        "Advanced error handling",
+        "Plugin system architecture"
+      ]
+    },
+    "v0.1.0": {
+      "targetDate": "2024-03-15",
+      "features": [
+        "Production deployment guides",
+        "Advanced security features",
+        "Performance optimization",
+        "Complete documentation"
+      ]
+    },
+    "v0.2.0": {
+      "targetDate": "2024-04-30",
+      "features": [
+        "Real-time collaboration features",
+        "Advanced component library",
+        "Mobile app development support",
+        "Cloud deployment integrations"
+      ]
+    }
+  },
+  "lts": {
+    "current": null,
+    "upcoming": "v0.1.0",
+    "maintenance": "6 months"
+  },
+  "compatibility": {
+    "node": ">=16.0.0",
+    "python": ">=3.8.0",
+    "browsers": [
+      "Chrome >= 90",
+      "Firefox >= 88",
+      "Safari >= 14",
+      "Edge >= 90"
+    ]
+  },
+  "support": {
+    "community": "https://github.com/puremix/puremix/discussions",
+    "issues": "https://github.com/puremix/puremix/issues",
+    "documentation": "https://puremix.dev/docs",
+    "examples": "https://github.com/puremix/examples"
+  }
+}

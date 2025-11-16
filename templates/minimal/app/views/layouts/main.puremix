@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title || 'PureMix App'}</title>
-  <meta name="description" content="{description || 'Built with PureMix Framework'}">
+  <meta name="description" content="{description || 'PureMix Framework - Server-side rendering with Python integration'}">
   
   <!-- Plain CSS -->
   <link href="/css/style.css" rel="stylesheet">
@@ -12,65 +12,3 @@
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 </head>
-<body>
-  <div id="app">
-    <!-- Navigation -->
-    <nav class="navbar">
-      <div class="container">
-        <div class="nav-container">
-          <a href="/" class="nav-brand">PureMix App</a>
-          
-          <ul class="nav-links" id="navLinks">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-          
-          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="container">
-        {content}
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <p>&copy; {new Date().getFullYear()} PureMix App. Built with <a href="https://puremix.dev">PureMix Framework</a>.</p>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <!-- Client-side JavaScript -->
-  <script>
-    function toggleMobileMenu() {
-      const navLinks = document.getElementById('navLinks');
-      navLinks.classList.toggle('show');
-    }
-    
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
-      const navLinks = document.getElementById('navLinks');
-      const toggle = event.target.closest('.mobile-menu-toggle');
-      
-      if (!navLinks.contains(event.target) && !toggle) {
-        navLinks.classList.remove('show');
-      }
-    });
-    
-    // Simple page transition animation
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelector('.main-content').classList.add('fade-in');
-    });
-  </script>
-  
-  <!-- PureMix will inject client runtime here -->
-</body>
-</html>

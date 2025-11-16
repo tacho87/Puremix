@@ -4,15 +4,32 @@
   "description": "PureMix application - default template",
   "type": "module",
   "scripts": {
-    "dev": "puremix dev",
-    "build": "puremix build",
-    "start": "puremix start",
-    "doctor": "puremix doctor"
+    "dev": "npm run css:build && puremix dev",
+    "build": "npm run css:build && echo 'PureMix project ready for deployment'",
+    "start": "npm run css:build && puremix start",
+    "doctor": "puremix doctor",
+    "css:build": "echo 'Using plain CSS - no build step needed'",
+    "css:watch": "npm run css:tailwind -- --watch",
+    "css:minify": "NODE_ENV=production npm run css:build",
+    "css:dev": "npm run css:tailwind",
+    "dev:watch": "concurrently \"npm run css:watch\" \"puremix dev\""
   },
   "keywords": ["puremix", "framework", "ssr"],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "puremix": "latest"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3",
+    "autoprefixer": "^10.4.15",
+    "postcss": "^8.4.28",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "postcss-import": "^15.1.0",
+    "cssnano": "^6.0.2",
+    "sass": "^1.69.5",
+    "concurrently": "^8.2.2"
   }
 }

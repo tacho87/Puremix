@@ -76,17 +76,21 @@ export async function buildProject(options: BuildOptions = {}) {
     console.log('🔧 Optimizing PureMix files...');
     await optimizePureMixFiles(outputDir, { obfuscate, minify, sourcemap });
     
-    // Step 5: Process static assets
+    // Step 5: Process CSS build
+    console.log('🎨 Processing CSS build...');
+    await processCSSBuild(outputDir, { minify, analyze });
+    
+    // Step 6: Process static assets
     console.log('🎨 Processing static assets...');
     await processStaticAssets(outputDir, { analyze, minify, obfuscate });
     
-    // Step 6: Optimize client runtime
+    // Step 7: Optimize client runtime
     await optimizeClientRuntime(outputDir, { obfuscate, minify });
     
-    // Step 7: Apply server optimizations
+    // Step 8: Apply server optimizations
     optimizeServerCode(outputDir);
     
-    // Step 8: TypeScript compilation (if tsconfig.json exists)
+    // Step 9: TypeScript compilation (if tsconfig.json exists)
     if (fs.existsSync('tsconfig.json')) {
       console.log('🔧 Compiling TypeScript...');
       try {
@@ -97,7 +101,7 @@ export async function buildProject(options: BuildOptions = {}) {
       }
     }
     
-    // Step 9: Install production dependencies
+    // Step 10: Install production dependencies
     console.log('📦 Installing production dependencies...');
     try {
       execSync('npm ci --only=production', { 
@@ -110,7 +114,7 @@ export async function buildProject(options: BuildOptions = {}) {
       console.warn('   Manual install required in output directory');
     }
     
-    // Step 10: Generate build info
+    // Step 11: Generate build info
     generateBuildInfo(outputDir, { obfuscate, minify, sourcemap });
     
     console.log('\n✅ Build completed successfully!');
@@ -931,6 +935,245 @@ This build is optimized for production deployment with:
 
 Run with: \`node server.js\`
 `;
+}
+
+// CSS Build Processing
+async function processCSSBuild(outputDir: string, options: { minify?: boolean; analyze?: boolean }) {
+  const { minify = false, analyze = false } = options;
+  const projectRoot = process.cwd();
+  const publicDir = path.join(outputDir, 'app', 'public');
+  const cssDir = path.join(publicDir, 'css');
+
+  if (!fs.existsSync(cssDir)) {
+    console.log('  ℹ️  No CSS directory found, skipping CSS build');
+    return;
+  }
+
+  console.log('  🎨 Processing CSS files...');
+
+  try {
+    // Check for Tailwind CSS configuration
+    const tailwindConfigPath = path.join(projectRoot, 'tailwind.config.js');
+    const hasTailwind = fs.existsSync(tailwindConfigPath);
+    
+    // Check for PostCSS configuration  
+    const postcssConfigPath = path.join(projectRoot, 'postcss.config.js');
+    const hasPostCSS = fs.existsSync(postcssConfigPath);
+
+    // Check for SCSS files
+    const scssFiles = findFiles(cssDir, '.scss');
+    const hasSCSS = scssFiles.length > 0;
+
+    if (!hasTailwind && !hasSCSS) {
+      console.log('  ℹ️  No Tailwind CSS or SCSS files found, skipping CSS build');
+      return;
+    }
+
+    // Build CSS using different strategies based on available tools
+    if (hasSCSS) {
+      await processSCSS(cssDir, { minify });
+    }
+
+    if (hasTailwind) {
+      await processTailwindCSS(cssDir, { minify, hasPostCSS });
+    }
+
+    // Process regular CSS files
+    await processRegularCSS(cssDir, { minify });
+
+    // CSS analysis if requested
+    if (analyze) {
+      await analyzeCSS(cssDir, outputDir);
+    }
+
+    console.log('  ✅ CSS build completed');
+  } catch (error) {
+    console.warn(`  ⚠️  CSS build failed: ${error.message}`);
+    console.warn('     Continuing build without CSS optimization');
+  }
+}
+
+async function processSCSS(cssDir: string, options: { minify?: boolean }) {
+  const { minify = false } = options;
+  const scssFiles = findFiles(cssDir, '.scss');
+
+  if (scssFiles.length === 0) return;
+
+  console.log(`  📝 Processing ${scssFiles.length} SCSS files...`);
+
+  try {
+    // Check if sass is available
+    execSync('npx sass --version', { stdio: 'pipe' });
+    
+    for (const scssFile of scssFiles) {
+      const relativePath = path.relative(cssDir, scssFile);
+      const cssFileName = relativePath.replace(/\.scss$/, '.css');
+      const cssOutputPath = path.join(cssDir, cssFileName);
+
+      try {
+        const args = [
+          scssFile,
+          cssOutputPath,
+          '--style=' + (minify ? 'compressed' : 'expanded'),
+          '--no-source-map'
+        ];
+
+        execSync(`npx sass ${args.join(' ')}`, { stdio: 'pipe' });
+        console.log(`    ✓ Processed ${relativePath}`);
+      } catch (fileError) {
+        console.warn(`    ⚠️  Failed to process ${relativePath}: ${fileError.message}`);
+      }
+    }
+  } catch (error) {
+    console.warn('  ⚠️  Sass not available, skipping SCSS processing');
+    console.warn('     Install with: npm install -D sass');
+  }
+}
+
+async function processTailwindCSS(cssDir: string, options: { minify?: boolean; hasPostCSS: boolean }) {
+  const { minify = false, hasPostCSS = false } = options;
+
+  console.log('  🎨 Processing Tailwind CSS...');
+
+  try {
+    // Check if tailwindcss is available
+    execSync('npx tailwindcss --version', { stdio: 'pipe' });
+
+    // Find the main CSS file (styles.css, main.css, or index.css)
+    const possibleInputs = ['styles.css', 'main.css', 'index.css'];
+    let inputFile = null;
+
+    for (const possibleInput of possibleInputs) {
+      const inputPath = path.join(cssDir, possibleInput);
+      if (fs.existsSync(inputPath)) {
+        inputFile = inputPath;
+        break;
+      }
+    }
+
+    if (!inputFile) {
+      console.log('  ℹ️  No main CSS file found for Tailwind processing');
+      return;
+    }
+
+    const outputFile = path.join(cssDir, 'output.css');
+    const inputFileRelative = path.relative(cssDir, inputFile);
+
+    let command = `npx tailwindcss -i ${inputFileRelative} -o output.css`;
+    
+    if (hasPostCSS) {
+      command += ' --postcss';
+    }
+
+    if (minify) {
+      command += ' --minify';
+    }
+
+    console.log(`    📝 Building Tailwind CSS from ${inputFileRelative}...`);
+    
+    execSync(command, { 
+      cwd: cssDir, 
+      stdio: 'pipe' 
+    });
+
+    // Remove the input file if different from output
+    if (inputFileRelative !== 'output.css') {
+      fs.unlinkSync(inputFile);
+    }
+
+    console.log(`    ✓ Tailwind CSS compiled to output.css`);
+  } catch (error) {
+    console.warn('  ⚠️  Tailwind CSS not available, skipping Tailwind processing');
+    console.warn('     Install with: npm install -D tailwindcss');
+  }
+}
+
+async function processRegularCSS(cssDir: string, options: { minify?: boolean }) {
+  const { minify = false } = options;
+  const cssFiles = findFiles(cssDir, '.css');
+
+  // Skip Tailwind output file and already processed files
+  const filesToProcess = cssFiles.filter(file => 
+    !file.includes('output.css') && 
+    !file.includes('style.css') // Skip if it was processed by SCSS
+  );
+
+  if (filesToProcess.length === 0) return;
+
+  console.log(`  📝 Processing ${filesToProcess.length} regular CSS files...`);
+
+  for (const cssFile of filesToProcess) {
+    try {
+      if (minify) {
+        const content = fs.readFileSync(cssFile, 'utf8');
+        
+        // Simple CSS minification (basic approach)
+        const minified = content
+          .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments
+          .replace(/\s+/g, ' ') // Collapse whitespace
+          .replace(/;\s*}/g, '}') // Remove unnecessary semicolons
+          .replace(/\s*{\s*/g, '{') // Clean braces
+          .replace(/\s*}\s*/g, '}')
+          .replace(/\s*;\s*/g, ';') // Clean semicolons
+          .trim();
+
+        fs.writeFileSync(cssFile, minified);
+      }
+
+      const relativePath = path.relative(cssDir, cssFile);
+      console.log(`    ✓ Processed ${relativePath}`);
+    } catch (fileError) {
+      console.warn(`    ⚠️  Failed to process ${path.relative(cssDir, cssFile)}: ${fileError.message}`);
+    }
+  }
+}
+
+async function analyzeCSS(cssDir: string, outputDir: string) {
+  console.log('  📊 Analyzing CSS build...');
+  
+  const cssFiles = findFiles(cssDir, '.css');
+  let totalSize = 0;
+  let fileCount = 0;
+
+  const analysis = {
+    files: [] as Array<{
+      name: string;
+      size: number;
+      sizeKB: number;
+    }>,
+    totalSize: 0,
+    totalSizeKB: 0,
+    fileCount: 0
+  };
+
+  for (const cssFile of cssFiles) {
+    try {
+      const stats = fs.statSync(cssFile);
+      const size = stats.size;
+      const relativePath = path.relative(cssDir, cssFile);
+      
+      totalSize += size;
+      fileCount++;
+
+      analysis.files.push({
+        name: relativePath,
+        size,
+        sizeKB: Math.round(size / 1024 * 100) / 100
+      });
+    } catch (error) {
+      console.warn(`    ⚠️  Could not analyze ${cssFile}`);
+    }
+  }
+
+  analysis.totalSize = totalSize;
+  analysis.totalSizeKB = Math.round(totalSize / 1024 * 100) / 100;
+  analysis.fileCount = fileCount;
+
+  // Save analysis to file
+  const analysisPath = path.join(outputDir, 'css-analysis.json');
+  fs.writeFileSync(analysisPath, JSON.stringify(analysis, null, 2));
+
+  console.log(`    📊 CSS Analysis: ${fileCount} files, ${Math.round(totalSize / 1024)}KB total`);
 }
 
 export default buildProject;

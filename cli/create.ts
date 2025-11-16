@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { createInterface } from 'readline';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,22 +14,114 @@ interface CreateOptions {
   packageManager?: string;
   skipInstall?: boolean;
   typescript?: boolean;
+  interactive?: boolean;
+}
+
+// Template descriptions for interactive selection
+const TEMPLATE_DESCRIPTIONS = {
+  basic: {
+    name: 'Basic Template',
+    description: 'Modern template with Tailwind CSS, animations, and interactive components',
+    features: [
+      '🎨 Tailwind CSS with custom animations',
+      '⚡ Interactive components and forms',
+      '📱 Mobile-responsive design',
+      '🔧 SCSS mixins and utilities',
+      '📊 Contact forms with validation'
+    ],
+    recommended: 'For most projects, rapid prototyping, and production applications'
+  },
+  default: {
+    name: 'Default Template',
+    description: 'Clean, minimal template with essential PureMix features',
+    features: [
+      '🏗️ Basic PureMix structure',
+      '📝 Essential layouts and components',
+      '⚙️ Production-ready configuration',
+      '🔧 Tailwind CSS integration',
+      '📦 Minimal dependencies'
+    ],
+    recommended: 'For developers who want to start from a clean foundation'
+  },
+  minimal: {
+    name: 'Minimal Template',
+    description: 'Ultra-lightweight template with zero dependencies',
+    features: [
+      '🚀 Zero external dependencies',
+      '📦 Pure CSS without frameworks',
+      '⚡ Blazing fast setup',
+      '🎯 Simple and clean structure',
+      '🔧 Basic component system'
+    ],
+    recommended: 'For learning, simple projects, or maximum performance'
+  }
+};
+
+// Interactive prompt function
+function askQuestion(query: string): Promise<string> {
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve) => {
+    rl.question(query, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+// Display template selection menu
+async function selectTemplateInteractively(availableTemplates: string[]): Promise<string> {
+  console.log('\n🎨 Available PureMix Templates:\n');
+  
+  availableTemplates.forEach((template, index) => {
+    const desc = TEMPLATE_DESCRIPTIONS[template as keyof typeof TEMPLATE_DESCRIPTIONS];
+    if (desc) {
+      console.log(`${index + 1}. ${desc.name}`);
+      console.log(`   ${desc.description}`);
+      console.log('   Features:');
+      desc.features.forEach(feature => {
+        console.log(`     ${feature}`);
+      });
+      console.log(`   💡 ${desc.recommended}\n`);
+    } else {
+      console.log(`${index + 1}. ${template}\n`);
+    }
+  });
+
+  const answer = await askQuestion('Select a template (enter number or name): ');
+  
+  // Check if answer is a number
+  const numAnswer = parseInt(answer);
+  if (!isNaN(numAnswer) && numAnswer > 0 && numAnswer <= availableTemplates.length) {
+    return availableTemplates[numAnswer - 1];
+  }
+  
+  // Check if answer is a template name
+  if (availableTemplates.includes(answer)) {
+    return answer;
+  }
+  
+  // Default to first template if invalid input
+  console.log(`❌ Invalid selection. Using default template: ${availableTemplates[0]}`);
+  return availableTemplates[0];
 }
 
 export async function createProject(projectName: string, options: CreateOptions = {}) {
   const {
-    template = 'default',
+    template = null,
     packageManager = 'npm',
     skipInstall = false,
-    typescript = false
+    typescript = false,
+    interactive = true  // Default to interactive for better UX
   } = options;
 
   const projectPath = path.resolve(projectName);
   
   console.log('🚀 Creating PureMix project...');
   console.log(`📁 Project: ${projectName}`);
-  console.log(`🎨 Template: ${template}`);
-  console.log(`📦 Package Manager: ${packageManager}`);
   
   // Check if directory exists (allow current directory if it's empty)
   if (fs.existsSync(projectPath)) {
@@ -48,15 +141,23 @@ export async function createProject(projectName: string, options: CreateOptions 
   
   // Copy template files - use dynamic template discovery
   const templatesDir = path.join(__dirname, '..', 'templates');
-  const templatePath = path.join(templatesDir, template);
   
   // Dynamically discover available templates
   const availableTemplates = getAvailableTemplates(templatesDir);
   
-  if (!fs.existsSync(templatePath)) {
-    throw new Error(`Template '${template}' not found. Available templates: ${availableTemplates.join(', ')}`);
+  // Interactive template selection if no template specified or interactive mode
+  let selectedTemplate = template;
+  if (!template || interactive) {
+    selectedTemplate = await selectTemplateInteractively(availableTemplates);
   }
   
+  const templatePath = path.join(templatesDir, selectedTemplate);
+  
+  if (!fs.existsSync(templatePath)) {
+    throw new Error(`Template '${selectedTemplate}' not found. Available templates: ${availableTemplates.join(', ')}`);
+  }
+  
+  console.log(`🎨 Template: ${selectedTemplate}`);
   console.log('📋 Copying template files...');
   copyDirectory(templatePath, projectPath);
   
