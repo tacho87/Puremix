@@ -1475,6 +1475,43 @@ a:hover {
   .brand-name {
     font-size: 1rem;
   }
+
+  /* Prevent horizontal overflow */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Fix code blocks for mobile */
+  pre[class*="language-"] {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  /* Fix container overflow */
+  .container,
+  .max-w-7xl {
+    overflow-x: hidden;
+  }
+
+  /* Fix flex containers that might overflow */
+  .feature-row,
+  .code-example {
+    flex-wrap: wrap;
+  }
+
+  /* Fix specific grid containers that cause overflow */
+  .feature-grid,
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Fix wide content */
+  code {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
 }
 
 /* Print styles */

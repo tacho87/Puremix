@@ -310,10 +310,9 @@
       <div class="flex justify-between items-center h-16">
         <!-- Brand -->
         <div class="flex items-center gap-2">
-          <span class="text-2xl">🎯</span>
           <span class="font-bold text-xl">PureMix</span>
           <span
-            class="hidden sm:inline-block bg-primary-light text-white px-2 py-1 rounded text-xs font-semibold">v0.1.0-alpha.1</span>
+            class="hidden sm:inline-block bg-primary-light text-white px-2 py-1 rounded text-xs font-semibold">v0.1.0-alpha.0.2</span>
         </div>
 <!-- Desktop Navigation -->
 <div class="hidden md:flex items-center gap-6">
@@ -444,43 +443,84 @@ cd my-app && npm run dev</code></pre>
             <!-- Window Content -->
             <div class="p-6 overflow-x-auto">
 <pre><code class="language-markup">&lt;loader>
-  async function loadDashboard(request) {
-    // Fetch sales data from database
-    const salesData = await getSalesData(
-      request.query.timeframe || 'month'
-    );
+  async function loadDashboard(request, actionResult) {
+    // Use analysis result from action if available
+    if (actionResult && actionResult.success) {
+      return {
+        data: {
+          sales: actionResult.predictions,
+          confidence: actionResult.confidence_score,
+          timeframe: actionResult.timeframe,
+          sampleSize: actionResult.sample_size
+        }
+      };
+    }
 
-    // Call Python for ML analysis
-    const analysis = await analyzeSales(salesData);
-
+    // Default initial load
     return {
       data: {
-        sales: analysis.predictions,
-        confidence: analysis.confidence_score
+        timeframe: request.query.timeframe || 'month',
+        pendingAnalysis: true
       }
     };
   }
 &lt;/loader>
 
-&lt;div class="dashboard">
-  &lt;h1>Sales Forecast: ${loadDashboard.data.sales}&lt;/h1>
-  &lt;p>Confidence: {loadDashboard.data.confidence}%&lt;/p>
-&lt;/div>
+&lt;div class="dashboard"&gt;
+  &lt;h1&gt;Sales Analysis Dashboard&lt;/h1&gt;
+  
+  {loadDashboard.data.pendingAnalysis ?
+    &lt;div&gt;
+      &lt;p&gt;Click the button below to run Python ML analysis:&lt;/p&gt;
+      &lt;form onsubmit="analyzeSales"&gt;
+        &lt;button type="submit" class="btn-primary"&gt;
+          🐍 Run Python Analysis
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  :
+    &lt;div&gt;
+      &lt;h2&gt;Results for {loadDashboard.data.timeframe}&lt;/h2&gt;
+      &lt;p&gt;&lt;strong&gt;Sales Forecast:&lt;/strong&gt; {loadDashboard.data.sales}&lt;/p&gt;
+      &lt;p&gt;&lt;strong&gt;Confidence:&lt;/strong&gt; {loadDashboard.data.confidence}%&lt;/p&gt;
+      &lt;p&gt;&lt;small&gt;Based on {loadDashboard.data.sampleSize} months of data&lt;/small&gt;&lt;/p&gt;
+      
+      &lt;button onclick="analyzeSales" class="btn-secondary"&gt;
+        🔄 Run Again
+      &lt;/button&gt;
+    &lt;/div&gt;
+  }
+&lt;/div&gt;
 
-&lt;script server lang="python">
-  def analyzeSales(data, js_context=None):
+&lt;script server lang="python"&gt;
+def analyzeSales(formData, request):
+    """Run ML analysis on sales data"""
     import pandas as pd
     import numpy as np
-
-    df = pd.DataFrame(data)
+    
+    # Sample data for demo
+    sample_sales = [
+        {'date': '2024-01', 'sales': 1200},
+        {'date': '2024-02', 'sales': 1500},
+        {'date': '2024-03', 'sales': 1350},
+        {'date': '2024-04', 'sales': 1800},
+        {'date': '2024-05', 'sales': 2100},
+        {'date': '2024-06', 'sales': 1950}
+    ]
+    
+    df = pd.DataFrame(sample_sales)
     predictions = float(df['sales'].mean())
     std_dev = float(df['sales'].std())
-
+    confidence = round(95 - (std_dev / predictions * 100), 2)
+    
     return {
-      'predictions': predictions,
-      'confidence_score': round(95 - (std_dev / predictions * 100), 2)
+        'success': True,
+        'predictions': predictions,
+        'confidence_score': confidence,
+        'timeframe': formData.get('timeframe') or 'month',
+        'sample_size': len(sample_sales)
     }
-&lt;/script></code></pre>
+&lt;/script&gt;</code></pre>
             </div>
           </div>
         </div>
@@ -525,7 +565,6 @@ cd my-app && npm run dev</code></pre>
         <div class="py-8 hover:bg-gray-50 transition-colors">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <span class="text-2xl">🎯</span>
               <span>HTML-First</span>
             </h3>
             <p class="text-gray-600 md:col-span-2">
@@ -960,7 +999,6 @@ npm run dev
     <div class="container">
       <div class="footer-content">
         <div class="footer-brand">
-          <span class="logo">🎯</span>
           <span class="brand-name">PureMix</span>
           <p class="footer-tagline">HTML-first framework with Python integration</p>
         </div>
