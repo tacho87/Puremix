@@ -1,10 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
+  <!-- Basic Meta Tags -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PureMix Documentation - Complete Framework Guide</title>
-  <meta name="description" content="Complete documentation for PureMix framework - routing, loaders, actions, Python integration, components, and more.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- Title and Description -->
+  <title>PureMix Documentation - Complete Framework Guide & API Reference</title>
+  <meta name="description" content="Complete documentation for PureMix framework - routing, loaders, actions, Python integration, components, templates, configuration, deployment guides, and API reference.">
+  <meta name="keywords" content="PureMix documentation, framework guide, API reference, tutorial, Python integration, server-side rendering, components, routing, configuration, deployment">
+  <meta name="author" content="PureMix Framework">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://puremix.dev/documentation.html">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://puremix.dev/documentation.html">
+  <meta property="og:title" content="PureMix Documentation - Complete Framework Guide">
+  <meta property="og:description" content="Complete documentation for PureMix framework with routing, loaders, Python integration, components, configuration, deployment guides, and API reference.">
+  <meta property="og:image" content="https://puremix.dev/images/og-documentation.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PureMix Framework Documentation - Complete developer guide">
+  <meta property="og:site_name" content="PureMix Framework">
+  <meta property="og:locale" content="en_US">
+  <meta property="article:section" content="Technology">
+  <meta property="article:tag" content="Web Development, Framework, Documentation, Python, JavaScript">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://puremix.dev/documentation.html">
+  <meta property="twitter:title" content="PureMix Documentation - Complete Framework Guide">
+  <meta property="twitter:description" content="Complete documentation for PureMix framework with routing, loaders, Python integration, components, and more.">
+  <meta property="twitter:image" content="https://puremix.dev/images/og-documentation.jpg">
+  <meta property="twitter:image:alt" content="PureMix Framework Documentation - Complete developer guide">
+  <meta property="twitter:creator" content="@PureMixFramework">
+  <meta property="twitter:site" content="@PureMixFramework">
+  
+  <!-- LinkedIn -->
+  <meta property="linkedin:owner" content="@PureMixFramework">
+  <meta property="linkedin:published_time" content="2024-01-01">
+  
+  <!-- Additional SEO Meta Tags -->
+  <meta name="theme-color" content="#6366f1">
+  <meta name="application-name" content="PureMix Documentation">
+  <meta name="apple-mobile-web-app-title" content="PureMix">
+  <meta name="content-type" content="text/html; charset=UTF-8">
+  <meta name="content-language" content="en">
+  
+  <!-- Sitemap -->
+  <link rel="sitemap" type="application/xml" href="https://puremix.dev/sitemap.xml">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -39,6 +87,47 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "PureMix Documentation - Complete Framework Guide & API Reference",
+    "description": "Complete documentation for PureMix framework with routing, loaders, Python integration, components, configuration, deployment guides, and API reference.",
+    "author": {
+      "@type": "Organization",
+      "name": "PureMix Framework",
+      "url": "https://puremix.dev"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PureMix Framework",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://puremix.dev/images/logo.png"
+      }
+    },
+    "datePublished": "2024-01-01",
+    "dateModified": "2025-01-16",
+    "url": "https://puremix.dev/documentation.html",
+    "image": "https://puremix.dev/images/og-documentation.jpg",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://puremix.dev/documentation.html"
+    },
+    "keywords": ["PureMix", "web framework", "documentation", "Python", "JavaScript", "server-side rendering"],
+    "programmingLanguage": ["JavaScript", "TypeScript", "Python"],
+    "softwareVersion": "0.1.0-alpha.0.2",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "educationalLevel": "Intermediate to Advanced"
+  }
+  </script>
+
 </head>
 <body class="docs-page">
   <!-- Navigation -->
@@ -77,6 +166,46 @@
           </svg>
           GitHub
         </a>
+        <div class="social-share">
+          <button id="share-btn" class="share-button" aria-label="Share this page">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            Share
+          </button>
+          <div id="share-dropdown" class="share-dropdown">
+            <a href="https://twitter.com/intent/tweet?text=PureMix%20-%20HTML-first%20framework%20with%20Python%20integration%20%F0%9F%90%8D&url=https://puremix.dev/documentation.html" target="_blank" class="share-link twitter">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+              </svg>
+              Twitter
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://puremix.dev/documentation.html" target="_blank" class="share-link linkedin">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+              LinkedIn
+            </a>
+            <a href="https://api.whatsapp.com/send?text=PureMix%20-%20HTML-first%20framework%20with%20Python%20integration%20%F0%9F%90%8D%20https://puremix.dev/documentation.html" target="_blank" class="share-link whatsapp">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94.964-.173.0-.349-.036-.545-.149-.196-.133-1.562-1.339-2.777-2.423-1.215-1.084-1.957-1.754-1.938-2.02-.02-.267.01-.466.149-.645.149-.18.497-.595.497-.595.14-.149.204-.099.305.05.101.149.694 1.011.825 1.164.13.149.22.149.382-.05.163-.198.726-.726.888-.887.163-.162.324-.101.459.05.135.15.635.762.825.923.19.16.38.199.559.149.179-.05.726-.324 1.021-.645.295-.321.399-.602.45-.889.05-.287-.05-.349-.149-.447z"/>
+                <path d="M21.85 2.15c-2.84-2.85-7.5-2.85-10.35 0C9.35 3.3 7.95 5.4 7.8 7.8 7.65 10.2 8.85 12.35 10.8 14.3c1.95 1.95 4.1 3.15 6.5 3 2.4-.15 4.5-1.55 5.65-3.7 1.15-2.15 1.15-5.5 0-8.35-1.15-1.85-2.85-2.85-4.7-2.85zM12 20c-2.2 0-4.2-.9-5.65-2.35C4.9 16.2 4 14.2 4 12s.9-4.2 2.35-5.65C7.8 4.9 9.8 4 12 4s4.2.9 5.65 2.35C19.1 7.8 20 9.8 20 12s-.9 4.2-2.35 5.65S14.2 20 12 20z"/>
+              </svg>
+              WhatsApp
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https://puremix.dev/documentation.html" target="_blank" class="share-link facebook">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+              </svg>
+              Facebook
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -2832,6 +2961,57 @@ sudo certbot --nginx -d example.com -d www.example.com</code></pre>
 
     // Initialize version system
     loadVersionConfig();
+
+    // Share button functionality
+    const shareBtn = document.getElementById('share-btn');
+    const shareDropdown = document.getElementById('share-dropdown');
+
+    if (shareBtn && shareDropdown) {
+      shareBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = shareDropdown.classList.contains('open');
+        
+        // Close dropdown
+        if (isOpen) {
+          shareDropdown.classList.remove('open');
+        } else {
+          // Open dropdown
+          shareDropdown.classList.add('open');
+        }
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.social-share')) {
+          shareDropdown.classList.remove('open');
+        }
+      });
+
+      // Close dropdown when pressing Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          shareDropdown.classList.remove('open');
+        }
+      });
+
+      // Copy link functionality
+      const shareLinks = shareDropdown.querySelectorAll('.share-link');
+      shareLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          // Handle copy link functionality
+          if (this.textContent.includes('Copy Link')) {
+            e.preventDefault();
+            navigator.clipboard.writeText(window.location.href).then(() => {
+              const originalText = this.textContent;
+              this.textContent = 'Copied!';
+              setTimeout(() => {
+                this.textContent = originalText;
+              }, 2000);
+            });
+          }
+        });
+      });
+    }
 
     // Mobile menu toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');

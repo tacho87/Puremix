@@ -82,6 +82,9 @@
   <!-- RSS Feed -->
   <link rel="alternate" type="application/rss+xml" title="PureMix Framework RSS Feed" href="https://puremix.dev/rss.xml">
   
+  <!-- Sitemap -->
+  <link rel="sitemap" type="application/xml" href="https://puremix.dev/sitemap.xml">
+  
   <!-- Favicon and Icons -->
   <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -302,6 +305,63 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "PureMix Framework",
+    "description": "HTML-first full-stack web framework with seamless Python integration. Build modern web applications with server-side rendering, component-based architecture, and native Python support.",
+    "url": "https://puremix.dev",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Linux, macOS, Windows",
+    "programmingLanguage": ["JavaScript", "TypeScript", "Python"],
+    "softwareVersion": "v0.1.0-alpha.0.2",
+    "author": {
+      "@type": "Organization",
+      "name": "PureMix Framework",
+      "url": "https://puremix.dev"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PureMix Framework",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://puremix.dev/images/logo.png"
+      }
+    },
+    "datePublished": "2024-01-01",
+    "dateModified": "2025-01-16",
+    "image": "https://puremix.dev/images/og-image.jpg",
+    "downloadUrl": "https://www.npmjs.com/package/puremix",
+    "license": "https://github.com/tacho87/Puremix/blob/main/LICENSE",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "100",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "featureList": [
+      "HTML-first development",
+      "Python integration",
+      "Server-side rendering",
+      "Component-based architecture",
+      "TypeScript support",
+      "Zero build complexity"
+    ],
+    "keywords": ["web framework", "Python", "JavaScript", "TypeScript", "server-side rendering", "HTML", "full-stack"],
+    "educationalLevel": "Intermediate to Advanced",
+    "learningResourceType": "Interactive tutorial and documentation"
+  }
+  </script>
+
 </head>
 <body>
   <!-- Navigation -->

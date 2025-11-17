@@ -1,0 +1,137 @@
+# PureMix Framework Robots.txt
+# https://puremix.dev/
+
+User-agent: *
+Allow: /
+
+# Prioritize important pages
+Allow: /
+Allow: /documentation.html
+Allow: /images/
+Allow: /css/
+Allow: /js/
+
+# Allow indexing of versioned documentation
+Allow: /v*/
+
+# Block sensitive files and directories
+Disallow: /*.temp$
+Disallow: /.git/
+Disallow: /.gitignore
+Disallow: /node_modules/
+Disallow: /scripts/
+Disallow: /templates/
+Disallow: /lib/
+Disallow: /cli/
+Disallow: /tests/
+Disallow: /*.log$
+Disallow: /*.tmp$
+Disallow: /.DS_Store
+Disallow: /*.env$
+
+# Block development and config files
+Disallow: /package-lock.json
+Disallow: /yarn.lock
+Disallow: /pnpm-lock.yaml
+Disallow: /tsconfig.json
+Disallow: /jest.config.js
+Disallow: /tailwind.config.js
+Disallow: /postcss.config.js
+Disallow: /webpack.config.js
+
+# Block CI/CD and build files
+Disallow: /.github/
+Disallow: /.gitlab-ci.yml
+Disallow: /Dockerfile
+Disallow: /docker-compose.yml
+Disallow: /Makefile
+
+# Block documentation source files
+Disallow: /README.md
+Disallow: /CHANGELOG.md
+Disallow: /LICENSE
+Disallow: /CONTRIBUTING.md
+Disallow: /CODE_OF_CONDUCT.md
+
+# Block test and development files
+Disallow: /*.test.js
+Disallow: /*.spec.js
+Disallow: /*.test.ts
+Disallow: /*.spec.ts
+Disallow: /*.test.puremix
+Disallow: /*.spec.html
+
+# Crawl delay for politeness
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://puremix.dev/sitemap.xml
+
+# Specific bots rules
+
+# Allow Googlebot fully
+User-agent: Googlebot
+Allow: /
+
+# Allow BING Bot fully  
+User-agent: bingbot
+Allow: /
+
+# Allow Yandex Bot fully
+User-agent: YandexBot
+Allow: /
+
+# Allow DuckDuckGo Bot
+User-agent: DuckDuckBot
+Allow: /
+
+# Allow Apple Bot
+User-agent: Applebot
+Allow: /
+
+# Allow Facebook crawler for Open Graph
+User-agent: facebookexternalhit
+Allow: /
+Allow: /documentation.html
+
+# Allow Twitter crawler for Card validation
+User-agent: Twitterbot
+Allow: /
+Allow: /documentation.html
+
+# Allow LinkedIn crawler
+User-agent: LinkedInBot
+Allow: /
+Allow: /documentation.html
+
+# Allow Slack crawler
+User-agent: Slackbot
+Allow: /
+
+# Allow Discord crawler
+User-agent: Discordbot
+Allow: /
+
+# Allow WhatsApp crawler
+User-agent: WhatsApp
+Allow: /
+
+# Disallow aggressive crawlers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# Rate limiting for aggressive crawlers
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: AhrefsSiteAudit
+Crawl-delay: 10

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+  
+  <channel>
+    <title>PureMix Framework - Latest Updates</title>
+    <link>https://puremix.dev/</link>
+    <description>HTML-first full-stack web framework with Python integration. Get the latest updates, tutorials, and release notes.</description>
+    <language>en-us</language>
+    <copyright>Copyright 2025 PureMix Framework. All rights reserved.</copyright>
+    <managingEditor>puremix@puremix.dev (PureMix Team)</managingEditor>
+    <webMaster>puremix@puremix.dev (PureMix Team)</webMaster>
+    <lastBuildDate>Thu, 16 Jan 2025 12:00:00 GMT</lastBuildDate>
+    <generator>PureMix Framework</generator>
+    <docs>https://puremix.dev/rss.html</docs>
+    <ttl>60</ttl>
+    <image>
+      <url>https://puremix.dev/images/logo.png</url>
+      <title>PureMix Framework</title>
+      <link>https://puremix.dev/</link>
+      <width>128</width>
+      <height>128</height>
+      <description>PureMix Framework Logo</description>
+    </image>
+    
+    <!-- Latest Version Release -->
+    <item>
+      <title>PureMix v0.1.0-alpha.0.2 Released - Versioned Documentation & Mobile Improvements</title>
+      <link>https://puremix.dev/</link>
+      <description>
+        <![CDATA[
+        <p>We're excited to announce PureMix v0.1.0-alpha.0.2 with major improvements:</p>
+        <ul>
+          <li><strong>Versioned Documentation System:</strong> Automatic version management with picker UI</li>
+          <li><strong>Mobile Responsiveness:</strong> Fixed horizontal overflow and improved mobile experience</li>
+          <li><strong>SEO Optimization:</strong> Complete Open Graph, Twitter Cards, and structured data</li>
+          <li><strong>Social Sharing:</strong> Interactive sharing buttons for Twitter, LinkedIn, WhatsApp, and Facebook</li>
+          <li><strong>Template Engine:</strong> Fixed {content} variable usage and main.puremix layout resolution</li>
+          <li><strong>Documentation:</strong> Comprehensive configuration guide and migration instructions</li>
+        </ul>
+        <p>Get the latest version with: <code>npm install puremix@latest</code></p>
+        ]]>
+      </description>
+      <pubDate>Thu, 16 Jan 2025 12:00:00 GMT</pubDate>
+      <guid isPermaLink="false">puremix-v0.1.0-alpha.0.2</guid>
+      <dc:creator>PureMix Team</dc:creator>
+      <category>Releases</category>
+    </item>
+    
+    <!-- Previous Version -->
+    <item>
+      <title>PureMix v0.1.0-alpha.0.1 - Initial Alpha Release</title>
+      <link>https://puremix.dev/</link>
+      <description>
+        <![CDATA[
+        <p>PureMix v0.1.0-alpha.0.1 marks our initial public alpha release with:</p>
+        <ul>
+          <li><strong>Core Framework:</strong> Server-side rendering with .puremix files</li>
+          <li><strong>Python Integration:</strong> Seamless Python/JavaScript interop</li>
+          <li><strong>Component System:</strong> React-style props and selective updates</li>
+          <li><strong>Template Engine:</strong> AST-based processing without regex</li>
+          <li><strong>CLI Tools:</strong> Project creation and development server</li>
+        </ul>
+        <p>Try it out: <code>npx puremix create my-app --template basic</code></p>
+        ]]>
+      </description>
+      <pubDate>Fri, 20 Dec 2024 10:00:00 GMT</pubDate>
+      <guid isPermaLink="false">puremix-v0.1.0-alpha.0.1</guid>
+      <dc:creator>PureMix Team</dc:creator>
+      <category>Releases</category>
+    </item>
+    
+    <!-- Documentation Update -->
+    <item>
+      <title>Complete Documentation Available - From Getting Started to Production Deployment</title>
+      <link>https://puremix.dev/documentation.html</link>
+      <description>
+        <![CDATA[
+        <p>The PureMix documentation is now comprehensive and includes:</p>
+        <ul>
+          <li><strong>Getting Started:</strong> Installation, quick start, and project structure</li>
+          <li><strong>Core Concepts:</strong> Loaders, actions, components, and routing</li>
+          <li><strong>Python Integration:</strong> From basic scripts to machine learning</li>
+          <li><strong>Configuration:</strong> Complete framework options and environment variables</li>
+          <li><strong>Deployment:</strong> PM2, Docker, Nginx, and production best practices</li>
+          <li><strong>Troubleshooting:</strong> Common issues and solutions</li>
+        </ul>
+        <p>Perfect for developers looking to master PureMix!</p>
+        ]]>
+      </description>
+      <pubDate>Wed, 15 Jan 2025 14:00:00 GMT</pubDate>
+      <guid isPermaLink="false">puremix-documentation-complete</guid>
+      <dc:creator>PureMix Team</dc:creator>
+      <category>Documentation</category>
+    </item>
+    
+    <!-- Feature Highlight -->
+    <item>
+      <title>Python Integration Deep Dive - Use Pandas, NumPy, and ML in Your Web Apps</title>
+      <link>https://puremix.dev/documentation.html#python-integration</link>
+      <description>
+        <![CDATA[
+        <p>Discover PureMix's powerful Python integration capabilities:</p>
+        <ul>
+          <li><strong>Process Pools:</strong> 4 dedicated Python workers for performance</li>
+          <li><strong>Popular Libraries:</strong> Native support for Pandas, NumPy, Scikit-learn</li>
+          <li><strong>Six Integration Methods:</strong> From script tags to ES6 imports</li>
+          <li><strong>Error Handling:</strong> Graceful fallbacks when Python is unavailable</li>
+          <li><strong>Type Safety:</strong> Python functions callable like JavaScript modules</li>
+        </ul>
+        <p>Perfect for data-driven web applications and ML-powered features!</p>
+        ]]>
+      </description>
+      <pubDate>Tue, 14 Jan 2025 16:00:00 GMT</pubDate>
+      <guid isPermaLink="false">puremix-python-integration</guid>
+      <dc:creator>PureMix Team</dc:creator>
+      <category>Python</category>
+    </item>
+    
+    <!-- Tutorial/Getting Started -->
+    <item>
+      <title>Getting Started with PureMix - Build Your First App in 5 Minutes</title>
+      <link>https://puremix.dev/documentation.html#getting-started</link>
+      <description>
+        <![CDATA[
+        <p>Learn how to create your first PureMix application:</p>
+        <ol>
+          <li><strong>Installation:</strong> <code>npx puremix create my-app</code></li>
+          <li><strong>Choose Template:</strong> Basic, Minimal, or Advanced</li>
+          <li><strong>Start Development:</strong> <code>cd my-app && npm run dev</code></li>
+          <li><strong>Add Components:</strong> Create reusable .puremix components</li>
+          <li><strong>Integrate Python:</strong> Add server-side Python functions</li>
+        </ol>
+        <p>No build step required - Node.js 22+ has native TypeScript support!</p>
+        ]]>
+      </description>
+      <pubDate>Mon, 13 Jan 2025 09:00:00 GMT</pubDate>
+      <guid isPermaLink="false">puremix-getting-started</guid>
+      <dc:creator>PureMix Team</dc:creator>
+      <category>Tutorial</category>
+    </item>
+    
+  </channel>
+</rss>
