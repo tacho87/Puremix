@@ -10,7 +10,7 @@
     // Show success message from form submission
     if (actionResult?.success) {
       return {
-        data: { message: actionResult.message, submitted: actionResult.data },
+        data: { message: actionResult.message, submitted: actionResult },
         state: { showSuccess: true }
       };
     }
@@ -36,9 +36,9 @@
       <p>{loadFormTest.data.message}</p>
       <div class="submitted-data">
         <h3>Submitted Data:</h3>
-        <p><strong>Name:</strong> {loadFormTest.data.submitted.name}</p>
-        <p><strong>Email:</strong> {loadFormTest.data.submitted.email}</p>
-        <p><strong>Message:</strong> {loadFormTest.data.submitted.message}</p>
+        <p><strong>Name:</strong> {loadFormTest.data.submitted.data.name}</p>
+        <p><strong>Email:</strong> {loadFormTest.data.submitted.data.email}</p>
+        <p><strong>Message:</strong> {loadFormTest.data.submitted.data.message}</p>
       </div>
     </div>
   : <span></span>}

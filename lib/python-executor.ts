@@ -284,11 +284,7 @@ def safe_execute(func_name: str, input_data: Any) -> Dict[str, Any]:
             result = func(input_data, None)
             
             # Ensure result is JSON serializable
-            return {
-                "success": True,
-                "data": result,
-                "function": func_name
-            }
+            return result
         else:
             return {"error": f"'{func_name}' is not callable"}
             

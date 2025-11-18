@@ -622,7 +622,7 @@ async function loadProduct(request) {
       return {
         data: {
           message: "Operation succeeded!",
-          result: actionResult.data,
+          result: actionResult,
           timestamp: new Date().toISOString()
         },
         state: { showSuccess: true }

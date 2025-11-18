@@ -414,11 +414,11 @@ def test_ml_libraries(data, js_context=None):
                     <div>
                       <h6>Environment Details:</h6>
                       <ul>
-                        <li><strong>Python Version:</strong> {scenario.result.data.python_version}</li>
-                        <li><strong>Test Calculation:</strong> √16 = {scenario.result.data.test_calculation}</li>
-                        <li><strong>Available Modules:</strong> {Object.keys(scenario.result.data.available_modules).join(', ')}</li>
-                        <li><strong>Framework Integration:</strong> {scenario.result.data.framework_integration}</li>
-                        <li><strong>Context Received:</strong> {scenario.result.data.context_received ? 'Yes' : 'No'}</li>
+                        <li><strong>Python Version:</strong> {scenario.result.python_version}</li>
+                        <li><strong>Test Calculation:</strong> √16 = {scenario.result.test_calculation}</li>
+                        <li><strong>Available Modules:</strong> {Object.keys(scenario.result.available_modules).join(', ')}</li>
+                        <li><strong>Framework Integration:</strong> {scenario.result.framework_integration}</li>
+                        <li><strong>Context Received:</strong> {scenario.result.context_received ? 'Yes' : 'No'}</li>
                       </ul>
                     </div>
                   : scenarioKey === 'data_analytics_test' ?
@@ -428,29 +428,29 @@ def test_ml_libraries(data, js_context=None):
                         <div class="col-md-6">
                           <strong>Price Analysis:</strong>
                           <ul>
-                            <li>Mean: ${scenario.result.data.price_analysis.mean}</li>
-                            <li>Median: ${scenario.result.data.price_analysis.median}</li>
-                            <li>Range: ${scenario.result.data.price_analysis.min} - ${scenario.result.data.price_analysis.max}</li>
+                            <li>Mean: ${scenario.result.price_analysis.mean}</li>
+                            <li>Median: ${scenario.result.price_analysis.median}</li>
+                            <li>Range: ${scenario.result.price_analysis.min} - ${scenario.result.price_analysis.max}</li>
                           </ul>
                         </div>
                         <div class="col-md-6">
                           <strong>Key Insights:</strong>
                           <ul>
-                            <li>Total Products: {scenario.result.data.total_products}</li>
-                            <li>Revenue Estimate: ${scenario.result.data.revenue_estimate}</li>
-                            <li>Best Seller: {scenario.result.data.insights.best_seller.name}</li>
-                            <li>Highest Rated: {scenario.result.data.insights.highest_rated.name} ({scenario.result.data.insights.highest_rated.rating}★)</li>
+                            <li>Total Products: {scenario.result.total_products}</li>
+                            <li>Revenue Estimate: ${scenario.result.revenue_estimate}</li>
+                            <li>Best Seller: {scenario.result.insights.best_seller.name}</li>
+                            <li>Highest Rated: {scenario.result.insights.highest_rated.name} ({scenario.result.insights.highest_rated.rating}★)</li>
                           </ul>
                         </div>
                       </div>
-                      <p><small><em>{scenario.result.data.context_info}</em></small></p>
+                      <p><small><em>{scenario.result.context_info}</em></small></p>
                     </div>
                   : scenarioKey === 'ml_libraries_test' ?
                     <div>
-                      <h6>ML Ecosystem Health: {scenario.result.data.ecosystem_health.health_percentage}% ({scenario.result.data.ecosystem_health.status})</h6>
+                      <h6>ML Ecosystem Health: {scenario.result.ecosystem_health.health_percentage}% ({scenario.result.ecosystem_health.status})</h6>
                       <div class="row">
-                        {Object.keys(scenario.result.data.libraries).map(libKey => {
-                          const lib = scenario.result.data.libraries[libKey];
+                        {Object.keys(scenario.result.libraries).map(libKey => {
+                          const lib = scenario.result.libraries[libKey];
                           return (
                             <div class="col-md-6 mb-2">
                               <div class="border rounded p-2 {lib.available ? 'border-success' : 'border-danger'}">
@@ -468,17 +468,17 @@ def test_ml_libraries(data, js_context=None):
                           );
                         })}
                       </div>
-                      <p><small><em>Framework Integration: {scenario.result.data.framework_integration}</em></small></p>
+                      <p><small><em>Framework Integration: {scenario.result.framework_integration}</em></small></p>
                     </div>
                   : <div>
-                      <pre class="bg-light p-3">{JSON.stringify(scenario.result.data, null, 2)}</pre>
+                      <pre class="bg-light p-3">{JSON.stringify(scenario.result, null, 2)}</pre>
                     </div>
                   }
                 </div>
               : <div class="alert alert-danger">
                   <strong>Error:</strong> {scenario.result.error || 'Test failed'}
-                  {scenario.result.data && scenario.result.data.error ?
-                    <div><small>Details: {scenario.result.data.error}</small></div>
+                  {scenario.result.error ?
+                    <div><small>Details: {scenario.result.error}</small></div>
                   : <div></div>}
                 </div>
               }

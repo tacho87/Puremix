@@ -4229,6 +4229,1138 @@ return {
 
 ---
 
+## 🧪 Testing Strategies
+
+PureMix applications require comprehensive testing across multiple layers due to the hybrid JavaScript/Python architecture. This section covers proven testing methodologies and best practices validated in production.
+
+### Testing Pyramid
+
+```
+              🌐 E2E Tests (5%)
+             🔗 Integration Tests (25%)
+         🧪 Unit Tests (70%)
+```
+
+### Key Testing Areas
+
+- ✅ **Route Resolution**: File-based routing and parameter extraction
+- ✅ **Template Rendering**: HTML generation and data binding
+- ✅ **Server Functions**: JavaScript and Python execution
+- ✅ **Component System**: Props passing and isolation
+- ✅ **Python Integration**: ML/AI library compatibility
+- ✅ **API Endpoints**: REST/GraphQL interface testing
+- ✅ **Performance**: Request times and DOM diffing
+
+### Testing Tools Setup
+
+#### Core Testing Stack
+
+```bash
+# Install testing dependencies
+npm install --save-dev jest @jest/globals supertest
+npm install --save-dev @playwright/test  # For E2E testing
+```
+
+#### Jest Configuration
+
+**File:** `jest.config.js`
+
+```javascript
+module.exports = {
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+  testMatch: [
+    '**/__tests__/**/*.test.js',
+    '**/?(*.)+(spec|test).js'
+  ],
+  collectCoverageFrom: [
+    'lib/**/*.js',
+    'cli/**/*.js',
+    'tests/**/*.js',
+    '!tests/fixtures/**'
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    }
+  }
+};
+```
+
+#### Test Environment Setup
+
+**File:** `tests/setup.js`
+
+```javascript
+// Configure test environment
+process.env.NODE_ENV = 'test';
+process.env.SESSION_SECRET = 'test-secret';
+
+// Mock production dependencies
+jest.mock('./lib/puremix-engine');
+
+// Global test utilities
+global.createTestApp = require('./helpers/test-app');
+global.mockRequest = require('./helpers/mock-request');
+```
+
+### Route Testing
+
+#### Static Route Coverage
+
+```javascript
+// tests/routes/static-routes.test.js
+describe('Static Routes', () => {
+  const routes = [
+    '/', '/about', '/contact', '/dashboard',
+    '/admin', '/profile', '/settings'
+  ];
+
+  routes.forEach(route => {
+    it(`should load ${route} successfully`, async () => {
+      const response = await request(app)
+        .get(route)
+        .expect(200);
+
+      expect(response.text).toContain('<!DOCTYPE html>');
+      expect(response.text).toContain('<html');
+    });
+  });
+});
+```
+
+#### Dynamic Route Testing
+
+```javascript
+// tests/routes/dynamic-routes.test.js
+describe('Dynamic Routes', () => {
+  test('should handle user ID parameter', async () => {
+    const response = await request(app)
+      .get('/users/123')
+      .expect(200);
+
+    expect(response.text).toContain('User 123');
+    expect(response.text).toContain('Profile Information');
+  });
+
+  test('should handle nested parameters', async () => {
+    const response = await request(app)
+      .get('/blog/tech/react-tutorial')
+      .expect(200);
+
+    expect(response.text).toContain('tech');
+    expect(response.text).toContain('react-tutorial');
+  });
+
+  test('should handle catch-all routes', async () => {
+    const response = await request(app)
+      .get('/docs/api/users/create')
+      .expect(200);
+
+    expect(response.text).toContain('api');
+    expect(response.text).toContain('users');
+    expect(response.text).toContain('create');
+  });
+});
+```
+
+#### Parameter Extraction Validation
+
+```javascript
+// tests/routes/parameter-extraction.test.js
+describe('Route Parameter Extraction', () => {
+  test('should extract query parameters', async () => {
+    const response = await request(app)
+      .get('/products?page=2&limit=10&sort=price:desc')
+      .expect(200);
+
+    expect(response.text).toContain('Page: 2');
+    expect(response.text).toContain('Limit: 10');
+    expect(response.text).toContain('Sort: price:desc');
+  });
+
+  test('should handle complex nested routes', async () => {
+    const response = await request(app)
+      .get('/shop/electronics/laptops/macbook-pro')
+      .expect(200);
+
+    expect(response.text).toContain('Category: electronics');
+    expect(response.text).toContain('Product: laptops');
+    expect(response.text).toContain('Slug: macbook-pro');
+  });
+});
+```
+
+### Template Engine Testing
+
+#### Expression Processing
+
+```javascript
+// tests/template/expressions.test.js
+describe('Template Expressions', () => {
+  test('should process simple data binding', async () => {
+    const template = '<h1>{user.name}</h1>';
+    const data = { user: { name: 'Alice' } };
+
+    const result = await renderTemplate(template, data);
+    expect(result).toContain('<h1>Alice</h1>');
+  });
+
+  test('should handle conditional expressions', async () => {
+    const template = '{user.isActive ? <div>Active</div> : <span>Inactive</span>}';
+
+    const activeResult = await renderTemplate(template, { user: { isActive: true } });
+    expect(activeResult).toContain('<div>Active</div>');
+    expect(activeResult).not.toContain('<span>Inactive</span>');
+
+    const inactiveResult = await renderTemplate(template, { user: { isActive: false } });
+    expect(inactiveResult).toContain('<span>Inactive</span>');
+    expect(inactiveResult).not.toContain('<div>Active</div>');
+  });
+
+  test('should process array mapping', async () => {
+    const template = '{items.map(item => <li>{item.name}</li>)}';
+    const data = { items: [{ name: 'Item 1' }, { name: 'Item 2' }] };
+
+    const result = await renderTemplate(template, data);
+    expect(result).toContain('<li>Item 1</li>');
+    expect(result).toContain('<li>Item 2</li>');
+  });
+});
+```
+
+#### JavaScript Block Execution
+
+```javascript
+// tests/template/javascript-blocks.test.js
+describe('JavaScript Blocks', () => {
+  test('should execute JavaScript with __export', async () => {
+    const template = `
+    {
+      let total = items.reduce((sum, item) => sum + item.price, 0);
+      let tax = total * 0.1;
+      __export = { total, tax, grandTotal: total + tax };
+    }
+    <div>Total: ${total}</div>
+    <div>Tax: ${tax}</div>
+    <div>Grand Total: ${grandTotal}</div>
+    `;
+
+    const data = {
+      items: [
+        { name: 'Product 1', price: 100 },
+        { name: 'Product 2', price: 200 }
+      ]
+    };
+
+    const result = await renderTemplate(template, data);
+    expect(result).toContain('<div>Total: 300</div>');
+    expect(result).toContain('<div>Tax: 30</div>');
+    expect(result).toContain('<div>Grand Total: 330</div>');
+  });
+
+  test('should handle complex JavaScript operations', async () => {
+    const template = `
+    {
+      let filtered = users.filter(u => u.isActive);
+      let grouped = filtered.reduce((acc, user) => {
+        acc[user.role] = acc[user.role] || [];
+        acc[user.role].push(user);
+        return acc;
+      }, {});
+      __export = { filtered, grouped, count: filtered.length };
+    }
+    `;
+
+    const data = {
+      users: [
+        { name: 'Alice', role: 'admin', isActive: true },
+        { name: 'Bob', role: 'user', isActive: false },
+        { name: 'Charlie', role: 'user', isActive: true }
+      ]
+    };
+
+    const result = await renderTemplate(template, data);
+    // Verify JavaScript execution worked correctly
+    expect(result).toBeDefined();
+  });
+});
+```
+
+### Python Integration Testing
+
+#### Module Function Testing
+
+```javascript
+// tests/python/modules.test.js
+describe('Python Module Integration', () => {
+  beforeAll(async () => {
+    // Ensure Python executor is available
+    const pythonAvailable = await pythonExecutor.available();
+    if (!pythonAvailable) {
+      console.warn('Python not available - skipping Python tests');
+    }
+  });
+
+  test('should call Python financial analyzer', async () => {
+    const result = await request.python.executeFile(
+      './app/services/financial_analyzer.py',
+      'calculate_loan_amortization',
+      {
+        principal: 300000,
+        rate: 0.045,
+        years: 30
+      }
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.monthly_payment).toBeGreaterThan(0);
+    expect(result.total_interest).toBeGreaterThan(0);
+    expect(result.schedule).toBeDefined();
+    expect(Array.isArray(result.schedule)).toBe(true);
+  });
+
+  test('should handle Python ML functions', async () => {
+    const result = await request.python.executeFile(
+      './app/services/ml_analyzer.py',
+      'analyze_dataset',
+      {
+        data: [
+          { feature1: 1.0, feature2: 2.0, label: 'A' },
+          { feature1: 3.0, feature2: 4.0, label: 'B' },
+          { feature1: 5.0, feature2: 6.0, label: 'A' }
+        ]
+      }
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.statistics).toBeDefined();
+    expect(result.analysis).toBeDefined();
+  });
+
+  test('should handle Python errors gracefully', async () => {
+    const result = await request.python.executeFile(
+      './app/services/nonexistent.py',
+      'nonexistent_function',
+      {}
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBeDefined();
+    expect(result.__pythonError || result.__pythonUnavailable).toBe(true);
+  });
+});
+```
+
+#### Python Library Compatibility
+
+```javascript
+// tests/python/libraries.test.js
+describe('Python Library Compatibility', () => {
+  test('should detect and use pandas', async () => {
+    const result = await request.python.call('test_pandas', {}, `
+      import pandas as pd
+      import sys
+
+      def test_pandas(data, js_context=None):
+        try:
+          df = pd.DataFrame([{'a': 1, 'b': 2}, {'a': 3, 'b': 4}])
+          return {
+            'success': True,
+            'pandas_available': True,
+            'data': df.to_dict('records'),
+            'python_version': sys.version
+          }
+        except ImportError:
+          return {
+            'success': False,
+            'pandas_available': False,
+            'error': 'pandas not available'
+          }
+    `);
+
+    if (result.success) {
+      expect(result.pandas_available).toBe(true);
+      expect(Array.isArray(result.data)).toBe(true);
+    } else {
+      console.log('Pandas not available - test skipped');
+    }
+  });
+
+  test('should work with numpy calculations', async () => {
+    const result = await request.python.call('test_numpy', {}, `
+      import numpy as np
+
+      def test_numpy(data, js_context=None):
+        try:
+          array = np.array([1, 2, 3, 4, 5])
+          return {
+            'success': True,
+            'numpy_available': True,
+            'mean': float(np.mean(array)),
+            'std': float(np.std(array)),
+            'sum': float(np.sum(array))
+          }
+        except ImportError:
+          return {
+            'success': False,
+            'numpy_available': False,
+            'error': 'numpy not available'
+          }
+    `);
+
+    if (result.success) {
+      expect(result.numpy_available).toBe(true);
+      expect(result.mean).toBe(3.0);
+      expect(result.sum).toBe(15.0);
+    }
+  });
+});
+```
+
+### Component System Testing
+
+#### Component Props Testing
+
+```javascript
+// tests/components/props.test.js
+describe('Component Props System', () => {
+  test('should pass and render string props', async () => {
+    const componentHtml = await renderComponent('UserCard', {
+      name: 'John Doe',
+      email: 'john@example.com'
+    });
+
+    expect(componentHtml).toContain('John Doe');
+    expect(componentHtml).toContain('john@example.com');
+  });
+
+  test('should handle object props', async () => {
+    const user = {
+      id: 1,
+      name: 'Alice',
+      profile: {
+        avatar: 'avatar.jpg',
+        bio: 'Software developer'
+      }
+    };
+
+    const componentHtml = await renderComponent('UserProfile', { user });
+
+    expect(componentHtml).toContain('Alice');
+    expect(componentHtml).toContain('Software developer');
+  });
+
+  test('should handle missing props gracefully', async () => {
+    const componentHtml = await renderComponent('UserCard', {});
+
+    expect(componentHtml).toContain('Default User');
+    expect(componentHtml).toContain('guest@example.com');
+  });
+
+  test('should handle array props', async () => {
+    const items = [
+      { id: 1, name: 'Item 1' },
+      { id: 2, name: 'Item 2' }
+    ];
+
+    const componentHtml = await renderComponent('ItemList', { items });
+
+    expect(componentHtml).toContain('Item 1');
+    expect(componentHtml).toContain('Item 2');
+  });
+});
+```
+
+#### Component Actions Testing
+
+```javascript
+// tests/components/actions.test.js
+describe('Component Actions', () => {
+  test('should handle component-scoped actions', async () => {
+    const app = createTestApp();
+
+    // Simulate component action call
+    const actionResult = await app.callComponentAction(
+      'UserCard.refreshProfile',
+      { userId: 123 }
+    );
+
+    expect(actionResult.success).toBe(true);
+    expect(actionResult.updatedUser).toBeDefined();
+  });
+
+  test('should maintain component isolation', async () => {
+    const app = createTestApp();
+
+    // Call different component instances
+    const card1Result = await app.callComponentAction(
+      'UserCard.updateStatus',
+      { userId: 1, status: 'active' }
+    );
+
+    const card2Result = await app.callComponentAction(
+      'UserCard.updateStatus',
+      { userId: 2, status: 'inactive' }
+    );
+
+    expect(card1Result.userId).toBe(1);
+    expect(card2Result.userId).toBe(2);
+    // Ensure actions don't interfere
+  });
+});
+```
+
+### API Testing
+
+#### REST API Endpoints
+
+```javascript
+// tests/api/rest-endpoints.test.js
+describe('REST API Endpoints', () => {
+  test('GET /api/products should return product list', async () => {
+    const response = await request(app)
+      .get('/api/products')
+      .expect(200);
+
+    expect(response.body).toHaveProperty('success', true);
+    expect(response.body).toHaveProperty('data');
+    expect(Array.isArray(response.body.data)).toBe(true);
+  });
+
+  test('POST /api/products should create new product', async () => {
+    const newProduct = {
+      name: 'Test Product',
+      price: 29.99,
+      description: 'A test product'
+    };
+
+    const response = await request(app)
+      .post('/api/products')
+      .send(newProduct)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('success', true);
+    expect(response.body.data).toHaveProperty('name', newProduct.name);
+    expect(response.body.data).toHaveProperty('price', newProduct.price);
+  });
+
+  test('PUT /api/products/:id should update product', async () => {
+    const updateData = {
+      name: 'Updated Product',
+      price: 39.99
+    };
+
+    const response = await request(app)
+      .put('/api/products/123')
+      .send(updateData)
+      .expect(200);
+
+    expect(response.body).toHaveProperty('success', true);
+    expect(response.body.data).toHaveProperty('name', updateData.name);
+  });
+
+  test('DELETE /api/products/:id should delete product', async () => {
+    const response = await request(app)
+      .delete('/api/products/123')
+      .expect(200);
+
+    expect(response.body).toHaveProperty('success', true);
+    expect(response.body).toHaveProperty('message', 'Product deleted successfully');
+  });
+});
+```
+
+#### API Authentication Testing
+
+```javascript
+// tests/api/authentication.test.js
+describe('API Authentication', () => {
+  test('should require authentication for protected endpoints', async () => {
+    const response = await request(app)
+      .get('/api/user/profile')
+      .expect(401);
+
+    expect(response.body).toHaveProperty('success', false);
+    expect(response.body).toHaveProperty('error');
+  });
+
+  test('should allow access with valid JWT token', async () => {
+    const token = generateTestToken({ userId: 123 });
+
+    const response = await request(app)
+      .get('/api/user/profile')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    expect(response.body).toHaveProperty('success', true);
+    expect(response.body.data).toHaveProperty('id');
+  });
+
+  test('should reject invalid JWT tokens', async () => {
+    const response = await request(app)
+      .get('/api/user/profile')
+      .set('Authorization', 'Bearer invalid-token')
+      .expect(401);
+
+    expect(response.body).toHaveProperty('success', false);
+    expect(response.body.error).toContain('Invalid or expired');
+  });
+});
+```
+
+### Performance Testing
+
+#### Request Time Benchmarks
+
+```javascript
+// tests/performance/request-times.test.js
+describe('Performance Benchmarks', () => {
+  test('page loads should complete within 100ms', async () => {
+    const startTime = Date.now();
+
+    const response = await request(app).get('/');
+
+    const loadTime = Date.now() - startTime;
+    expect(loadTime).toBeLessThan(100);
+    expect(response.status).toBe(200);
+  });
+
+  test('component updates should be sub-10ms', async () => {
+    const app = createTestApp();
+
+    const startTime = Date.now();
+    const result = await app.updateComponent('UserCard', {
+      user: { name: 'Updated User' }
+    });
+
+    const updateTime = Date.now() - startTime;
+    expect(updateTime).toBeLessThan(10);
+    expect(result.success).toBe(true);
+  });
+
+  test('Python function calls should be reasonable', async () => {
+    const startTime = Date.now();
+
+    const result = await request.python.executeFile(
+      './app/services/data_processor.py',
+      'process_data',
+      { data: new Array(1000).fill(0).map(() => ({ value: Math.random() })) }
+    );
+
+    const executionTime = Date.now() - startTime;
+    expect(result.success).toBe(true);
+    expect(executionTime).toBeLessThan(1000); // Should complete within 1 second
+  });
+});
+```
+
+#### Memory Usage Testing
+
+```javascript
+// tests/performance/memory.test.js
+describe('Memory Management', () => {
+  test('Python worker pool memory stays stable', async () => {
+    const app = createTestApp();
+    const initialMemory = process.memoryUsage();
+
+    // Execute multiple Python calls
+    for (let i = 0; i < 100; i++) {
+      await app.request.python.executeFile(
+        './app/services/data_processor.py',
+        'process_data',
+        { data: new Array(1000).fill(0).map(() => ({ value: Math.random() })) }
+      );
+    }
+
+    const finalMemory = process.memoryUsage();
+    const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
+
+    // Memory increase should be minimal (process pool reuse)
+    expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // 50MB
+  });
+
+  test('template processing memory is efficient', async () => {
+    const initialMemory = process.memoryUsage();
+
+    // Process many templates
+    for (let i = 0; i < 1000; i++) {
+      await renderTemplate('<div>{item.name}</div>', { item: { name: `Item ${i}` } });
+    }
+
+    const finalMemory = process.memoryUsage();
+    const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
+
+    expect(memoryIncrease).toBeLessThan(10 * 1024 * 1024); // 10MB
+  });
+});
+```
+
+### End-to-End Testing
+
+#### Playwright E2E Tests
+
+**File:** `tests/e2e/user-journeys.test.js`
+
+```javascript
+const { test, expect } = require('@playwright/test');
+
+test.describe('User Journeys', () => {
+  test('user registration and login flow', async ({ page }) => {
+    // Visit registration page
+    await page.goto('/register');
+
+    // Fill registration form
+    await page.fill('[name="name"]', 'John Doe');
+    await page.fill('[name="email"]', 'john@example.com');
+    await page.fill('[name="password"]', 'password123');
+
+    // Submit registration
+    await page.click('[type="submit"]');
+
+    // Should redirect to dashboard
+    await expect(page).toHaveURL('/dashboard');
+    await expect(page.locator('h1')).toContain('Welcome, John Doe');
+
+    // Test logout
+    await page.click('button:has-text("Logout")');
+    await expect(page).toHaveURL('/login');
+  });
+
+  test('product creation and management', async ({ page }) => {
+    // Login first
+    await page.goto('/login');
+    await page.fill('[name="email"]', 'admin@example.com');
+    await page.fill('[name="password"]', 'admin123');
+    await page.click('[type="submit"]');
+
+    // Navigate to products
+    await page.goto('/products');
+
+    // Create new product
+    await page.click('button:has-text("Add Product")');
+    await page.fill('[name="name"]', 'Test Product');
+    await page.fill('[name="price"]', '29.99');
+    await page.fill('[name="description"]', 'A test product');
+    await page.click('button:has-text("Create")');
+
+    // Verify product appears in list
+    await expect(page.locator('text=Test Product')).toBeVisible();
+    await expect(page.locator('text=$29.99')).toBeVisible();
+
+    // Edit product
+    await page.click('button:has-text("Edit")');
+    await page.fill('[name="price"]', '39.99');
+    await page.click('button:has-text("Update")');
+
+    // Verify price updated
+    await expect(page.locator('text=$39.99')).toBeVisible();
+    await expect(page.locator('text=$29.99')).not.toBeVisible();
+  });
+
+  test('Python data analysis workflow', async ({ page }) => {
+    await page.goto('/analytics');
+
+    // Upload test data
+    await page.setInputFiles('input[type="file"]', 'test-data.csv');
+    await page.click('button:has-text("Analyze")');
+
+    // Wait for Python processing
+    await page.waitForSelector('.analysis-results');
+
+    // Verify analysis results
+    await expect(page.locator('.statistics')).toBeVisible();
+    await expect(page.locator('.chart-container')).toBeVisible();
+
+    // Test additional analysis options
+    await page.click('button:has-text("Generate Report")');
+    await expect(page.locator('.report-content')).toBeVisible();
+  });
+});
+```
+
+#### Cross-Browser Testing
+
+```javascript
+// tests/e2e/cross-browser.test.js
+const { devices } = require('@playwright/test');
+
+const iPhone = devices['iPhone 12'];
+const desktop = { ...devices['Desktop Chrome'] };
+
+test.describe('Cross-Browser Compatibility', () => {
+  ['Desktop Chrome', 'Desktop Firefox', 'Desktop Safari'].forEach(browserName => {
+    test(`forms work correctly in ${browserName}`, async ({ page }) => {
+      await page.goto('/contact');
+
+      // Test form submission
+      await page.fill('[name="name"]', 'Test User');
+      await page.fill('[name="email"]', 'test@example.com');
+      await page.fill('[name="message"]', 'Test message');
+      await page.click('[type="submit"]');
+
+      // Verify success message
+      await expect(page.locator('.success-message')).toBeVisible();
+    });
+  });
+
+  test('responsive design works on mobile', async ({ page }) => {
+    await page.emulate(iPhone);
+    await page.goto('/');
+
+    // Test mobile navigation
+    await page.click('.mobile-menu-toggle');
+    await expect(page.locator('.mobile-menu')).toBeVisible();
+
+    // Test touch interactions
+    await page.tap('.product-card');
+    await expect(page.locator('.product-details')).toBeVisible();
+  });
+});
+```
+
+### Integration Testing
+
+#### Database Integration
+
+```javascript
+// tests/integration/database.test.js
+describe('Database Integration', () => {
+  beforeAll(async () => {
+    await connectTestDatabase();
+  });
+
+  afterAll(async () => {
+    await disconnectTestDatabase();
+  });
+
+  beforeEach(async () => {
+    await clearTestData();
+  });
+
+  test('CRUD operations work correctly', async () => {
+    // Create
+    const user = await User.create({
+      name: 'Test User',
+      email: 'test@example.com'
+    });
+
+    // Read
+    const foundUser = await User.findById(user.id);
+    expect(foundUser.name).toBe('Test User');
+
+    // Update
+    await User.findByIdAndUpdate(user.id, { name: 'Updated User' });
+    const updatedUser = await User.findById(user.id);
+    expect(updatedUser.name).toBe('Updated User');
+
+    // Delete
+    await User.findByIdAndDelete(user.id);
+    const deletedUser = await User.findById(user.id);
+    expect(deletedUser).toBeNull();
+  });
+
+  test('database operations in loaders work', async () => {
+    const response = await request(app)
+      .get('/users')
+      .expect(200);
+
+    expect(response.text).toContain('Test User');
+  });
+});
+```
+
+#### Session Management Testing
+
+```javascript
+// tests/integration/sessions.test.js
+describe('Session Management', () => {
+  test('session persists across requests', async () => {
+    const agent = request.agent(app);
+
+    // Login
+    await agent
+      .post('/login')
+      .send({ email: 'test@example.com', password: 'password' })
+      .expect(302);
+
+    // Access protected page
+    const response = await agent
+      .get('/dashboard')
+      .expect(200);
+
+    expect(response.text).toContain('Welcome');
+  });
+
+  test('session expires correctly', async () => {
+    const agent = request.agent(app);
+
+    // Login
+    await agent
+      .post('/login')
+      .send({ email: 'test@example.com', password: 'password' });
+
+    // Fast-forward time beyond session expiration
+    jest.useFakeTimers();
+    jest.advanceTimersByTime(7 * 24 * 60 * 60 * 1000); // 7 days
+
+    // Try to access protected page
+    const response = await agent
+      .get('/dashboard')
+      .expect(302);
+
+    expect(response.headers.location).toBe('/login');
+  });
+});
+```
+
+### Security Testing
+
+#### Input Validation
+
+```javascript
+// tests/security/input-validation.test.js
+describe('Input Validation Security', () => {
+  test('should sanitize XSS attempts', async () => {
+    const xssPayload = '<script>alert("xss")</script>';
+
+    const response = await request(app)
+      .post('/contact')
+      .send({ message: xssPayload })
+      .expect(200);
+
+    expect(response.text).not.toContain('<script>');
+    expect(response.text).toContain('&lt;script&gt;');
+  });
+
+  test('should validate required fields', async () => {
+    const response = await request(app)
+      .post('/register')
+      .send({ name: '', email: 'invalid-email' })
+      .expect(400);
+
+    expect(response.body).toHaveProperty('success', false);
+    expect(response.body.error).toContain('required');
+  });
+
+  test('should handle SQL injection attempts', async () => {
+    const sqlInjection = "'; DROP TABLE users; --";
+
+    const response = await request(app)
+      .get(`/users/${encodeURIComponent(sqlInjection)}`)
+      .expect(404);
+
+    // Should not cause server errors
+    expect(response.body.error).toBeDefined();
+  });
+});
+```
+
+#### CSRF Protection
+
+```javascript
+// tests/security/csrf.test.js
+describe('CSRF Protection', () => {
+  test('should require CSRF token for form submissions', async () => {
+    const response = await request(app)
+      .post('/transfer')
+      .send({ amount: 100, to: 'user2' })
+      .expect(403);
+
+    expect(response.body.error).toContain('CSRF token required');
+  });
+
+  test('should accept valid CSRF tokens', async () => {
+    // Get page with CSRF token
+    const pageResponse = await request(app).get('/transfer');
+    const csrfToken = extractCSRFToken(pageResponse.text);
+
+    const response = await request(app)
+      .post('/transfer')
+      .set('X-CSRF-Token', csrfToken)
+      .send({ amount: 100, to: 'user2' })
+      .expect(200);
+
+    expect(response.body.success).toBe(true);
+  });
+});
+```
+
+### Test Coverage Reports
+
+#### Coverage Collection
+
+```bash
+# Run tests with coverage
+npm test -- --coverage
+
+# Generate coverage report
+npm run test:coverage
+
+# View coverage in browser
+open coverage/lcov-report/index.html
+```
+
+#### Coverage Thresholds
+
+**File:** `package.json`
+
+```json
+{
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage --coverageThreshold='{\"global\":{\"branches\":80,\"functions\":80,\"lines\":80,\"statements\":80}}'",
+    "test:watch": "jest --watch",
+    "test:e2e": "playwright test"
+  }
+}
+```
+
+### Continuous Integration Testing
+
+#### GitHub Actions Configuration
+
+**File:** `.github/workflows/test.yml`
+
+```yaml
+name: Test Suite
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20]
+
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Python
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3 python3-pip
+
+    - name: Install Python packages
+      run: pip3 install pandas numpy scikit-learn
+
+    - name: Run tests
+      run: npm test
+
+    - name: Run Python tests
+      run: |
+        python3 -m pytest tests/python/
+        python3 -m pytest tests/python/ --cov=app/services
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+
+    - name: Run E2E tests
+      run: npm run test:e2e
+
+    - name: Upload E2E artifacts
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: playwright-report
+        path: playwright-report/
+```
+
+### Testing Best Practices Summary
+
+#### ✅ DO
+
+1. **Test all layers**: Unit, integration, and E2E tests
+2. **Mock external dependencies**: Databases, APIs, file systems
+3. **Test edge cases**: Empty data, invalid input, error conditions
+4. **Validate performance**: Request times, memory usage
+5. **Test security**: XSS, CSRF, SQL injection, input validation
+6. **Use realistic data**: Test with production-like datasets
+7. **Test Python integration**: Verify ML library compatibility
+8. **Cross-browser testing**: Ensure compatibility
+9. **CI/CD integration**: Automated testing on every push
+10. **Coverage goals**: Aim for 80%+ coverage across all modules
+
+#### ❌ DON'T
+
+1. **Don't test framework internals**: Focus on your application code
+2. **Don't ignore flaky tests**: Fix race conditions and timing issues
+3. **Don't mock everything**: Test real integrations where valuable
+4. **Don't forget error paths**: Test failure scenarios
+5. **Don't skip accessibility**: Test with screen readers and keyboard navigation
+6. **Don't ignore performance**: Set performance budgets and alerts
+7. **Don't test without cleanup**: Ensure test isolation
+8. **Don't use brittle selectors**: Prefer stable selectors for E2E tests
+
+### Test Report Templates
+
+#### Daily Test Results
+
+```markdown
+# PureMix Test Report - [Date]
+
+## 📊 Test Summary
+
+- **Total Tests**: [number]
+- **Passed**: [number] ✅
+- **Failed**: [number] ❌
+- **Skipped**: [number]
+- **Coverage**: [percentage]%
+
+## 🧪 Route Testing Results
+
+### Core Framework
+- `/` - ✅ [time]ms
+- `/props-test` - ✅ [time]ms
+- `/conditional-test` - ✅ [time]ms
+
+### Python Integration
+- `/python-ml-test` - ✅ [time]ms
+- `/python-financial-test` - ✅ [time]ms
+- `/python-integration-test` - ✅ [time]ms
+
+## 🔧 Performance Metrics
+
+### Request Times
+- **Average**: [average]ms
+- **Fastest**: [fastest]ms
+- **Slowest**: [slowest]ms
+
+### Component Updates
+- **Average**: [average]ms
+- **DOM Diffing**: Sub-10ms target achieved ✅
+
+## 🚀 Framework Status
+
+### Production Readiness: ✅ CONFIRMED
+- Core Features: [percentage]% working
+- Python Integration: [percentage]% functional
+- Performance: Excellent (sub-[time]ms average)
+- Security: Built-in protections active
+```
+
 ## 🆘 Troubleshooting
 
 ### Common Issues

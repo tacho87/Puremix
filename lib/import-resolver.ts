@@ -177,8 +177,8 @@ class ImportResolver {
                 try {
                   console.log(`🐍 CALLING: ${functionName}(${JSON.stringify(data).substring(0, 100)}...)`);
                   const result = await this.pythonExecutor.executeFile(pythonMatch.filePath!, functionName, data, jsContext);
-                  console.log(`🐍 SUCCESS: ${functionName} -> ${JSON.stringify(result.data).substring(0, 100)}...`);
-                  return result.data; // Return just the data, not the wrapper
+                  console.log(`🐍 SUCCESS: ${functionName} -> ${JSON.stringify(result).substring(0, 100)}...`);
+                  return result; // Return the result directly (no .data wrapper)
                 } catch (error: any) {
                   console.warn(`🐍 Python function '${functionName}' failed:`, error.message);
                   return {

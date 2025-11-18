@@ -99,7 +99,7 @@
         operation: actionResult.operation,
         operationName: actionResult.operationName,
         success: actionResult.success,
-        data: actionResult.data,
+        data: actionResult,
         message: actionResult.message,
         executionTime: actionResult.executionTime,
         timestamp: actionResult.timestamp

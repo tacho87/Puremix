@@ -1,18 +1,18 @@
 # Project Structure - tests/projects/comprehensive-test
 
-*Auto-generated on 10/2/2025, 3:08:17 PM*
+*Auto-generated on 11/18/2025, 1:42:15 PM*
 
 **This file is automatically regenerated. Do not edit manually.**
 
 ## 📊 Overview
 
-- **Total Routes**: 28 (23 pages, 5 API)
+- **Total Routes**: 37 (32 pages, 5 API)
 - **Components**: 7
 - **Python Modules**: 6 (22 functions)
 - **Authentication**: hybrid
-- **Action Results Flow**: 10 route(s) use POST-redirect-GET pattern
+- **Action Results Flow**: 15 route(s) use POST-redirect-GET pattern
 
-## 🗺️ Routes Map (28 routes)
+## 🗺️ Routes Map (37 routes)
 
 | URL | Type | File | Loader | Actions | Auth | Language |
 |-----|------|------|--------|---------|------|----------|
@@ -25,12 +25,18 @@
 | `/api/users/:id` | 🔌 api | `routes/api/users/[id].js` | — | 1 | 🔓 Public | 📗 javascript |
 | `/api/webhook/:service` | 🔌 api | `routes/api/webhook/[service].js` | — | 1 | 🔓 Public | 📗 javascript |
 | `/ast-improvements-test` | 📄 page | `routes/ast-improvements-test.puremix` | ✅ | 2 | 🔓 Public | 📗 puremix |
+| `/auth-flow-test` | 📄 page | `routes/auth-flow-test.puremix` | ✅🔄 | 3 | 🔒 hybrid | 📗 puremix |
 | `/basic-form-test` | 📄 page | `routes/basic-form-test.puremix` | ✅🔄 | 1 | 🔓 Public | 📗 puremix |
+| `/blog/[year]/[month]/:slug` | 📄 page | `routes/blog/[year]/[month]/[slug].puremix` | ✅ | — | 🔓 Public | 📗 puremix |
+| `/build-validation-test` | 📄 page | `routes/build-validation-test.puremix` | ✅🔄 | 1 | 🔓 Public | 📗 puremix |
 | `/conditional-test` | 📄 page | `routes/conditional-test.puremix` | ✅ | — | 🔓 Public | 📗 puremix |
 | `/dashboard` | 📄 page | `routes/dashboard.puremix` | — | 3 | 🔓 Public | 📗 puremix |
+| `/database-integration-test` | 📄 page | `routes/database-integration-test.puremix` | ✅🔄 | 8 | 🔒 session | 📗 puremix |
+| `/docs/*` | 📄 page | `routes/docs/[...slug].puremix` | ✅ | — | 🔓 Public | 📗 puremix |
 | `/edge-case-components` | 📄 page | `routes/edge-case-components.puremix` | — | — | 🔓 Public | 📗 puremix |
 | `/edge-case-forms` | 📄 page | `routes/edge-case-forms.puremix` | ✅🔄 | 6 | 🔓 Public | 📗 puremix |
 | `/edge-case-templates` | 📄 page | `routes/edge-case-templates.puremix` | ✅ | — | 🔓 Public | 📗 puremix |
+| `/error-handling-test` | 📄 page | `routes/error-handling-test.puremix` | ✅🔄 | 5 | 🔒 session | 📗 puremix |
 | `/file-upload-test` | 📄 page | `routes/file-upload-test.puremix` | ✅🔄 | 5 | 🔓 Public | 📗 puremix |
 | `/javascript-block-execution-test` | 📄 page | `routes/javascript-block-execution-test.puremix` | ✅ | — | 🔓 Public | 📗 puremix |
 | `/props-test` | 📄 page | `routes/props-test.puremix` | — | — | 🔓 Public | 📗 puremix |
@@ -40,10 +46,13 @@
 | `/python-modules-test` | 📄 page | `routes/python-modules-test.puremix` | ✅🔄 | 4 | 🔓 Public | 📗 puremix |
 | `/python-native-test` | 📄 page | `routes/python-native-test.puremix` | ✅🔄 | — | 🔓 Public | 📗 puremix |
 | `/python-script-tag-test` | 📄 page | `routes/python-script-tag-test.puremix` | ✅ | 3 | 🔓 Public | 📗 puremix |
+| `/routing-comprehensive-test` | 📄 page | `routes/routing-comprehensive-test.puremix` | ✅🔄 | 1 | 🔓 Public | 📗 puremix |
 | `/seamless-python-test` | 📄 page | `routes/seamless-python-test.puremix` | ✅ | — | 🔓 Public | 📗 puremix |
 | `/security-test` | 📄 page | `routes/security-test.puremix` | ✅🔄 | 15 | 🔒 hybrid | 📗 puremix |
+| `/shop/[category]/:productId` | 📄 page | `routes/shop/[category]/[productId].puremix` | ✅ | — | 🔓 Public | 📗 puremix |
 | `/typescript-javascript-test` | 📄 page | `routes/typescript-javascript-test.puremix` | — | 2 | 🔓 Public | 📗 puremix |
 | `/unified-template-literals` | 📄 page | `routes/unified-template-literals.puremix` | ✅🔄 | 3 | 🔓 Public | 📗 puremix |
+| `/users/:id` | 📄 page | `routes/users/[id].puremix` | ✅ | — | 🔓 Public | 📗 puremix |
 
 **Legend:** ✅ = Has Loader, 🔄 = Uses Action Results
 
@@ -135,6 +144,18 @@
 
 ---
 
+### `/auth-flow-test` - page
+
+**File**: `routes/auth-flow-test.puremix`
+
+**Loader**: `loadAuthTest` 🔄 *(accepts action results)*
+
+**Server Actions**: `handleLogin`, `handleLogout`, `handleRegister` → flows to loader
+
+**Authentication**: hybrid (session, jwt)
+
+---
+
 ### `/basic-form-test` - page
 
 **File**: `routes/basic-form-test.puremix`
@@ -142,6 +163,24 @@
 **Loader**: `loadFormTest` 🔄 *(accepts action results)*
 
 **Server Actions**: `handleFormSubmission` → flows to loader
+
+---
+
+### `/blog/[year]/[month]/:slug` - page
+
+**File**: `routes/blog/[year]/[month]/[slug].puremix`
+
+**Loader**: `loadPage`
+
+---
+
+### `/build-validation-test` - page
+
+**File**: `routes/build-validation-test.puremix`
+
+**Loader**: `loadBuildValidation` 🔄 *(accepts action results)*
+
+**Server Actions**: `runValidationCheck` → flows to loader
 
 ---
 
@@ -160,6 +199,26 @@
 **Server Actions**: `refreshDashboard`, `updateDashboardSettings`, `sendDynamicData`
 
 **Components Used**: `UserCard`
+
+---
+
+### `/database-integration-test` - page
+
+**File**: `routes/database-integration-test.puremix`
+
+**Loader**: `loadDatabaseTest` 🔄 *(accepts action results)*
+
+**Server Actions**: `testDatabaseOperation`, `createUser`, `readUser`, `updateUser`, `deleteUser`, `testReadOperation`, `testUpdateOperation`, `testDeleteOperation` → flows to loader
+
+**Authentication**: session (session)
+
+---
+
+### `/docs/*` - page
+
+**File**: `routes/docs/[...slug].puremix`
+
+**Loader**: `loadPage`
 
 ---
 
@@ -186,6 +245,18 @@
 **File**: `routes/edge-case-templates.puremix`
 
 **Loader**: `loadTemplateEdgeCases`
+
+---
+
+### `/error-handling-test` - page
+
+**File**: `routes/error-handling-test.puremix`
+
+**Loader**: `loadErrorHandlingTest` 🔄 *(accepts action results)*
+
+**Server Actions**: `triggerError`, `testPythonMissingModule`, `testPythonExecutionError`, `testPythonTimeout`, `triggerCustomError` → flows to loader
+
+**Authentication**: session (session)
 
 ---
 
@@ -275,6 +346,16 @@
 
 ---
 
+### `/routing-comprehensive-test` - page
+
+**File**: `routes/routing-comprehensive-test.puremix`
+
+**Loader**: `loadRoutingTest` 🔄 *(accepts action results)*
+
+**Server Actions**: `testRouteScenario` → flows to loader
+
+---
+
 ### `/seamless-python-test` - page
 
 **File**: `routes/seamless-python-test.puremix`
@@ -295,6 +376,14 @@
 
 ---
 
+### `/shop/[category]/:productId` - page
+
+**File**: `routes/shop/[category]/[productId].puremix`
+
+**Loader**: `loadPage`
+
+---
+
 ### `/typescript-javascript-test` - page
 
 **File**: `routes/typescript-javascript-test.puremix`
@@ -312,6 +401,14 @@
 **Loader**: `loadTemplateTest` 🔄 *(accepts action results)*
 
 **Server Actions**: `updateTemplateTest`, `ajaxTemplateUpdate`, `getTemplateData` → flows to loader
+
+---
+
+### `/users/:id` - page
+
+**File**: `routes/users/[id].puremix`
+
+**Loader**: `loadPage`
 
 ---
 
@@ -342,38 +439,50 @@
 
 **Type**: hybrid
 
-**Session Usage**: 2 file(s)
+**Session Usage**: 5 file(s)
 - `routes/index.puremix`
+- `routes/auth-flow-test.puremix`
+- `routes/database-integration-test.puremix`
+- `routes/error-handling-test.puremix`
 - `routes/security-test.puremix`
 
-**JWT Usage**: 3 file(s)
+**JWT Usage**: 4 file(s)
 - `routes/api-testing.puremix`
 - `routes/api/auth/login.ts`
+- `routes/auth-flow-test.puremix`
 - `routes/security-test.puremix`
 
 **Cookie Usage**: 1 file(s)
 - `routes/api/auth/login.ts`
 
-**Protected Routes**: 4
+**Protected Routes**: 7
 - ``
 - `/api-testing`
 - `/api/auth/login`
+- `/auth-flow-test`
+- `/database-integration-test`
+- `/error-handling-test`
 - `/security-test`
 
 ## 🔄 Action Results Flow
 
-**10 route(s)** use the action results pattern (POST-redirect-GET):
+**15 route(s)** use the action results pattern (POST-redirect-GET):
 
 | Route | Actions | Loader |
 |-------|---------|--------|
+| `/auth-flow-test` | handleLogin, handleLogout, handleRegister | `loadAuthTest` |
 | `/basic-form-test` | handleFormSubmission | `loadFormTest` |
+| `/build-validation-test` | runValidationCheck | `loadBuildValidation` |
+| `/database-integration-test` | testDatabaseOperation, createUser, readUser | `loadDatabaseTest` |
 | `/edge-case-forms` | testEmptyForm, testNullValues, testLongStrings | `loadFormEdgeCases` |
+| `/error-handling-test` | triggerError, testPythonMissingModule, testPythonExecutionError | `loadErrorHandlingTest` |
 | `/file-upload-test` | handleFileUpload, downloadFile, testFilenameAttacks | `loadFileUploadTest` |
 | `/python-financial-test` | calculateCustomLoan | `loadFinancialAnalysis` |
 | `/python-integration-test` | runCustomPythonTest | `loadPythonIntegrationTest` |
 | `/python-ml-test` | runCustomRegression, runCustomDeepLearning | `loadMLTest` |
 | `/python-modules-test` | testFinancialModule, testMLModule, testRegressionModule | `loadPythonModulesTest` |
 | `/python-native-test` | None | `loadPage` |
+| `/routing-comprehensive-test` | testRouteScenario | `loadRoutingTest` |
 | `/security-test` | sanitizeInput, validateCSRFToken, testSQLInjection | `loadSecurityTest` |
 | `/unified-template-literals` | updateTemplateTest, ajaxTemplateUpdate, getTemplateData | `loadTemplateTest` |
 

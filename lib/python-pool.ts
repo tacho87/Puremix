@@ -202,12 +202,7 @@ class PythonWorker:
             # CLEANUP after execution but keep worker ready
             self.cleanup_execution()
             
-            return {
-                "success": True,
-                "data": result,
-                "function": function_name,
-                "worker_requests": self.request_count
-            }
+            return result
             
         except Exception as e:
             # Always cleanup on error too
