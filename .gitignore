@@ -17,10 +17,13 @@ logs
 .temp
 logs
 .tmp
-
+claude.md
+CLAUDE.MD
+next.md
 
 .tmp/
 
 # Documentation version folders
 docs/v*/
 .ignore
+add.md

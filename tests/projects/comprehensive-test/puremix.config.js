@@ -12,6 +12,70 @@ export default {
   
   // Python settings
   pythonTimeout: 30000,
+
+  // Python Worker Persistence Configuration
+  pythonPersistence: {
+    // Enable/disable persistent globals between Python requests
+    enabled: true,
+
+    // Memory management settings
+    memory: {
+      // Maximum number of persistent globals per worker
+      maxGlobals: process.env.PYTHON_MAX_GLOBALS ? parseInt(process.env.PYTHON_MAX_GLOBALS) : 100,
+
+      // Maximum size per global in bytes (1MB default)
+      maxGlobalSize: process.env.PYTHON_MAX_GLOBAL_SIZE ? parseInt(process.env.PYTHON_MAX_GLOBAL_SIZE) : 1024 * 1024,
+
+      // Time-to-live for globals in seconds (1 hour default)
+      globalTTL: process.env.PYTHON_GLOBAL_TTL ? parseInt(process.env.PYTHON_GLOBAL_TTL) : 3600,
+
+      // Cleanup interval (every N requests)
+      cleanupInterval: process.env.PYTHON_CLEANUP_INTERVAL ? parseInt(process.env.PYTHON_CLEANUP_INTERVAL) : 100,
+
+      // Memory usage warning threshold (0.8 = 80%)
+      memoryWarningThreshold: process.env.PYTHON_MEMORY_WARNING ? parseFloat(process.env.PYTHON_MEMORY_WARNING) : 0.8
+    },
+
+    // Security settings
+    security: {
+      // Enable JSON serialization validation for stored values
+      requireSerializable: process.env.PYTHON_REQUIRE_SERIALIZABLE !== 'false',
+
+      // Prevent storing executable code (functions, methods, etc.)
+      preventCodeStorage: process.env.PYTHON_PREVENT_CODE_STORAGE !== 'false',
+
+      // Allow protected globals to be modified (not recommended)
+      allowProtectedModification: process.env.PYTHON_ALLOW_PROTECTED === 'true'
+    },
+
+    // Logging and monitoring
+    logging: {
+      // Enable detailed persistence debugging logs
+      enableDebugLogs: process.env.NODE_ENV === 'development',
+
+      // Log persistence statistics at intervals
+      logStatsInterval: process.env.PYTHON_STATS_INTERVAL ? parseInt(process.env.PYTHON_STATS_INTERVAL) : 1000,
+
+      // Log memory warnings
+      logMemoryWarnings: true
+    },
+
+    // Advanced settings
+    advanced: {
+      // Enable automatic expired global cleanup
+      autoCleanup: process.env.PYTHON_AUTO_CLEANUP !== 'false',
+
+      // Least Recently Used (LRU) eviction when at capacity
+      enableLRUEviction: process.env.PYTHON_LRU_EVICTION !== 'false',
+
+      // Preload common ML libraries in persistent namespace
+      preloadLibraries: process.env.PYTHON_PRELOAD_LIBRARIES !== 'false',
+
+      // Custom protected globals (comma-separated list)
+      protectedGlobals: process.env.PYTHON_PROTECTED_GLOBALS ?
+        process.env.PYTHON_PROTECTED_GLOBALS.split(',') : []
+    }
+  },
   
   // VerboseDebug logging system (enabled for testing)
   verboseDebug: {
@@ -23,6 +87,14 @@ export default {
   },
   
   // Security settings (customize for production)
+  security: {
+    enableCSRF: true,
+    trustProxy: false,
+    csp: {
+      enabled: false
+    }
+  },
+
   session: {
     secret: process.env.SESSION_SECRET || 'puremix-test-secret-key',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours

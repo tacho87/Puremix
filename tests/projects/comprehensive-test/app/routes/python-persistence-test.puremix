@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Python Persistence Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer; margin: 5px; }
+        .button:hover { background: #0056b3; }
+        .globals-display { background: #e9ecef; padding: 10px; border-radius: 3px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>🐍 Python Persistence Test - Smart Auto-Persistence</h1>
+    <p>🚀 <strong>NEW:</strong> Python now automatically detects and persists module-level variables, just like Node.js! No manual <code>worker.set_global()</code> required.</p>
+    <p>Variables defined outside functions automatically persist between requests.</p>
+
+    <div class="test-section">
+        <h2>🚀 Test 1: Smart Auto-Persistence (Node.js Style)</h2>
+        <p><strong>NEW:</strong> Module-level variables automatically persist without manual calls!</p>
+
+        <button class="button" onclick="testAutoPersistence">Test Auto-Persistence</button>
+        <button class="button" onclick="checkAutoPersisted">Check What Was Auto-Persisted</button>
+        <button class="button" onclick="testVariablePersistence">Test Variable Access</button>
+        <div id="auto-persist-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Test 2: Manual Variable Control</h2>
+        <p>Explicit control over persistent variables when needed.</p>
+
+        <button class="button" onclick="setVariable">Set Variable Manually</button>
+        <button class="button" onclick="getVariable">Get Variable</button>
+        <button class="button" onclick="incrementCounter">Increment Counter</button>
+        <div id="variable-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Test 3: ML Model Persistence</h2>
+        <p>Train a model and keep it in memory for predictions.</p>
+
+        <button class="button" onclick="trainModel">Train Model</button>
+        <button class="button" onclick="makePrediction">Make Prediction</button>
+        <button class="button" onclick="getModelInfo">Get Model Info</button>
+        <div id="model-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Test 3: Global State Management</h2>
+        <p>Show all persistent globals and manage worker state.</p>
+
+        <button class="button" onclick="listGlobals">List Globals</button>
+        <button class="button" onclick="clearGlobals">Clear Globals</button>
+        <button class="button" onclick="getWorkerInfo">Worker Info</button>
+        <div id="globals-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Current Worker State</h2>
+        <div id="worker-state" class="globals-display">Loading...</div>
+    </div>
+
+    <script>
+        async function setVariable() {
+            const result = await PureMix.call('setPersistentVariable', {
+                name: 'test_variable',
+                value: { timestamp: Date.now(), message: 'Hello from Python!' }
+            });
+            document.getElementById('variable-result').innerHTML =
+                `<div class="success">✅ Variable set: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function getVariable() {
+            const result = await PureMix.call('getPersistentVariable', {
+                name: 'test_variable'
+            });
+            document.getElementById('variable-result').innerHTML =
+                `<div class="success">✅ Variable retrieved: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function incrementCounter() {
+            const result = await PureMix.call('incrementCounter', {});
+            document.getElementById('variable-result').innerHTML =
+                `<div class="success">✅ Counter incremented: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function trainModel() {
+            const result = await PureMix.call('trainPersistentModel', {
+                algorithm: 'LinearRegression',
+                training_data: [
+                    { x: 1, y: 2 },
+                    { x: 2, y: 4 },
+                    { x: 3, y: 6 },
+                    { x: 4, y: 8 },
+                    { x: 5, y: 10 }
+                ]
+            });
+            document.getElementById('model-result').innerHTML =
+                `<div class="success">✅ Model trained: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function makePrediction() {
+            const result = await PureMix.call('makePersistentPrediction', {
+                input: { x: 6 }
+            });
+            document.getElementById('model-result').innerHTML =
+                `<div class="success">✅ Prediction made: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function getModelInfo() {
+            const result = await PureMix.call('getPersistentModelInfo', {});
+            document.getElementById('model-result').innerHTML =
+                `<div class="success">✅ Model info: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function listGlobals() {
+            const result = await PureMix.call('listPersistentGlobals', {});
+            document.getElementById('globals-result').innerHTML =
+                `<div class="success">✅ Persistent globals: <pre>${JSON.stringify(result, null, 2)}</pre></div>`;
+        }
+
+        async function clearGlobals() {
+            const result = await PureMix.call('clearPersistentGlobals', {
+                keep_system: true
+            });
+            document.getElementById('globals-result').innerHTML =
+                `<div class="success">✅ Globals cleared: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function getWorkerInfo() {
+            const result = await PureMix.call('getWorkerInfo', {});
+            document.getElementById('globals-result').innerHTML =
+                `<div class="success">✅ Worker info: <pre>${JSON.stringify(result, null, 2)}</pre></div>`;
+        }
+
+              // NEW: Smart Auto-Persistence Test Functions
+        async function testAutoPersistence() {
+            const result = await PureMix.call('testAutoPersistence', {
+                message: 'Testing automatic persistence!',
+                timestamp: Date.now(),
+                config: { mode: 'auto', feature: 'persistence' }
+            });
+            document.getElementById('auto-persist-result').innerHTML =
+                `<div class="success">✅ Auto-persistence test: ${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function checkAutoPersisted() {
+            const result = await PureMix.call('listAutoPersistedGlobals', {});
+            document.getElementById('auto-persist-result').innerHTML =
+                `<div class="success">✅ Auto-persisted globals: <pre>${JSON.stringify(result, null, 2)}</pre></div>`;
+        }
+
+        async function testVariablePersistence() {
+            const result = await PureMix.call('testVariableAccess', {
+                test_var: 'should_exist_after_first_request'
+            });
+            document.getElementById('auto-persist-result').innerHTML =
+                `<div class="success">✅ Variable access test: <pre>${JSON.stringify(result, null, 2)}</pre></div>`;
+        }
+
+        // Auto-refresh worker state
+        async function updateWorkerState() {
+            try {
+                const result = await PureMix.call('getWorkerInfo', {});
+                const stateDiv = document.getElementById('worker-state');
+                stateDiv.innerHTML = `Request Count: ${result.request_count}\nPersistent Globals: ${result.persistent_globals_count}\nAvailable Libraries: ${result.available_libraries ? result.available_libraries.join(', ') : 'Loading...'}`;
+            } catch (error) {
+                document.getElementById('worker-state').innerHTML = 'Error loading worker state';
+            }
+        }
+
+        // Update state every 2 seconds
+        setInterval(updateWorkerState, 2000);
+        updateWorkerState();
+    </script>
+
+    <script server>
+        async function setPersistentVariable(formData, request) {
+            const code = `
+def setPersistentVariable(data, js_context=None):
+    name = data['name']
+    value = data['value']
+
+    # 🆕 PureMix Framework API: Store in persistent globals
+    # Available methods: worker.set_global(), worker.get_global(), worker.clear_global(), worker.list_globals()
+    worker.set_global(name, value)
+
+    return {
+        'success': True,
+        'action': 'set_global',
+        'name': name,
+        'value': value,
+        'timestamp': worker.get_global('request_timestamp', 0),
+        'total_globals': len(worker.list_globals())
+    }`;
+            return await request.python.call('setPersistentVariable', formData, code);
+        }
+
+        async function getPersistentVariable(formData, request) {
+            const code = `
+def getPersistentVariable(data, js_context=None):
+    name = data['name']
+    value = worker.get_global(name, 'NOT_FOUND')
+
+    return {
+        'success': True,
+        'action': 'get_global',
+        'name': name,
+        'value': value,
+        'exists': value != 'NOT_FOUND',
+        'total_globals': len(worker.list_globals())
+    }`;
+            return await request.python.call('getPersistentVariable', formData, code);
+        }
+
+        async function incrementCounter(formData, request) {
+            const code = `
+def incrementCounter(data, js_context=None):
+    # Get current counter or initialize
+    current = worker.get_global('counter', 0)
+    current += 1
+
+    # Store back
+    worker.set_global('counter', current)
+    worker.set_global('last_increment', {'timestamp': js_context.get('timestamp', 0), 'value': current})
+
+    return {
+        'success': True,
+        'action': 'increment',
+        'counter': current,
+        'previous_value': current - 1,
+        'total_globals': len(worker.list_globals())
+    }`;
+            return await request.python.call('incrementCounter', formData, code);
+        }
+
+        async function trainPersistentModel(formData, request) {
+            const code = `
+def trainPersistentModel(data, js_context=None):
+    algorithm = data.get('algorithm', 'LinearRegression')
+    training_data = data['training_data']
+
+    # Extract features and target
+    X = [[item['x']] for item in training_data]
+    y = [item['y'] for item in training_data]
+
+    # Train model using persistent sklearn
+    if algorithm == 'LinearRegression':
+        model = LinearRegression()
+    elif algorithm == 'Ridge':
+        model = Ridge(alpha=1.0)
+    elif algorithm == 'Lasso':
+        model = Lasso(alpha=0.1)
+    else:
+        model = LinearRegression()
+
+    model.fit(X, y)
+
+    # Store model in persistent globals
+    worker.set_global('trained_model', model)
+    worker.set_global('model_metadata', {
+        'algorithm': algorithm,
+        'trained_at': js_context.get('timestamp', 0),
+        'training_samples': len(training_data),
+        'score': model.score(X, y)
+    })
+
+    # Test prediction
+    test_prediction = model.predict([[6]])[0]
+
+    return {
+        'success': True,
+        'action': 'train_model',
+        'algorithm': algorithm,
+        'samples': len(training_data),
+        'score': float(model.score(X, y)),
+        'test_prediction': float(test_prediction),
+        'metadata': worker.get_global('model_metadata')
+    }`;
+            return await request.python.call('trainPersistentModel', formData, code);
+        }
+
+        async function makePersistentPrediction(formData, request) {
+            const code = `
+def makePersistentPrediction(data, js_context=None):
+    model = worker.get_global('trained_model')
+
+    if model is None:
+        return {
+            'success': False,
+            'error': 'No trained model found. Train a model first.',
+            'action': 'predict_without_model'
+        }
+
+    input_x = data['input']['x']
+    prediction = model.predict([[input_x]])[0]
+
+    # Store prediction history
+    history = worker.get_global('prediction_history', [])
+    history.append({
+        'input': input_x,
+        'prediction': float(prediction),
+        'timestamp': js_context.get('timestamp', 0)
+    })
+    worker.set_global('prediction_history', history)
+
+    return {
+        'success': True,
+        'action': 'predict',
+        'input': input_x,
+        'prediction': float(prediction),
+        'history_count': len(history),
+        'model_metadata': worker.get_global('model_metadata')
+    }`;
+            return await request.python.call('makePersistentPrediction', formData, code);
+        }
+
+        async function getPersistentModelInfo(formData, request) {
+            const code = `
+def getPersistentModelInfo(data, js_context=None):
+    model = worker.get_global('trained_model')
+    metadata = worker.get_global('model_metadata')
+    history = worker.get_global('prediction_history', [])
+
+    return {
+        'success': True,
+        'action': 'get_model_info',
+        'has_model': model is not None,
+        'metadata': metadata,
+        'prediction_count': len(history),
+        'recent_predictions': history[-5:] if history else [],
+        'total_globals': len(worker.list_globals())
+    }`;
+            return await request.python.call('getPersistentModelInfo', formData, code);
+        }
+
+        async function listPersistentGlobals(formData, request) {
+            const code = `
+def listPersistentGlobals(data, js_context=None):
+    globals_info = worker.list_globals()
+
+    # Get some key persistent values
+    counter = worker.get_global('counter', 'Not set')
+    has_model = worker.get_global('trained_model') is not None
+    history_len = len(worker.get_global('prediction_history', []))
+
+    return {
+        'success': True,
+        'action': 'list_globals',
+        'globals': globals_info,
+        'key_values': {
+            'counter': counter,
+            'has_trained_model': has_model,
+            'prediction_history_length': history_len
+        },
+        'total_count': len(globals_info)
+    }`;
+            return await request.python.call('listPersistentGlobals', formData, code);
+        }
+
+        async function clearPersistentGlobals(formData, request) {
+            const code = `
+def clearPersistentGlobals(data, js_context=None):
+    keep_system = data.get('keep_system', True)
+
+    if keep_system:
+        # Get current globals
+        current_globals = list(worker.list_globals().keys())
+
+        # Only clear user-defined globals (keep system libraries)
+        user_globals = [name for name in current_globals
+                       if name not in ['json', 'os', 'sys', 'traceback', 'gc', 'Any', 'Dict',
+                                     'np', 'numpy', 'pd', 'pandas', 'DataFrame', 'Series',
+                                     'tf', 'tensorflow', 'sklearn', 'LinearRegression',
+                                     'Ridge', 'Lasso', 'ElasticNet', 'RandomForestRegressor',
+                                     'train_test_split', 'mean_squared_error', 'r2_score',
+                                     'array', '__builtins__']]
+
+        cleared_count = 0
+        for global_name in user_globals:
+            worker.clear_global(global_name)
+            cleared_count += 1
+
+        return {
+            'success': True,
+            'action': 'clear_user_globals',
+            'cleared_count': cleared_count,
+            'remaining_globals': len(worker.list_globals())
+        }
+    else:
+        # Clear ALL globals
+        all_globals = len(worker.list_globals())
+        worker.persistent_globals.clear()
+        worker._initialize_persistent_namespace()
+
+        return {
+            'success': True,
+            'action': 'clear_all_globals',
+            'cleared_count': all_globals,
+            'remaining_globals': len(worker.list_globals())
+        }`;
+            return await request.python.call('clearPersistentGlobals', formData, code);
+        }
+
+        async function getWorkerInfo(formData, request) {
+            const code = `
+def getWorkerInfo(data, js_context=None):
+    globals_info = worker.list_globals()
+    available_libs = []
+
+    # Check available libraries
+    try:
+        import numpy
+        available_libs.append('numpy')
+    except:
+        pass
+
+    try:
+        import pandas
+        available_libs.append('pandas')
+    except:
+        pass
+
+    try:
+        import sklearn
+        available_libs.append('sklearn')
+    except:
+        pass
+
+    try:
+        import tensorflow
+        available_libs.append('tensorflow')
+    except:
+        pass
+
+    return {
+        'success': True,
+        'action': 'worker_info',
+        'request_count': worker.request_count,
+        'persistent_globals_count': len(globals_info),
+        'available_libraries': available_libs,
+        'globals_info': globals_info
+    }`;
+            return await request.python.call('getWorkerInfo', formData, code);
+        }
+
+        // NEW: Smart Auto-Persistence Test Functions
+        async function testAutoPersistence(formData, request) {
+            const code = `
+# Smart Auto-Persistence Test (Node.js style)
+# Module-level variables should automatically persist
+
+# Test data and config (these should auto-persist)
+test_message = "Initial message from first request"
+test_timestamp = ${Date.now()}
+app_config = {
+    mode: "automatic",
+    version: "1.0",
+    features: ["persistence", "smart_detection"]
+}
+
+# User data (should auto-persist)
+users_processed = 0
+processing_stats = {
+    total_processed: 0,
+    success_rate: 1.0,
+    last_updated: test_timestamp
+}
+
+# Collection that should auto-persist
+data_cache = {}
+request_history = []
+
+# Function to demonstrate variable persistence
+def process_request(data, js_context=None):
+    global users_processed
+    global processing_stats
+    global request_history
+    global data_cache
+
+    # Update counters (these persist between requests)
+    users_processed += 1
+    processing_stats['total_processed'] += 1
+    processing_stats['last_updated'] = js_context.get('timestamp', 0) if js_context else test_timestamp
+
+    # Add to history
+    request_history.append({
+        timestamp: processing_stats['last_updated'],
+        request_count: users_processed,
+        data_sample: data.get('message', 'No message')[:50] + '...' if data.get('message') else 'Empty'
+    })
+
+    # Keep only last 10 requests in history
+    if len(request_history) > 10:
+        request_history = request_history[-10:]
+
+    # Cache some data
+    if data.get('cache_key'):
+        data_cache[data['cache_key']] = {
+            processed_at: processing_stats['last_updated'],
+            data: data
+        }
+
+    return {
+        'success': True,
+        'action': 'auto_persistence_test',
+        'test_message': test_message,
+        'test_timestamp': test_timestamp,
+        'users_processed': users_processed,
+        'processing_stats': processing_stats,
+        'cache_size': len(data_cache),
+        'history_length': len(request_history),
+        'auto_persisted_count': len(worker.global_metadata),
+        'available_globals': list(worker.list_globals().keys())
+    }`;
+            return await request.python.call('process_request', formData, code);
+        }
+
+        async function listAutoPersistedGlobals(formData, request) {
+            const code = `
+def listAutoPersistedGlobals(data, js_context=None):
+    """List all auto-persisted globals with metadata"""
+
+    # Get persistence statistics
+    stats = worker.get_persistence_stats()
+
+    # List all auto-persisted variables
+    auto_persisted = {}
+    for name, metadata in worker.global_metadata.items():
+        if name not in worker.PROTECTED_GLOBALS:
+            auto_persisted[name] = {
+                'type': type(worker.get_global(name)).__name__,
+                'created_at': metadata['created_at'],
+                'access_count': metadata['access_count'],
+                'last_accessed': metadata['last_accessed'],
+                'size_estimate': metadata['size_estimate']
+            }
+
+    return {
+        'success': True,
+        'action': 'list_auto_persisted',
+        'auto_persisted_globals': auto_persisted,
+        'persistence_stats': stats,
+        'total_globals': len(worker.persistent_globals)
+    }`;
+            return await request.python.call('listAutoPersistedGlobals', formData, code);
+        }
+
+        async function testVariableAccess(formData, request) {
+            const code = `
+def testVariableAccess(data, js_context=None):
+    """Test accessing variables that should be auto-persisted"""
+
+    # Try to access variables that should exist from previous request
+    try:
+        test_var_value = test_var  # This should exist from previous test
+    except NameError:
+        test_var_value = "NOT_FOUND"
+
+    try:
+        test_msg_value = test_message
+    except NameError:
+        test_msg_value = "NOT_FOUND"
+
+    try:
+        config_value = app_config
+    except NameError:
+        config_value = "NOT_FOUND"
+
+    return {
+        'success': True,
+        'action': 'test_variable_access',
+        'test_var': test_var_value,
+        'test_message': test_msg_value,
+        'app_config': config_value,
+        'available_globals': list(worker.list_globals().keys()),
+        'message': 'Variables that should persist from previous requests'
+    }`;
+            return await request.python.call('testVariableAccess', formData, code);
+        }
+    </script>
+</body>
+</html>

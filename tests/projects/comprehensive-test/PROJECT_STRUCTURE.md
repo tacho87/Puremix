@@ -1,18 +1,18 @@
 # Project Structure - tests/projects/comprehensive-test
 
-*Auto-generated on 11/18/2025, 1:42:15 PM*
+*Auto-generated on 12/7/2025, 11:33:02 PM*
 
 **This file is automatically regenerated. Do not edit manually.**
 
 ## 📊 Overview
 
-- **Total Routes**: 37 (32 pages, 5 API)
+- **Total Routes**: 46 (34 pages, 12 API)
 - **Components**: 7
-- **Python Modules**: 6 (22 functions)
+- **Python Modules**: 8 (33 functions)
 - **Authentication**: hybrid
 - **Action Results Flow**: 15 route(s) use POST-redirect-GET pattern
 
-## 🗺️ Routes Map (37 routes)
+## 🗺️ Routes Map (46 routes)
 
 | URL | Type | File | Loader | Actions | Auth | Language |
 |-----|------|------|--------|---------|------|----------|
@@ -20,6 +20,13 @@
 | `/admin-dashboard` | 📄 page | `routes/admin-dashboard.puremix` | — | 8 | 🔓 Public | 📗 puremix |
 | `/api-testing` | 📄 page | `routes/api-testing.puremix` | ✅ | 2 | 🔒 jwt | 📗 puremix |
 | `/api/auth/login` | 🔌 api | `routes/api/auth/login.ts` | — | 1 | 🔒 jwt | 📘 typescript |
+| `/api/delete-model` | 🔌 api | `routes/api/delete-model.js` | — | 1 | 🔓 Public | 📗 javascript |
+| `/api/get-model-details` | 🔌 api | `routes/api/get-model-details.js` | — | 1 | 🔓 Public | 📗 javascript |
+| `/api/get-saved-models` | 🔌 api | `routes/api/get-saved-models.js` | — | 1 | 🔓 Public | 📗 javascript |
+| `/api/make-prediction` | 🔌 api | `routes/api/make-prediction.js` | — | 1 | 🔓 Public | 📗 javascript |
+| `/api/test-prediction` | 🔌 api | `routes/api/test-prediction.js` | — | 1 | 🔓 Public | 📗 javascript |
+| `/api/test-python-libraries` | 🔌 api | `routes/api/test-python-libraries.js` | — | 1 | 🔓 Public | 📗 javascript |
+| `/api/train-model` | 🔌 api | `routes/api/train-model.js` | — | 1 | 🔓 Public | 📗 javascript |
 | `/api/upload` | 🔌 api | `routes/api/upload.py` | — | 1 | 🔓 Public | 🐍 python |
 | `/api/users` | 🔌 api | `routes/api/users.js` | — | 1 | 🔓 Public | 📗 javascript |
 | `/api/users/:id` | 🔌 api | `routes/api/users/[id].js` | — | 1 | 🔓 Public | 📗 javascript |
@@ -43,8 +50,10 @@
 | `/python-financial-test` | 📄 page | `routes/python-financial-test.puremix` | ✅🔄 | 1 | 🔓 Public | 📗 puremix |
 | `/python-integration-test` | 📄 page | `routes/python-integration-test.puremix` | ✅🔄 | 1 | 🔓 Public | 📗 puremix |
 | `/python-ml-test` | 📄 page | `routes/python-ml-test.puremix` | ✅🔄 | 2 | 🔓 Public | 📗 puremix |
+| `/python-ml-test-v2` | 📄 page | `routes/python-ml-test-v2.puremix` | — | 5 | 🔓 Public | 📗 puremix |
 | `/python-modules-test` | 📄 page | `routes/python-modules-test.puremix` | ✅🔄 | 4 | 🔓 Public | 📗 puremix |
 | `/python-native-test` | 📄 page | `routes/python-native-test.puremix` | ✅🔄 | — | 🔓 Public | 📗 puremix |
+| `/python-persistence-test` | 📄 page | `routes/python-persistence-test.puremix` | — | 12 | 🔓 Public | 📗 puremix |
 | `/python-script-tag-test` | 📄 page | `routes/python-script-tag-test.puremix` | ✅ | 3 | 🔓 Public | 📗 puremix |
 | `/routing-comprehensive-test` | 📄 page | `routes/routing-comprehensive-test.puremix` | ✅🔄 | 1 | 🔓 Public | 📗 puremix |
 | `/seamless-python-test` | 📄 page | `routes/seamless-python-test.puremix` | ✅ | — | 🔓 Public | 📗 puremix |
@@ -99,6 +108,62 @@
 **HTTP Methods**: `GET`, `POST`
 
 **Authentication**: jwt (cookie, jwt)
+
+---
+
+### `/api/delete-model` - api
+
+**File**: `routes/api/delete-model.js`
+
+**HTTP Methods**: `GET`, `POST`
+
+---
+
+### `/api/get-model-details` - api
+
+**File**: `routes/api/get-model-details.js`
+
+**HTTP Methods**: `GET`, `POST`
+
+---
+
+### `/api/get-saved-models` - api
+
+**File**: `routes/api/get-saved-models.js`
+
+**HTTP Methods**: `GET`, `POST`
+
+---
+
+### `/api/make-prediction` - api
+
+**File**: `routes/api/make-prediction.js`
+
+**HTTP Methods**: `GET`, `POST`
+
+---
+
+### `/api/test-prediction` - api
+
+**File**: `routes/api/test-prediction.js`
+
+**HTTP Methods**: `GET`, `POST`
+
+---
+
+### `/api/test-python-libraries` - api
+
+**File**: `routes/api/test-python-libraries.js`
+
+**HTTP Methods**: `GET`, `POST`
+
+---
+
+### `/api/train-model` - api
+
+**File**: `routes/api/train-model.js`
+
+**HTTP Methods**: `GET`, `POST`
 
 ---
 
@@ -316,6 +381,14 @@
 
 ---
 
+### `/python-ml-test-v2` - page
+
+**File**: `routes/python-ml-test-v2.puremix`
+
+**Server Actions**: `trainModel`, `makePrediction`, `refreshModels`, `deleteModel`, `testWithSampleData`
+
+---
+
 ### `/python-modules-test` - page
 
 **File**: `routes/python-modules-test.puremix`
@@ -331,6 +404,14 @@
 **File**: `routes/python-native-test.puremix`
 
 **Loader**: `loadPage` 🔄 *(accepts action results)*
+
+---
+
+### `/python-persistence-test` - page
+
+**File**: `routes/python-persistence-test.puremix`
+
+**Server Actions**: `setPersistentVariable`, `getPersistentVariable`, `incrementCounter`, `trainPersistentModel`, `makePersistentPrediction`, `getPersistentModelInfo`, `listPersistentGlobals`, `clearPersistentGlobals`, `getWorkerInfo`, `testAutoPersistence`, `listAutoPersistedGlobals`, `testVariableAccess`
 
 ---
 
@@ -424,14 +505,16 @@
 | `UserCard` | `components/UserCard.puremix` | refreshCount, status | refreshProfile, updateStatus, toggleActive, updateUserData | — routes |
 | `UserStats` | `components/UserStats.puremix` | rate | refreshStats, sendAlert | — routes |
 
-## 🐍 Python Modules (6)
+## 🐍 Python Modules (8)
 
 | Module | File | Functions | Used In |
 |--------|------|-----------|----------|
 | `advanced_financial_calculator` | `services/advanced_financial_calculator.py` | analyze_custom_loan, generate_recommendations, calculate_loan_comparison, validate_loan_parameters | — |
 | `financial_analyzer` | `services/financial_analyzer.py` | calculate_loan_amortization, analyze_investment_portfolio, calculate_retirement_planning, test_module_integration | — |
 | `ml_analyzer` | `services/ml_analyzer.py` | analyze_dataset, train_simple_regression, classify_data_points, predict_time_series, test_ml_module | — |
+| `sample_data_generator` | `services/sample_data_generator.py` | generate_sample_data, _generate_classification_samples, _generate_regression_samples, _generate_description, _get_feature_ranges, generate_sample_data_for_specific_scenario, _generate_edge_case_samples, _generate_boundary_samples, _generate_performance_test_samples | — |
 | `data_processor` | `lib/data_processor.py` | process_data, validate_data, transform_data | — |
+| `ml_library_cache` | `lib/ml_library_cache.py` | get_cached_library_status, get_lightweight_library_status | — |
 | `string_helpers` | `lib/utils/string_helpers.py` | format_text, validate_email, generate_slug | — |
 | `user_controller` | `controllers/user_controller.py` | get_user_profile, update_user_settings, authenticate_user | — |
 

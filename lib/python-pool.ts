@@ -233,35 +233,9 @@ class PythonWorker:
             # Also add individual globals for convenience
             namespace['js_globals'] = js_context
         
-        # Try to pre-import common ML libraries (fail silently if not available)
-        try:
-            import numpy as np
-            namespace['np'] = np
-            namespace['numpy'] = np
-        except ImportError:
-            pass
-            
-        try:
-            import pandas as pd
-            namespace['pd'] = pd
-            namespace['pandas'] = pd
-        except ImportError:
-            pass
-            
-        try:
-            import tensorflow as tf
-            namespace['tf'] = tf
-            namespace['tensorflow'] = tf
-        except ImportError:
-            pass
-            
-        try:
-            import sklearn
-            namespace['sklearn'] = sklearn
-            from sklearn import *
-        except ImportError:
-            pass
-        
+        # NOTE: Don't pre-import ML libraries - users import what they need in their scripts
+        # This prevents memory issues from loading large libraries during worker startup
+          
         return namespace
     
     def cleanup_execution(self):

@@ -207,8 +207,8 @@
     <div class="test-case">
       <h3>String Method Filters</h3>
       <div class="result" id="string-methods">
-        <p>Original: <code>{loadTemplateTest.data.user.name}</code></p>
-        <p>Uppercase: <strong>{loadTemplateTest.data.user.name.toUpperCase()}</strong></p>
+        <p>Original: {loadTemplateTest.data?.user?.name}</p>
+        <p>Uppercase: <strong>{loadTemplateTest.data?.user?.name?.toUpperCase()}</strong></p>
         <p>Lowercase: <strong>{loadTemplateTest.data.user.email.toLowerCase()}</strong></p>
         <p>First Char: <strong>{loadTemplateTest.data.user.name.charAt(0)}</strong></p>
         <p>Length: <strong>{loadTemplateTest.data.user.name.length}</strong></p>

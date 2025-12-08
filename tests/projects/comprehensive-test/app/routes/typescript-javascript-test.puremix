@@ -19,6 +19,7 @@
         isActive: true,
         preferences: { theme: 'dark', notifications: true },
         balance: 2500.75,
+        formattedBalance: formatCurrency(2500.75),
         membershipType: 'premium'
       },
       {
@@ -28,6 +29,7 @@
         isActive: false,
         preferences: { theme: 'light', notifications: false },
         balance: 150.25,
+        formattedBalance: formatCurrency(150.25),
         membershipType: 'basic'
       },
       {
@@ -37,6 +39,7 @@
         isActive: true,
         preferences: { theme: 'dark', notifications: true },
         balance: 10000.00,
+        formattedBalance: formatCurrency(10000.00),
         membershipType: 'enterprise'
       }
     ];
@@ -87,6 +90,16 @@
       };
 
       metrics.avgBalance = metrics.totalBalance / metrics.totalUsers;
+
+      // Add formatted currency values
+      metrics.formattedTotalBalance = formatCurrency(metrics.totalBalance);
+      metrics.formattedAvgBalance = formatCurrency(metrics.avgBalance);
+      metrics.richestUser = users.reduce((richest, user) =>
+        user.balance > (richest?.balance || 0) ? user : richest, null
+      );
+      if (metrics.richestUser) {
+        metrics.richestUser.formattedBalance = formatCurrency(metrics.richestUser.balance);
+      }
 
       // Count memberships and themes
       users.forEach(user => {
@@ -156,6 +169,14 @@
     <button class="nav-tab" onclick="switchTab" data-tab="mixed">Mixed Tests</button>
   </div>
 
+  <!-- TEST: Conditional outside array mapping -->
+  <div class="test-conditional-outside-array">
+    <h4>Test: Conditional Outside Array Mapping</h4>
+    <p>Test Boolean: {loadTypeScriptJavaScriptTest.data.users[0].isActive ? "Active" : "Inactive"}</p>
+    <p>Test Numeric: {loadTypeScriptJavaScriptTest.data.users[0].balance > 1000 ? "💰" : "💳"}</p>
+    <p>Test String: {loadTypeScriptJavaScriptTest.data.users[0].membershipType === "premium" ? "🌟" : "📝"}</p>
+  </div>
+
   <!-- Action Result Display -->
   {loadTypeScriptJavaScriptTest.state.showActionResult ?
     <div class="action-result-panel">
@@ -217,7 +238,7 @@
             <div class="user-details">
               <h5>{loadTypeScriptJavaScriptTest.data.users[0].name}</h5>
               <p>Email: {loadTypeScriptJavaScriptTest.data.users[0].email}</p>
-              <p>Balance: {formatCurrency(loadTypeScriptJavaScriptTest.data.users[0].balance)}</p>
+              <p>Balance: {loadTypeScriptJavaScriptTest.data.users[0].formattedBalance}</p>
               {loadTypeScriptJavaScriptTest.data.users[0].preferences.notifications ?
                 <p class="notifications-on">🔔 Notifications enabled</p>
               :
@@ -250,12 +271,8 @@
                   <span class="membership-badge {user.membershipType}">{user.membershipType}</span>
                 </div>
                 <div class="balance">
-                  Balance: {formatCurrency(user.balance)}
-                  {user.balance > 1000 ?
-                    <span class="high-balance">💰</span>
-                  :
-                    <span class="low-balance">💳</span>
-                  }
+                  Balance: {user.formattedBalance}
+                  {user.balance > 1000 ? "💰" : "💳"}
                 </div>
               </div>
             )}
@@ -284,7 +301,7 @@
               :
                 <div class="standard-user">
                   <h5>Standard User: {loadTypeScriptJavaScriptTest.data.users[0].name}</h5>
-                  <p>Current balance: {formatCurrency(loadTypeScriptJavaScriptTest.data.users[0].balance)}</p>
+                  <p>Current balance: {loadTypeScriptJavaScriptTest.data.users[0].formattedBalance}</p>
                 </div>
               }
             </div>
@@ -424,18 +441,18 @@
             </div>
             <div class="stat-card">
               <h5>Total Balance</h5>
-              <span class="stat-value">{formatCurrency(stats.totalBalance)}</span>
+              <span class="stat-value">{stats.formattedTotalBalance}</span>
             </div>
             <div class="stat-card">
               <h5>Average Balance</h5>
-              <span class="stat-value">{formatCurrency(stats.averageBalance)}</span>
+              <span class="stat-value">{stats.formattedAvgBalance}</span>
             </div>
           </div>
 
           <div class="richest-user">
             <h5>Richest User:</h5>
             <div class="user-highlight">
-              {stats.richestUser.name} - {formatCurrency(stats.richestUser.balance)}
+              {stats.richestUser.name} - {stats.richestUser.formattedBalance}
             </div>
           </div>
 
@@ -475,11 +492,11 @@
         </div>
         <div class="metric-card">
           <h4>Total Balance</h4>
-          <span class="metric-value">{formatCurrency(loadTypeScriptJavaScriptTest.data.userMetrics.totalBalance)}</span>
+          <span class="metric-value">{loadTypeScriptJavaScriptTest.data.userMetrics.formattedTotalBalance}</span>
         </div>
         <div class="metric-card">
           <h4>Average Balance</h4>
-          <span class="metric-value">{formatCurrency(loadTypeScriptJavaScriptTest.data.userMetrics.avgBalance)}</span>
+          <span class="metric-value">{loadTypeScriptJavaScriptTest.data.userMetrics.formattedAvgBalance}</span>
         </div>
       </div>
 

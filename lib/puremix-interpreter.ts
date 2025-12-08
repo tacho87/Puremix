@@ -105,6 +105,13 @@ export const TokenType = {
   ARROW: 'ARROW',               // =>
   EQUALS: 'EQUALS',             // === (strict equality)
   NOT_EQUALS: 'NOT_EQUALS',     // !== (strict inequality)
+
+  // Comparison operators
+  GREATER_THAN: 'GREATER_THAN', // >
+  LESS_THAN: 'LESS_THAN',       // <
+  GREATER_EQUAL: 'GREATER_EQUAL', // >=
+  LESS_EQUAL: 'LESS_EQUAL',     // <=
+
   LOGICAL_AND: 'LOGICAL_AND',   // &&
   LOGICAL_OR: 'LOGICAL_OR',     // ||
   LOGICAL_NOT: 'LOGICAL_NOT',   // !
@@ -273,8 +280,19 @@ export class PureMixLexer {
         // Check for HTML comments <!-- ... -->
         if (this.peek() === '!' && this.peekNext() === '-' && this.source[this.position + 2] === '-') {
           this.skipHTMLComment();
+        } else if (this.peek() === '=') {
+          // Handle <= (less than or equal)
+          this.advance(); // consume =
+          this.addToken(TokenType.LESS_EQUAL, '<=');
         } else {
-          this.scanHTMLTag();
+          // Check if this looks like an HTML tag (next char is alpha or /)
+          const nextChar = this.peek();
+          if (nextChar && (this.isAlpha(nextChar) || nextChar === '/' || nextChar === '!')) {
+            this.scanHTMLTag();
+          } else {
+            // Treat as comparison operator
+            this.addToken(TokenType.LESS_THAN, '<');
+          }
         }
         break;
       case '=':
@@ -318,6 +336,16 @@ export class PureMixLexer {
           this.addToken(TokenType.LOGICAL_OR, '||');
         } else {
           this.addToken(TokenType.TEXT_CONTENT, char);
+        }
+        break;
+      case '>':
+        // Handle >= (greater than or equal)
+        if (this.peek() === '=') {
+          this.advance(); // consume =
+          this.addToken(TokenType.GREATER_EQUAL, '>=');
+        } else {
+          // Simple greater than
+          this.addToken(TokenType.GREATER_THAN, '>');
         }
         break;
       case '+':
@@ -1064,7 +1092,9 @@ export class PureMixParser {
       // continue
     }
 
-    while (this.match(TokenType.EQUALS, TokenType.NOT_EQUALS)) {
+    while (this.match(TokenType.EQUALS, TokenType.NOT_EQUALS,
+                   TokenType.GREATER_THAN, TokenType.LESS_THAN,
+                   TokenType.GREATER_EQUAL, TokenType.LESS_EQUAL)) {
       const operator = this.previous();
       
       // Skip whitespace after operator
@@ -1760,12 +1790,12 @@ export class PureMixCodeGenerator {
 
   private evaluateExpression(node: ASTNode): string {
     const result = this.evaluate(node);
-    
+
     // If result is an object or array, don't render it
     if (typeof result === 'object') {
       return '';
     }
-    
+
     return String(result);
   }
 
@@ -1791,6 +1821,14 @@ export class PureMixCodeGenerator {
         return String(leftValue === rightValue);
       case '!==':
         return String(leftValue !== rightValue);
+      case '>':
+        return String(Number(leftValue) > Number(rightValue));
+      case '<':
+        return String(Number(leftValue) < Number(rightValue));
+      case '>=':
+        return String(Number(leftValue) >= Number(rightValue));
+      case '<=':
+        return String(Number(leftValue) <= Number(rightValue));
       case '+':
         return String(Number(leftValue) + Number(rightValue));
       case '-':
@@ -1851,7 +1889,19 @@ export class PureMixCodeGenerator {
 
     if (objectValue && typeof objectValue === 'object') {
       const result = objectValue[property];
-      return result !== undefined ? String(result) : '';
+
+      // If the result is an object or array, we need to handle it differently
+      // for template rendering - don't convert to [object Object]
+      if (result !== undefined) {
+        if (typeof result === 'object' && result !== null) {
+          // For objects, we don't render them directly in templates
+          // They should be accessed through further property access
+          return '';
+        } else {
+          // For primitive values (string, number, boolean), convert to string
+          return String(result);
+        }
+      }
     }
 
     return '';
@@ -1906,11 +1956,6 @@ export class PureMixCodeGenerator {
       const objectValue = this.resolveValue(objectNode);
 
       if (!objectValue || typeof objectValue[method] !== 'function') {
-        log?.debug?.('Method call failed: object or method not found', {
-          objectValue: typeof objectValue,
-          method,
-          hasMethod: objectValue && typeof objectValue[method]
-        });
         return '';
       }
 
@@ -1919,33 +1964,35 @@ export class PureMixCodeGenerator {
         return this.evaluateArrayMethodWithCallback(objectValue, method, args);
       }
 
-      // Execute the method using JavaScript execution for safety
-      const objectPath = this.buildObjectPath(objectNode);
-      const methodCode = `
-        try {
-          const obj = ${objectPath};
-          if (obj && typeof obj.${method} === 'function') {
-            __export = { result: obj.${method}() };
-          } else {
+      // For simple method calls on strings, numbers, etc., execute directly
+      try {
+        const result = objectValue[method](...args.map(arg => this.resolveValue(arg)));
+        return String(result);
+      } catch (error) {
+        // Fallback to JavaScript execution for complex cases
+        const objectPath = this.buildObjectPath(objectNode);
+        const methodCode = `
+          try {
+            const obj = ${objectPath};
+            if (obj && typeof obj.${method} === 'function') {
+              __export = { result: obj.${method}() };
+            } else {
+              __export = { result: '' };
+            }
+          } catch (error) {
             __export = { result: '' };
           }
-        } catch (error) {
-          __export = { result: '' };
+        `;
+
+        const result = JavaScriptExecutor.execute(methodCode, this.context);
+
+        if (result.exports && result.exports.result !== undefined) {
+          return String(result.exports.result);
         }
-      `;
 
-      const result = JavaScriptExecutor.execute(methodCode, this.context);
-
-      if (result.exports && result.exports.result !== undefined) {
-        return String(result.exports.result);
+        return '';
       }
-
-      return '';
     } catch (error) {
-      log?.debug?.('Method call evaluation error', {
-        method: node.value,
-        error: (error as Error).message
-      });
       return '';
     }
   }
