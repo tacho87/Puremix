@@ -1,11 +1,18 @@
 {
-  "current": "0.1.0-alpha.0.2.1",
+  "current": "0.1.0-alpha.0.2.2",
   "versions": [
+    {
+      "version": "0.1.0-alpha.0.2.2",
+      "releaseDate": "2025-12-08",
+      "status": "current",
+      "documentation": "/",
+      "changelog": "# 0.1.0-alpha.0.2.2 (12/8/2025)\n\n## 🚀 Release\n\nSee the full changelog in [CHANGELOG.md](../CHANGELOG.md)."
+    },
     {
       "version": "0.1.0-alpha.0.2.1",
       "releaseDate": "2025-11-18",
-      "status": "current",
-      "documentation": "/",
+      "status": "previous",
+      "documentation": "/v0.1.0-alpha.0.2.1",
       "changelog": "# 0.1.0-alpha.0.2.1 (11/18/2025)\n\n## 🚀 Release\n\nSee the full changelog in [CHANGELOG.md](../CHANGELOG.md)."
     },
     {

@@ -16,12 +16,64 @@ export default {
   appDir: 'app',
   port: 3000,
   host: '0.0.0.0',
-  
+
   // Environment detection
   isDev: true,
   hotReload: true,
-  
-  // Additional configuration sections...
+
+  // Python integration (NEW)
+  python: {
+    enabled: true,
+    workers: 4,
+    timeout: 30000,
+    cacheSize: 1000,
+    tempDir: '.temp',
+    fallbackMode: 'mock',
+    gracefulDegradation: true,
+    workerHealthCheck: true
+  },
+
+  // Debug logging (ENHANCED)
+  verboseDebug: {
+    enabled: true,
+    level: 'debug', // 'error', 'warn', 'info', 'debug'
+    console: true,
+    save: true,
+    includeData: false,
+    maxFileSize: '10MB',
+    maxFiles: 5
+  },
+
+  // Security settings (NEW)
+  security: {
+    csrf: true,
+    rateLimit: {
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100 // limit each IP to 100 requests per windowMs
+    },
+    cors: {
+      origin: process.env.CORS_ORIGIN || "*",
+      credentials: true
+    },
+    helmet: true,
+    compression: true
+  },
+
+  // Template engine (NEW)
+  template: {
+    cache: process.env.NODE_ENV === 'production',
+    strictMode: false,
+    jsxSupport: true,
+    debugExpressions: false
+  },
+
+  // Client runtime (NEW)
+  clientRuntime: {
+    enableDiffing: true,
+    formSubmissionTimeout: 30000,
+    maxRetries: 3,
+    enableSwup: false
+  }
 };
 ```
 
@@ -136,11 +188,17 @@ PureMix provides seamless Python integration with process pooling.
 ```javascript
 export default {
   python: {
-    enabled: true,         // Enable Python integration
-    poolSize: 3,          // Number of Python worker processes
-    timeout: 30000,       // Python execution timeout
-    command: 'python3',   // Python command to use
-    tempDir: '.temp'      // Directory for temporary Python files
+    enabled: true,           // Enable Python integration
+    workers: 4,              // Number of Python worker processes
+    timeout: 30000,          // Python execution timeout (30s)
+    command: 'python3',      // Python command to use
+    tempDir: '.temp',        // Directory for temporary Python files
+    cacheSize: 1000,         // Python script cache size
+    fallbackMode: 'mock',    // How to handle Python failures: 'mock', 'error', 'skip'
+    gracefulDegradation: true, // Continue working when Python unavailable
+    workerHealthCheck: true,  // Enable worker health monitoring
+    retryFailedWorkers: 3,    // Number of times to retry failed workers
+    autoRestart: true         // Auto-restart crashed workers
   }
 };
 ```
@@ -159,6 +217,39 @@ const model = await request.python.sklearn.trainModel('linear_regression', X, y)
 ### Python Auto-Discovery
 
 The framework automatically discovers and registers Python functions from all `.py` files in your `app/` directory at startup. No imports required - functions are available globally.
+
+### Python Worker Persistence API (NEW)
+
+PureMix provides custom APIs for maintaining state between Python function calls, enabling powerful ML and analytics workflows:
+
+```python
+def process_data(data, js_context=None):
+    # Store persistent values that survive between requests
+    worker.set_global('trained_model', ml_model)
+    worker.set_global('application_config', {'debug': True, 'version': '1.0'})
+
+    # Retrieve persistent values
+    model = worker.get_global('trained_model', None)  # Default if not found
+    config = worker.get_global('application_config', {'debug': False})
+
+    # Clear specific persistent variables
+    worker.clear_global('old_cache_data')
+
+    # List all persistent globals with their types
+    globals_info = worker.list_globals()
+
+    return {
+        'success': True,
+        'available_globals': list(globals_info.keys()),
+        'model_loaded': model is not None
+    }
+```
+
+**Worker API Methods:**
+- `worker.set_global(name, value)` - Store persistent global variable
+- `worker.get_global(name, default)` - Retrieve persistent variable with default
+- `worker.clear_global(name)` - Remove specific persistent variable
+- `worker.list_globals()` - Get all persistent globals with their types
 
 ## Security Configuration
 

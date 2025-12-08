@@ -1,6 +1,6 @@
 {
   "name": "puremix",
-  "version": "0.1.0-alpha.0.2.1",
+  "version": "0.1.0-alpha.0.2.2",
   "description": "HTML-first full-stack framework with seamless Python integration",
   "main": "lib/puremix-engine.ts",
   "type": "module",

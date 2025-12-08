@@ -3,15 +3,15 @@
    ========================================================================== */
 
 :root {
-  /* Colors */
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #818cf8;
-  --secondary: #8b5cf6;
-  --accent: #06b6d4;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  /* Colors - Professional Grayish Theme */
+  --primary: #4b5563;
+  --primary-dark: #374151;
+  --primary-light: #6b7280;
+  --secondary: #1f2937;
+  --accent: #059669;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
 
   /* Grayscale */
   --gray-50: #f9fafb;
@@ -275,7 +275,7 @@ a:hover {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #ea4aaa 0%, #d946ef 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
   color: white !important;
   border-radius: var(--radius);
   font-weight: 600;
@@ -283,7 +283,7 @@ a:hover {
 }
 
 .sponsor-link:hover {
-  background: linear-gradient(135deg, #ff1744 0%, #ea4aaa 100%);
+  background: linear-gradient(135deg, var(--danger) 0%, var(--secondary) 100%);
   color: white !important;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
@@ -623,7 +623,7 @@ a:hover {
 
 .method-card.highlight {
   border: 2px solid var(--primary);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(75, 85, 99, 0.05) 0%, rgba(31, 41, 55, 0.05) 100%);
 }
 
 .method-header {
@@ -748,7 +748,7 @@ a:hover {
 }
 
 .flow-step.highlight {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(75, 85, 99, 0.1) 0%, rgba(31, 41, 55, 0.1) 100%);
   border: 2px solid var(--primary-light);
 }
 

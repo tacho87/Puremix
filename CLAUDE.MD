@@ -958,6 +958,73 @@ return {
 - **Built-in ML Support**: NumPy, Pandas, Scikit-learn, TensorFlow interfaces
 - **Automatic Dependency Detection**: Graceful fallbacks when Python packages missing
 - **Context Sharing**: JavaScript data seamlessly passed to Python functions
+- **🆕 Persistent State Management**: Python workers maintain state between requests
+- **🆕 Worker API**: Custom methods for managing persistent global variables
+
+#### **🆕 NEW: Python Worker Persistence API**
+
+**PureMix Custom APIs** (available in Python execution context):
+
+```python
+def myPythonFunction(data, js_context=None):
+    # 🆕 PERSISTENT STATE MANAGEMENT - PureMix Framework APIs
+
+    # Store values that persist between requests
+    worker.set_global('trained_model', ml_model)
+    worker.set_global('application_config', {'debug': True, 'version': '1.0'})
+
+    # Retrieve persistent values
+    model = worker.get_global('trained_model', None)  # Default if not found
+    config = worker.get_global('application_config', {'debug': False})
+
+    # Clear specific persistent variables
+    worker.clear_global('old_cache_data')
+
+    # List all persistent globals with their types
+    globals_info = worker.list_globals()
+    # Returns: {'trained_model': 'LinearRegression', 'config': 'dict', ...}
+
+    # Example: ML model persistence
+    if model is None:
+        # Train model only once, then reuse
+        from sklearn.linear_model import LinearRegression
+        import numpy as np
+
+        X = [[1, 2], [2, 4], [3, 6]]  # Training data
+        y = [3, 5, 7]
+
+        model = LinearRegression()
+        model.fit(X, y)
+
+        # Store for future use
+        worker.set_global('trained_model', model)
+        worker.set_global('model_score', model.score(X, y))
+
+    # Use persistent model for predictions
+    prediction = model.predict([[data['input']]])[0]
+
+    return {
+        'success': True,
+        'prediction': float(prediction),
+        'model_score': worker.get_global('model_score', 0),
+        'available_globals': list(globals_info.keys())
+    }
+```
+
+**Worker API Methods:**
+
+- **`worker.set_global(name, value)`**: Store persistent global variable
+- **`worker.get_global(name, default)`**: Retrieve persistent variable (with default)
+- **worker.clear_global(name)`**: Remove specific persistent variable
+- **`worker.list_globals()`**: Get all persistent globals with their types
+
+**State Persistence Benefits:**
+
+- **🚀 Performance**: Models and data loaded once, reused thousands of times
+- **🧠 Memory Management**: Intelligent cleanup preserves important state
+- **🔄 Cumulative Processing**: Maintain running calculations, analytics, or incremental ML training
+- **⚡ Instant Access**: Pre-loaded libraries and models eliminate startup overhead
+- **🎯 Stateful Applications**: Build applications that remember previous interactions
 
 #### **Python Integration Methods:**
 

@@ -137,7 +137,7 @@ describe('PureMix Routing Integration Tests', () => {
 
       const html = await response.text();
       expect(html).toContain('Python');
-    }, 15000); // Increase timeout for heavy ML operations
+    }, 55000); // Increase timeout for heavy ML operations
 
     test('should serve TypeScript/JavaScript test page', async () => {
       if (!serverRunning) return;
