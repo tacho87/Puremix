@@ -476,16 +476,27 @@ export function generateClientRuntime(
         Object.entries(componentFunctions).forEach(([componentName, funcs]) => {
           if (Array.isArray(funcs)) {
             funcs.forEach(funcName => {
-              const fullName = componentName + '.' + funcName;
+              // Handle multiple namespace prefixes: "RealEstateForm_RealEstateForm_predictRealEstate"
+              // Strip the component prefix repeatedly until it's gone
+              let baseFuncName = funcName;
+              const prefix = componentName + '_';
+              while (baseFuncName.startsWith(prefix)) {
+                baseFuncName = baseFuncName.substring(prefix.length);
+              }
+
+              // Create the proper namespaced key: "RealEstateForm.predictRealEstate"
+              const fullName = componentName + '.' + baseFuncName;
+
               this.componentFunctions.set(fullName, {
-                name: funcName,
+                name: baseFuncName,           // For client-side reference
+                serverName: funcName,          // Original server function name for API calls
                 type: 'component',
                 component: componentName
               });
-              
-              // Create namespaced function for direct calls
+
+              // Create namespaced function for direct calls at correct path
               if (!window[componentName]) window[componentName] = {};
-              window[componentName][funcName] = this.createFunctionWrapper(fullName, 'component');
+              window[componentName][baseFuncName] = this.createFunctionWrapper(fullName, 'component');
               console.log('✅ Component function available globally:', fullName);
             });
           }
@@ -567,44 +578,30 @@ export function generateClientRuntime(
     // Enhanced server function calls with component support
     call: async function(functionName, data = {}, options = {}) {
       try {
-        
-        // Check if function is registered (with name mapping for components)
+
+        // Check if function is registered
         let actualFunctionName = functionName;
         let isComponentFunction = this.componentFunctions.has(functionName);
         const isPageFunction = this.serverFunctions.has(functionName);
-        
-        // Handle component function name mapping: "Component.func" → "Component.Component_func"
-        if (!isComponentFunction && functionName.includes('.')) {
-          const parts = functionName.split('.');
-          if (parts.length === 2) {
-            const [componentName, funcName] = parts;
-            const mappedName = componentName + '.' + componentName + '_' + funcName;
-            if (this.componentFunctions.has(mappedName)) {
-              actualFunctionName = mappedName;
-              isComponentFunction = true;
-              console.log('🔄 Mapped component function: "' + functionName + '" → "' + mappedName + '"');
-            }
-          }
-        }
-        
-        console.log('🔍 After mapping check:', {
+
+        console.log('🔍 Function lookup:', {
           functionName,
-          actualFunctionName,
           isComponentFunction,
-          isPageFunction
+          isPageFunction,
+          componentFunctionKeys: Array.from(this.componentFunctions.keys()).slice(0, 5)
         });
-        
+
         if (!isComponentFunction && !isPageFunction) {
-          console.warn('Server function "' + functionName + '" not found. Available functions:', 
+          console.warn('Server function "' + functionName + '" not found. Available functions:',
                       Array.from(this.serverFunctions.keys()).concat(Array.from(this.componentFunctions.keys())));
         }
-        
+
         console.log('🔍 About to check component detection for:', functionName);
-        
+
         // Detect component-scoped actions: "ComponentName.actionName"
         if (functionName.includes('.')) {
           const [componentName, actionName] = functionName.split('.');
-          
+
           // Find component instance on current page
           const componentElement = document.querySelector('[data-component="' + componentName + '"]');
           const componentId = componentElement?.getAttribute('data-component-id');
@@ -618,15 +615,19 @@ export function generateClientRuntime(
           
           if (componentElement && componentId) {
             // Component-specific AJAX (follows action→loader→template)
-            // Use the actual mapped function name for the server
+            // Get the server function name (with namespace prefix) for the server
+            const funcInfo = this.componentFunctions.get(functionName);
+            const serverActionName = funcInfo?.serverName || functionName;
+
             console.log('🚀 AJAX Debug: Sending component action request:', {
               endpoint: '/_puremix/component-action',
-              action: actualFunctionName,
+              clientAction: functionName,
+              serverAction: serverActionName,
               componentId: componentId,
               data: data,
               csrfToken: this.state.csrfToken ? '✅ Present' : '❌ Missing'
             });
-            
+
             // Handle file uploads for component actions
             let componentHeaders = {
               'X-CSRF-Token': this.state.csrfToken,
@@ -637,13 +638,13 @@ export function generateClientRuntime(
             if (data instanceof FormData) {
               // For file uploads, send FormData directly
               componentBody = data;
-              componentBody.append('action', actionName);
+              componentBody.append('action', serverActionName);
               componentBody.append('componentId', componentId);
             } else {
               // For regular data, send as JSON
               componentHeaders['Content-Type'] = 'application/json';
               componentBody = JSON.stringify({
-                action: actionName,  // Use original action name for server lookup
+                action: serverActionName,  // Use server function name for server lookup
                 data: data,
                 componentId: componentId
               });

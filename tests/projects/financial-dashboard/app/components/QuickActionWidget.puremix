@@ -1,0 +1,426 @@
+<imports>
+  import { DataManager } from '../lib/data-manager.js'
+</imports>
+
+<!--
+  QuickActionWidget - A complete PureMix component example demonstrating:
+  1. Props passed from parent component
+  2. Loader receiving props (3rd parameter)
+  3. Loader handling actionResult (2nd parameter)
+  4. Server functions in <script server> block
+  5. Complete data flow: Props → Loader → Server Function → Action Result → Template
+-->
+
+<loader>
+  async function loadQuickActionWidget(request, actionResult, props) {
+    // STEP 1: Read props from parent component
+    const widgetType = props.widgetType || 'transfer';
+    const title = props.title || 'Quick Action';
+    const initialValues = props.initialValues || {};
+    const showBalance = props.showBalance !== false; // default true
+
+    // Load current balance for display
+    const financialData = await DataManager.readData('financial-data.json');
+    const currentBalance = financialData.metrics.totalRevenue - financialData.metrics.totalExpenses;
+
+    // STEP 2: Handle action results from server functions
+    // When a server function completes, it returns data that flows back to the loader
+    let notification = null;
+    let previousBalance = null;
+
+    if (actionResult) {
+      notification = {
+        message: actionResult.message || 'Action completed successfully',
+        type: actionResult.type || 'success', // 'success' | 'error' | 'warning'
+        timestamp: new Date().toISOString()
+      };
+
+      // Track balance change if provided
+      if (actionResult.previousBalance !== undefined) {
+        previousBalance = actionResult.previousBalance;
+      }
+    }
+
+    // STEP 3: Compute derived data from props
+    let formFields = [];
+    let actionButtonText = 'Submit';
+    let actionIcon = '💸';
+
+    switch (widgetType) {
+      case 'transfer':
+        formFields = [
+          { name: 'recipient', label: 'Recipient', type: 'text', placeholder: 'Enter recipient name or email' },
+          { name: 'amount', label: 'Amount', type: 'number', placeholder: '0.00', min: 0.01, step: 0.01 }
+        ];
+        actionButtonText = 'Send Transfer';
+        actionIcon = '💸';
+        break;
+
+      case 'deposit':
+        formFields = [
+          { name: 'source', label: 'Source Account', type: 'text', placeholder: 'Account number or name' },
+          { name: 'amount', label: 'Amount', type: 'number', placeholder: '0.00', min: 0.01, step: 0.01 }
+        ];
+        actionButtonText = 'Deposit';
+        actionIcon = '💰';
+        break;
+
+      case 'withdraw':
+        formFields = [
+          { name: 'destination', label: 'Destination', type: 'text', placeholder: 'Account number' },
+          { name: 'amount', label: 'Amount', type: 'number', placeholder: '0.00', min: 0.01, step: 0.01 }
+        ];
+        actionButtonText = 'Withdraw';
+        actionIcon = '🏦';
+        break;
+
+      case 'payment':
+        formFields = [
+          { name: 'payee', label: 'Payee', type: 'text', placeholder: 'Enter payee name' },
+          { name: 'amount', label: 'Amount', type: 'number', placeholder: '0.00', min: 0.01, step: 0.01 },
+          { name: 'reference', label: 'Reference', type: 'text', placeholder: 'Payment reference (optional)' }
+        ];
+        actionButtonText = 'Make Payment';
+        actionIcon = '💳';
+        break;
+
+      default:
+        formFields = [
+          { name: 'action', label: 'Action', type: 'text', placeholder: 'Enter action details' },
+          { name: 'amount', label: 'Amount', type: 'number', placeholder: '0.00', min: 0, step: 0.01 }
+        ];
+        actionButtonText = 'Execute';
+        actionIcon = '⚡';
+    }
+
+    // Apply initial values from props to form fields
+    if (Object.keys(initialValues).length > 0) {
+      formFields = formFields.map(field => ({
+        ...field,
+        value: initialValues[field.name] || ''
+      }));
+    }
+
+    // STEP 4: Return data and state to template
+    return {
+      data: {
+        // Props-derived data
+        widgetType,
+        title,
+        showBalance,
+        actionIcon,
+        actionButtonText,
+
+        // Form configuration
+        formFields,
+
+        // Computed display values
+        currentBalance,
+        previousBalance,
+        formattedBalance: formatCurrency(currentBalance),
+        formattedPreviousBalance: previousBalance ? formatCurrency(previousBalance) : null,
+
+        // Notification for template display
+        notification
+      },
+      state: {
+        // UI state (optional, for tracking UI changes)
+        isSubmitting: false,
+        lastAction: actionResult?.action || null
+      }
+    };
+
+    // Helper function for currency formatting
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(amount);
+    }
+  }
+</loader>
+
+<div class="quick-action-widget bg-white rounded-lg shadow p-6">
+  <!-- Widget Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-3">
+      <span class="text-3xl">{loadQuickActionWidget.data.actionIcon}</span>
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">{loadQuickActionWidget.data.title}</h3>
+        <p class="text-sm text-gray-500 capitalize">{loadQuickActionWidget.data.widgetType}</p>
+      </div>
+    </div>
+    {loadQuickActionWidget.data.showBalance ?
+      <div class="text-right">
+        <p class="text-xs text-gray-500">Available Balance</p>
+        <p class="text-lg font-bold text-gray-900">
+          {loadQuickActionWidget.data.formattedPreviousBalance || loadQuickActionWidget.data.formattedBalance}
+        </p>
+        {loadQuickActionWidget.data.previousBalance ?
+          <p class="text-xs text-gray-400">Previous: {loadQuickActionWidget.data.formattedPreviousBalance}</p>
+          : ''
+        }
+      </div>
+      : ''
+    }
+  </div>
+
+  <!-- Notification Display (shows action result from server function) -->
+  {loadQuickActionWidget.data.notification ?
+    <div class={`p-4 rounded-lg mb-4 flex items-center ${
+      loadQuickActionWidget.data.notification.type === 'success' ? 'bg-green-50 border border-green-200' :
+      loadQuickActionWidget.data.notification.type === 'error' ? 'bg-red-50 border border-red-200' :
+      'bg-blue-50 border border-blue-200'
+    }`}>
+      {loadQuickActionWidget.data.notification.type === 'success' ?
+        `<svg class="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>`
+      : loadQuickActionWidget.data.notification.type === 'error' ?
+        `<svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>`
+      :
+        `<svg class="w-5 h-5 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+        </svg>`
+      }
+      <span class={
+        loadQuickActionWidget.data.notification.type === 'success' ? 'text-green-800' :
+        loadQuickActionWidget.data.notification.type === 'error' ? 'text-red-800' :
+        'text-blue-800'
+      }>{loadQuickActionWidget.data.notification.message}</span>
+    </div>
+    : ''
+  }
+
+  <!-- Action Form -->
+  <form onsubmit="QuickActionWidget.submitAction" class="space-y-4">
+    <input type="hidden" name="widgetType" value="{loadQuickActionWidget.data.widgetType}" />
+    <input type="hidden" name="currentBalance" value="{loadQuickActionWidget.data.currentBalance}" />
+
+    {loadQuickActionWidget.data.formFields.map(field =>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+        {field.type === 'number' ?
+          <input
+            type="number"
+            name={field.name}
+            value={field.value || ''}
+            min={field.min || ''}
+            max={field.max || ''}
+            step={field.step || ''}
+            placeholder={field.placeholder}
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+        :
+          <input
+            type="text"
+            name={field.name}
+            value={field.value || ''}
+            placeholder={field.placeholder}
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          />
+        }
+      </div>
+    )}
+
+    <div class="flex justify-end space-x-3 pt-4">
+      <button
+        type="button"
+        onclick="QuickActionWidget.reset"
+        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+      >
+        Reset
+      </button>
+      <button
+        type="submit"
+        class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
+      >
+        <span>{loadQuickActionWidget.data.actionIcon}</span>
+        <span>{loadQuickActionWidget.data.actionButtonText}</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Quick Summary Info -->
+  <div class="mt-6 pt-6 border-t border-gray-200">
+    <div class="grid grid-cols-3 gap-4 text-center">
+      <div class="bg-gray-50 rounded-lg p-3">
+        <p class="text-xs text-gray-500">Transaction Fee</p>
+        <p class="text-sm font-semibold text-gray-900">$0.00</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-3">
+        <p class="text-xs text-gray-500">Processing Time</p>
+        <p class="text-sm font-semibold text-gray-900">Instant</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-3">
+        <p class="text-xs text-gray-500">Daily Limit</p>
+        <p class="text-sm font-semibold text-gray-900">$10,000</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+  SERVER FUNCTIONS
+  These functions are automatically available globally as:
+  - QuickActionWidget.submitAction()
+  - QuickActionWidget.reset()
+
+  The component name acts as a namespace for server functions.
+-->
+<script server>
+  /**
+   * Main action handler - processes the form submission
+   *
+   * Data Flow:
+   * 1. User submits form
+   * 2. Form data is sent to this function
+   * 3. Function processes data and returns result
+   * 4. Result is passed to loader as actionResult
+   * 5. Loader displays notification in template
+   */
+  async function submitAction(formData, request) {
+    // Extract form data
+    const widgetType = formData.get('widgetType');
+    const amount = parseFloat(formData.get('amount') || '0');
+    const currentBalance = parseFloat(formData.get('currentBalance') || '0');
+
+    // Validate amount
+    if (amount <= 0) {
+      return {
+        success: false,
+        message: 'Amount must be greater than zero',
+        type: 'error'
+      };
+    }
+
+    // Check sufficient balance (for withdrawals/transfers)
+    if (widgetType === 'withdraw' || widgetType === 'transfer') {
+      if (amount > currentBalance) {
+        return {
+          success: false,
+          message: 'Insufficient balance for this transaction',
+          type: 'error'
+        };
+      }
+    }
+
+    // Load data manager
+    const { DataManager } = await import('../lib/data-manager.js');
+
+    // Create transaction record
+    const transaction = {
+      id: Date.now().toString(),
+      type: widgetType === 'deposit' ? 'income' : 'expense',
+      description: getDescription(widgetType, formData),
+      amount: amount,
+      category: widgetType,
+      date: new Date().toISOString(),
+      status: 'completed'
+    };
+
+    // Save transaction
+    await DataManager.addRecord('transactions.json', transaction);
+
+    // Return success result that flows back to loader
+    return {
+      success: true,
+      message: getSuccessMessage(widgetType, amount),
+      type: 'success',
+      action: widgetType,
+      previousBalance: currentBalance,
+      newBalance: widgetType === 'deposit' ? currentBalance + amount : currentBalance - amount,
+      transactionId: transaction.id
+    };
+  }
+
+  /**
+   * Reset handler - clears form state
+   */
+  async function reset(formData, request) {
+    return {
+      success: true,
+      message: 'Form has been reset',
+      type: 'info',
+      action: 'reset'
+    };
+  }
+
+  // Helper function to generate transaction description
+  function getDescription(widgetType, formData) {
+    switch (widgetType) {
+      case 'transfer':
+        return `Transfer to ${formData.get('recipient')}`;
+      case 'deposit':
+        return `Deposit from ${formData.get('source')}`;
+      case 'withdraw':
+        return `Withdrawal to ${formData.get('destination')}`;
+      case 'payment':
+        const ref = formData.get('reference');
+        return `Payment to ${formData.get('payee')}${ref ? ' - ' + ref : ''}`;
+      default:
+        return `${widgetType} transaction`;
+    }
+  }
+
+  // Helper function to generate success message
+  function getSuccessMessage(widgetType, amount) {
+    const formattedAmount = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+
+    switch (widgetType) {
+      case 'transfer':
+        return `Transfer of ${formattedAmount} completed successfully`;
+      case 'deposit':
+        return `Deposit of ${formattedAmount} confirmed`;
+      case 'withdraw':
+        return `Withdrawal of ${formattedAmount} processed`;
+      case 'payment':
+        return `Payment of ${formattedAmount} sent successfully`;
+      default:
+        return `Transaction of ${formattedAmount} completed`;
+    }
+  }
+</script>
+
+<!--
+  CLIENT SCRIPTS
+  These run in the browser after the page loads
+-->
+<script client>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Access widget data from PureMix.data
+    const widgetData = PureMix.data?.loadQuickActionWidget?.data;
+
+    if (widgetData) {
+      console.log('QuickAction Widget loaded:', widgetData.widgetType);
+
+      // Add custom client-side behavior
+      const form = document.querySelector('form[onsubmit*="submitAction"]');
+      if (form) {
+        // Add form validation feedback
+        form.addEventListener('submit', function(e) {
+          const amountInput = form.querySelector('input[name="amount"]');
+          if (amountInput) {
+            const amount = parseFloat(amountInput.value);
+            const balance = widgetData.currentBalance;
+
+            // Warn for large transactions
+            if (amount > 1000) {
+              if (!confirm(`You are about to ${widgetData.widgetType} $${amount.toLocaleString()}. Continue?`)) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+              }
+            }
+          }
+        });
+      }
+    }
+  });
+</script>

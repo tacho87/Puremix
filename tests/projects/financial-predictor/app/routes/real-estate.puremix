@@ -1,7 +1,7 @@
 <layout>main</layout>
 
 <imports>
-  import PredictionForm from '../components/PredictionForm.puremix'
+  import RealEstateForm from '../components/RealEstateForm.puremix'
   import ResultChart from '../components/ResultChart.puremix'
   import StatisticsPanel from '../components/StatisticsPanel.puremix'
 </imports>
@@ -52,14 +52,14 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Prediction Form -->
     <div class="lg:col-span-2">
-      <PredictionForm predictionType="real-estate" notification={loadPage.data.notification} />
+      <RealEstateForm notification={loadPage.data.notification} />
 
       <!-- Results Section -->
       {loadPage.data.predictionResult ?
         <div class="mt-8">
           <ResultChart prediction={loadPage.data.predictionResult} />
         </div>
-      : ''}
+      : <div></div>}
     </div>
 
     <!-- Statistics Sidebar -->

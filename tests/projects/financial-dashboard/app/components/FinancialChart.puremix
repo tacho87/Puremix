@@ -1,5 +1,5 @@
 <loader>
-  async function loadFinancialChart(request, actionResult) {
+  async function loadFinancialChart(request, actionResult, props) {
     // Generate a unique chart ID for this component instance
     const chartId = `chart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -8,10 +8,10 @@
         chartId
       },
       state: {
-        chartType: request.props.chartType || 'line',
-        title: request.props.title || 'Chart',
-        data: request.props.data || [],
-        height: request.props.height || '400'
+        chartType: props.chartType || 'line',
+        title: props.title || 'Chart',
+        data: props.data || [],
+        height: props.height || '400'
       }
     };
   }

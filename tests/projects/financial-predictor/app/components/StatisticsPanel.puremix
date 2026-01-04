@@ -3,8 +3,8 @@
 </imports>
 
 <loader>
-  async function loadStatisticsPanel(request, actionResult) {
-    const predictionType = request.props.predictionType || 'real-estate';
+  async function loadStatisticsPanel(request, actionResult, props) {
+    const predictionType = props.predictionType || 'real-estate';
 
     // Load data
     const realEstateData = await DataManager.readData('real-estate.json');
@@ -16,34 +16,148 @@
 
     if (predictionType === 'real-estate') {
       // Call Python for detailed statistics
-      const statsResult = await request.python.executeFile(
-        './app/services/real-estate-predictor.py',
-        'get_market_statistics',
-        realEstateData
-      );
+      try {
+        const statsResult = await request.python.executeFile(
+          './app/services/real-estate-predictor.py',
+          'get_market_statistics',
+          realEstateData
+        );
 
-      if (statsResult.success) {
-        statistics = statsResult.data;
+        if (statsResult && statsResult.success) {
+          statistics = statsResult.data;
+        } else {
+          // Use fallback statistics calculated from data
+          statistics = calculateFallbackStatistics(realEstateData, 'real-estate');
+        }
+      } catch (error) {
+        console.warn('Python statistics call failed, using fallback:', error.message);
+        statistics = calculateFallbackStatistics(realEstateData, 'real-estate');
       }
     } else {
       // Call Python for car statistics
-      const statsResult = await request.python.executeFile(
-        './app/services/car-predictor.py',
-        'get_car_market_statistics',
-        carsData
-      );
+      try {
+        const statsResult = await request.python.executeFile(
+          './app/services/car-predictor.py',
+          'get_car_market_statistics',
+          carsData
+        );
 
-      if (statsResult.success) {
-        statistics = statsResult.data;
+        if (statsResult && statsResult.success) {
+          statistics = statsResult.data;
+        } else {
+          // Use fallback statistics calculated from data
+          statistics = calculateFallbackStatistics(carsData, 'car');
+        }
+      } catch (error) {
+        console.warn('Python statistics call failed, using fallback:', error.message);
+        statistics = calculateFallbackStatistics(carsData, 'car');
       }
     }
+
+    // Helper function to calculate fallback statistics
+    function calculateFallbackStatistics(data, type) {
+      if (type === 'real-estate') {
+        const prices = data.map(p => p.price);
+        const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+        const sortedPrices = prices.sort((a, b) => a - b);
+        const medianPrice = sortedPrices[Math.floor(sortedPrices.length / 2)];
+        const locations = {};
+        data.forEach(p => {
+          locations[p.location] = (locations[p.location] || 0) + p.price;
+        });
+
+        return {
+          average_price: avgPrice,
+          median_price: medianPrice,
+          price_range: { min: Math.min(...prices), max: Math.max(...prices) },
+          top_locations: locations
+        };
+      } else {
+        const prices = data.map(c => c.price);
+        const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+        const sortedPrices = prices.sort((a, b) => a - b);
+        const medianPrice = sortedPrices[Math.floor(sortedPrices.length / 2)];
+        const brands = {};
+        data.forEach(c => {
+          brands[c.brand] = (brands[c.brand] || 0) + c.price;
+        });
+
+        return {
+          average_price: avgPrice,
+          median_price: medianPrice,
+          price_range: { min: Math.min(...prices), max: Math.max(...prices) },
+          top_brands: brands
+        };
+      }
+    }
+
+    // Helper function to format price
+    const formatPriceK = (price) => {
+      if (!price) return 'N/A';
+      return '$' + Math.round(price / 1000) + 'K';
+    };
+
+    // Compute all formatted values for template
+    const formattedStats = {
+      avgPrice: formatPriceK(statistics.average_price),
+      medianPrice: formatPriceK(statistics.median_price),
+      minPrice: statistics.price_range ? formatPriceK(statistics.price_range.min) : 'N/A',
+      maxPrice: statistics.price_range ? formatPriceK(statistics.price_range.max) : 'N/A',
+      percentile25: formatPriceK(statistics.average_price * 0.75),
+      percentile75: formatPriceK(statistics.average_price * 1.25)
+    };
+
+    // Format top locations/brands
+    let topCategories = [];
+    if (predictionType === 'real-estate' && statistics.top_locations) {
+      topCategories = Object.entries(statistics.top_locations)
+        .slice(0, 5)
+        .map(([location, price]) => ({
+          name: location,
+          formattedPrice: formatPriceK(price)
+        }));
+    } else if (predictionType === 'car' && statistics.top_brands) {
+      topCategories = Object.entries(statistics.top_brands)
+        .slice(0, 5)
+        .map(([brand, price]) => ({
+          name: brand,
+          formattedPrice: formatPriceK(price)
+        }));
+    }
+
+    // Format fuel types
+    let fuelTypes = [];
+    if (predictionType === 'car' && statistics.price_by_fuel_type) {
+      fuelTypes = Object.entries(statistics.price_by_fuel_type)
+        .map(([fuelType, price]) => ({
+          name: fuelType.replace('_', ' '),
+          formattedPrice: formatPriceK(price)
+        }));
+    }
+
+    // Format recent predictions
+    const formattedPredictions = predictions
+      .filter(p => p.type === predictionType)
+      .map(p => ({
+        ...p,
+        formattedDate: new Date(p.timestamp).toLocaleDateString(),
+        formattedPrice: formatPriceK(p.result.predicted_price),
+        displayDetails: predictionType === 'real-estate'
+          ? `${p.input.location} - ${p.input.square_meters} sqm`
+          : `${p.input.brand} ${p.input.model}`
+      }));
 
     return {
       data: {
         predictionType,
         statistics,
-        recentPredictions: predictions.filter(p => p.type === predictionType),
-        totalData: predictionType === 'real-estate' ? realEstateData.length : carsData.length
+        formattedStats,
+        topCategories,
+        topCategoriesHeading: predictionType === 'real-estate' ? 'Top Locations by Average Price' : 'Brands by Average Price',
+        fuelTypes,
+        recentPredictions: formattedPredictions,
+        totalData: predictionType === 'real-estate' ? realEstateData.length : carsData.length,
+        typeLabel: predictionType === 'real-estate' ? 'Properties' : 'Cars'
       }
     };
   }
@@ -53,26 +167,16 @@
   <!-- Overview Cards -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <div class="bg-white p-4 rounded-lg shadow">
-      <p class="text-sm font-medium text-gray-600">Total {loadStatisticsPanel.data.predictionType === 'real-estate' ? 'Properties' : 'Cars'}</p>
+      <p class="text-sm font-medium text-gray-600">Total {loadStatisticsPanel.data.typeLabel}</p>
       <p class="text-2xl font-bold text-gray-900">{loadStatisticsPanel.data.totalData}</p>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
       <p class="text-sm font-medium text-gray-600">Average Price</p>
-      <p class="text-2xl font-bold text-primary">
-        {loadStatisticsPanel.data.statistics.average_price ?
-          '$' + (loadStatisticsPanel.data.statistics.average_price / 1000).toFixed(0) + 'K'
-          : 'N/A'
-        }
-      </p>
+      <p class="text-2xl font-bold text-primary">{loadStatisticsPanel.data.formattedStats.avgPrice}</p>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
       <p class="text-sm font-medium text-gray-600">Median Price</p>
-      <p class="text-2xl font-bold text-secondary">
-        {loadStatisticsPanel.data.statistics.median_price ?
-          '$' + (loadStatisticsPanel.data.statistics.median_price / 1000).toFixed(0) + 'K'
-          : 'N/A'
-        }
-      </p>
+      <p class="text-2xl font-bold text-secondary">{loadStatisticsPanel.data.formattedStats.medianPrice}</p>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
       <p class="text-sm font-medium text-gray-600">Total Predictions</p>
@@ -88,48 +192,23 @@
         <div class="space-y-2">
           <div class="flex justify-between">
             <span class="text-sm text-gray-600">Minimum Price</span>
-            <span class="text-sm font-medium">
-              {loadStatisticsPanel.data.statistics.price_range ?
-                '$' + (loadStatisticsPanel.data.statistics.price_range.min / 1000).toFixed(0) + 'K'
-                : 'N/A'
-              }
-            </span>
+            <span class="text-sm font-medium">{loadStatisticsPanel.data.formattedStats.minPrice}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-sm text-gray-600">25th Percentile</span>
-            <span class="text-sm font-medium">
-              {loadStatisticsPanel.data.statistics.average_price ?
-                '$' + (loadStatisticsPanel.data.statistics.average_price * 0.75 / 1000).toFixed(0) + 'K'
-                : 'N/A'
-              }
-            </span>
+            <span class="text-sm font-medium">{loadStatisticsPanel.data.formattedStats.percentile25}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-sm text-gray-600">Median</span>
-            <span class="text-sm font-medium">
-              {loadStatisticsPanel.data.statistics.median_price ?
-                '$' + (loadStatisticsPanel.data.statistics.median_price / 1000).toFixed(0) + 'K'
-                : 'N/A'
-              }
-            </span>
+            <span class="text-sm font-medium">{loadStatisticsPanel.data.formattedStats.medianPrice}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-sm text-gray-600">75th Percentile</span>
-            <span class="text-sm font-medium">
-              {loadStatisticsPanel.data.statistics.average_price ?
-                '$' + (loadStatisticsPanel.data.statistics.average_price * 1.25 / 1000).toFixed(0) + 'K'
-                : 'N/A'
-              }
-            </span>
+            <span class="text-sm font-medium">{loadStatisticsPanel.data.formattedStats.percentile75}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-sm text-gray-600">Maximum Price</span>
-            <span class="text-sm font-medium">
-              {loadStatisticsPanel.data.statistics.price_range ?
-                '$' + (loadStatisticsPanel.data.statistics.price_range.max / 1000).toFixed(0) + 'K'
-                : 'N/A'
-              }
-            </span>
+            <span class="text-sm font-medium">{loadStatisticsPanel.data.formattedStats.maxPrice}</span>
           </div>
         </div>
       </div>
@@ -140,91 +219,57 @@
   </div>
 
   <!-- Top Categories -->
-  {loadStatisticsPanel.data.predictionType === 'real-estate' && loadStatisticsPanel.data.statistics.top_locations ?
-    <div class="bg-white p-6 rounded-lg shadow">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Locations by Average Price</h3>
-      <div class="space-y-2">
-        {Object.entries(loadStatisticsPanel.data.statistics.top_locations).slice(0, 5).map(([location, price]) =>
-          <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
-            <span class="font-medium text-gray-900">{location}</span>
-            <span class="text-primary font-semibold">${(price / 1000).toFixed(0)}K</span>
-          </div>
-        )}
-      </div>
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      {loadStatisticsPanel.data.topCategoriesHeading}
+    </h3>
+    <div class="space-y-2">
+      {loadStatisticsPanel.data.topCategories.map(item =>
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+          <span class="font-medium text-gray-900">{item.name}</span>
+          <span class="text-primary font-semibold">{item.formattedPrice}</span>
+        </div>
+      )}
     </div>
-  : ''
-  }
+  </div>
 
-  {loadStatisticsPanel.data.predictionType === 'car' && loadStatisticsPanel.data.statistics.top_brands ?
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-white p-6 rounded-lg shadow">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Brands by Average Price</h3>
-        <div class="space-y-2">
-          {Object.entries(loadStatisticsPanel.data.statistics.top_brands).slice(0, 5).map(([brand, price]) =>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span class="font-medium text-gray-900">{brand}</span>
-              <span class="text-primary font-semibold">${(price / 1000).toFixed(0)}K</span>
-            </div>
-          )}
+  <!-- Fuel Types (for cars) -->
+  {loadStatisticsPanel.data.predictionType === 'car' && <div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Price by Fuel Type</h3>
+    <div class="space-y-2">
+      {loadStatisticsPanel.data.fuelTypes.map(item =>
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+          <span class="font-medium text-gray-900 capitalize">{item.name}</span>
+          <span class="text-primary font-semibold">{item.formattedPrice}</span>
         </div>
-      </div>
-      <div class="bg-white p-6 rounded-lg shadow">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Price by Fuel Type</h3>
-        <div class="space-y-2">
-          {Object.entries(loadStatisticsPanel.data.statistics.price_by_fuel_type).map(([fuelType, price]) =>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span class="font-medium text-gray-900 capitalize">{fuelType.replace('_', ' ')}</span>
-              <span class="text-primary font-semibold">${(price / 1000).toFixed(0)}K</span>
-            </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
-  : ''}
+  </div>}
 
   <!-- Recent Predictions -->
-  {loadStatisticsPanel.data.recentPredictions.length > 0 ?
-    <div class="bg-white p-6 rounded-lg shadow">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Predictions</h3>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+  <div class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Predictions</h3>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Predicted Price</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {loadStatisticsPanel.data.recentPredictions.map(prediction =>
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              {loadStatisticsPanel.data.predictionType === 'real-estate' ?
-                `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Size (sqm)</th>`
-              :
-                `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brand</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
-              `
-              }
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Predicted Price</th>
+              <td class="px-4 py-3 text-sm text-gray-900">{prediction.formattedDate}</td>
+              <td class="px-4 py-3 text-sm text-gray-900">{prediction.displayDetails}</td>
+              <td class="px-4 py-3 text-sm font-medium text-primary">{prediction.formattedPrice}</td>
             </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            {loadStatisticsPanel.data.recentPredictions.map(prediction =>
-              <tr>
-                <td class="px-4 py-3 text-sm text-gray-900">
-                  {new Date(prediction.timestamp).toLocaleDateString()}
-                </td>
-                {loadStatisticsPanel.data.predictionType === 'real-estate' ?
-                  `<td class="px-4 py-3 text-sm text-gray-900">${prediction.input.location}</td>
-                  <td class="px-4 py-3 text-sm text-gray-900">${prediction.input.square_meters}</td>`
-                :
-                  `<td class="px-4 py-3 text-sm text-gray-900">${prediction.input.brand}</td>
-                  <td class="px-4 py-3 text-sm text-gray-900">${prediction.input.model}</td>`
-                }
-                <td class="px-4 py-3 text-sm font-medium text-primary">
-                  ${(prediction.result.predicted_price / 1000).toFixed(0)}K
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+          )}
+        </tbody>
+      </table>
     </div>
-  : ''}
+  </div>
 </div>
 
 <script client>
@@ -267,7 +312,7 @@
               beginAtZero: false,
               ticks: {
                 callback: function(value) {
-                  return '$' + (value / 1000) + 'k';
+                  return  (value / 1000) ;
                 }
               }
             }

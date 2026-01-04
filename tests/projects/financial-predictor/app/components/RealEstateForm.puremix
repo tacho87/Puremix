@@ -1,0 +1,168 @@
+<imports>
+  import { DataManager } from '../lib/data-manager.js'
+  import { predict_property_price } from '../services/real-estate-predictor.py'
+</imports>
+
+<loader>
+  async function loadRealEstateForm(request, actionResult, props) {
+    actionResult = actionResult || null;
+    const properties = await DataManager.readData('real-estate.json');
+    const locations = [...new Set(properties.map(p => p.location))];
+
+    return {
+      data: {
+        locations,
+        notification: actionResult || null
+      }
+    };
+  }
+</loader>
+
+<div class="real-estate-form bg-white rounded-lg shadow p-6">
+  <h2 class="text-xl font-bold text-gray-900 mb-6">
+    🏠 Real Estate Price Predictor
+  </h2>
+
+  {loadRealEstateForm.data.notification ?
+    <div class="p-4 rounded-lg mb-4 bg-green-50 border border-green-200">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-green-800">{loadRealEstateForm.data.notification.message}</span>
+      </div>
+    </div>
+    : <div></div>
+  }
+
+  <form onsubmit="RealEstateForm.predictRealEstate" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+        <select name="location" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="">Select a location</option>
+          {loadRealEstateForm.data.locations.map(location =>
+            <option value={location}>{location}</option>
+          )}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Square Meters</label>
+        <input type="number" name="square_meters" min="20" max="1000" value="100" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Number of Rooms</label>
+        <input type="number" name="rooms" min="1" max="20" value="2" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Number of Bathrooms</label>
+        <input type="number" name="bathrooms" min="1" max="10" value="1" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Age (years)</label>
+        <input type="number" name="age_years" min="0" max="100" value="10" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Distance to Center (km)</label>
+        <input type="number" name="distance_to_center_km" min="0" max="100" step="0.1" value="5" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Has Parking</label>
+        <select name="has_parking" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Has Pool</label>
+        <select name="has_pool" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Floor Number</label>
+        <input type="number" name="floor_number" min="0" max="100" value="3" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+    </div>
+
+    <div class="pt-4">
+      <button type="submit" class="w-full md:w-auto px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+        <span>Get Prediction</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script server>
+  async function predictRealEstate(formData, request) {
+    // DataManager is already available from <imports> block
+    // formData is a plain object after sanitization - use direct property access
+    const location = formData.location;
+    // Map location to a neighborhood that exists in training data
+    const locationToNeighborhood = {
+      'New York': 'Manhattan',
+      'Los Angeles': 'Beverly Hills',
+      'Chicago': 'Loop',
+      'San Francisco': 'Mission',
+      'Miami': 'South Beach',
+      'Seattle': 'Downtown',
+      'Austin': 'Downtown',
+      'Boston': 'Downtown',
+      'Denver': 'Downtown',
+      'Portland': 'Downtown',
+      'Phoenix': 'Downtown'
+    };
+
+    const propertyData = {
+      location: location,
+      neighborhood: locationToNeighborhood[location] || 'Downtown',
+      square_meters: formData.square_meters,
+      rooms: formData.rooms,
+      bathrooms: formData.bathrooms,
+      age_years: formData.age_years,
+      distance_to_center_km: formData.distance_to_center_km,
+      has_parking: formData.has_parking,
+      has_pool: formData.has_pool,
+      floor_number: formData.floor_number,
+      total_floors: 20,
+      heating_type: 'central',
+      energy_efficiency: 'A'
+    };
+
+    // Call Python function directly like a normal JS function
+    const result = await predict_property_price(propertyData);
+
+    if (result.success) {
+      await DataManager.savePrediction({
+        type: 'real-estate',
+        input: propertyData,
+        result: result,
+        success: true
+      });
+
+      return {
+        success: true,
+        message: `Prediction complete: Estimated price is $${result.predicted_price.toLocaleString()}`,
+        prediction: result
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Prediction failed: ' + (result.error || 'Unknown error')
+      };
+    }
+  }
+</script>

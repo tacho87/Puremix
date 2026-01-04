@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { getBaseUrl, findServerPort } from './test-helper.js';
+import { getBaseUrl, findServerPort, cleanupTests } from './test-helper.js';
 
 /**
  * SERVER FUNCTIONS INTEGRATION TESTS
@@ -25,15 +25,13 @@ describe('Server Functions Integration Tests', () => {
 
   beforeAll(async () => {
     const port = await findServerPort();
-    if (port) {
-      BASE_URL = `http://localhost:${port}`;
-      serverRunning = true;
-    }
+    BASE_URL = `http://localhost:${port}`;
+    serverRunning = true;
   });
+
 
   describe('Form Submissions', () => {
     test('should handle basic form POST', async () => {
-      if (!serverRunning) return;
 
       const formData = new URLSearchParams();
       formData.append('name', 'John Doe');
@@ -50,7 +48,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should handle JSON POST requests', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`, {
         method: 'POST',
@@ -65,7 +62,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should handle multipart form data', async () => {
-      if (!serverRunning) return;
 
       const formData = new FormData();
       formData.append('title', 'Test Upload');
@@ -82,7 +78,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Server Function Execution', () => {
     test('should execute loader functions on GET requests', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`);
       const html = await response.text();
@@ -93,7 +88,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should execute action functions on POST requests', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/basic-form-test`, {
         method: 'POST',
@@ -107,7 +101,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Data Validation', () => {
     test('should handle empty form submissions', async () => {
-      if (!serverRunning) return;
 
       const formData = new URLSearchParams();
 
@@ -121,7 +114,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should handle invalid data types', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`, {
         method: 'POST',
@@ -137,7 +129,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Error Recovery', () => {
     test('should handle server function errors gracefully', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/error-handling-test`, {
         method: 'POST',
@@ -150,7 +141,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should handle malformed JSON', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`, {
         method: 'POST',
@@ -165,7 +155,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Response Formats', () => {
     test('should return HTML after form submission (full page reload)', async () => {
-      if (!serverRunning) return;
 
       const formData = new URLSearchParams();
       formData.append('test', 'value');
@@ -184,7 +173,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should return JSON for AJAX requests', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/api/users/123`, {
         method: 'POST',
@@ -204,7 +192,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Session Handling', () => {
     test('should maintain session across requests', async () => {
-      if (!serverRunning) return;
 
       // First request
       const response1 = await fetch(`${BASE_URL}/dashboard`);
@@ -223,7 +210,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Security Features', () => {
     test('should sanitize user input in form submissions', async () => {
-      if (!serverRunning) return;
 
       const formData = new URLSearchParams();
       formData.append('name', '<script>alert("XSS")</script>');
@@ -243,7 +229,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should prevent SQL injection in inputs', async () => {
-      if (!serverRunning) return;
 
       const formData = new URLSearchParams();
       formData.append('username', "admin' OR '1'='1");
@@ -262,7 +247,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Component Server Functions', () => {
     test('should execute component-scoped server functions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/props-test`, {
         method: 'POST',
@@ -279,7 +263,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Concurrent Operations', () => {
     test('should handle multiple simultaneous POST requests', async () => {
-      if (!serverRunning) return;
 
       const requests = Array(5).fill(null).map((_, i) =>
         fetch(`${BASE_URL}/dashboard`, {
@@ -299,7 +282,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Data Persistence', () => {
     test('should persist data through action/loader cycle', async () => {
-      if (!serverRunning) return;
 
       // Submit data via POST
       const postResponse = await fetch(`${BASE_URL}/database-integration-test`, {
@@ -324,7 +306,6 @@ describe('Server Functions Integration Tests', () => {
 
   describe('Edge Cases', () => {
     test('should handle extremely large POST payloads', async () => {
-      if (!serverRunning) return;
 
       const largeData = {
         items: Array(100).fill(null).map((_, i) => ({
@@ -344,7 +325,6 @@ describe('Server Functions Integration Tests', () => {
     });
 
     test('should handle rapid sequential requests', async () => {
-      if (!serverRunning) return;
 
       for (let i = 0; i < 10; i++) {
         const response = await fetch(`${BASE_URL}/dashboard`);

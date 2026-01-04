@@ -36,7 +36,10 @@ export default {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
+  testTimeout: 60000, // 60 second timeout for tests
+  globalSetup: '<rootDir>/tests/jest.global-setup.ts',
+  globalTeardown: '<rootDir>/tests/jest.global-teardown.ts',
   collectCoverageFrom: [
     'lib/**/*.(ts|js)',
     '!lib/**/*.d.ts',

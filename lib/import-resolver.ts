@@ -76,6 +76,7 @@ class ImportResolver {
       }
     }
 
+    console.log(`🐍 RESOLVE IMPORTS DEBUG: Final resolved keys: [${Object.keys(resolved).join(', ')}]`);
     return resolved;
   }
 
@@ -172,7 +173,7 @@ class ImportResolver {
           const pythonWrappers: Record<string, any> = {};
 
           for (const functionName of functions) {
-            pythonWrappers[functionName] = async (data: any, jsContext?: any) => {
+            pythonWrappers[functionName] = async (data, jsContext) => {
               if (this.pythonExecutor && this.pythonExecutor.available()) {
                 try {
                   console.log(`🐍 CALLING: ${functionName}(${JSON.stringify(data).substring(0, 100)}...)`);
@@ -285,11 +286,13 @@ class ImportResolver {
 
       // For .py files, return seamless Python module wrapper functions
       if (finalPath.endsWith('.py')) {
+        console.log(`🐍 .py IMPORT DEBUG: Processing Python file: ${finalPath}`);
         const fs = await import('fs');
         const pythonCode = fs.readFileSync(finalPath, 'utf8');
 
         // Extract Python function names from the file
         const functionMatches = pythonCode.match(/^def\s+(\w+)\s*\(/gm);
+        console.log(`🐍 .py IMPORT DEBUG: Function matches found: ${functionMatches ? functionMatches.length : 0}`);
         const pythonFunctions: Record<string, any> = {};
 
         if (functionMatches) {
@@ -297,7 +300,7 @@ class ImportResolver {
             const functionName = match.replace(/^def\s+(\w+)\s*\(.*/, '$1');
 
             // Create seamless JavaScript wrapper function that calls Python directly
-            pythonFunctions[functionName] = async (data: any, jsContext?: any) => {
+            pythonFunctions[functionName] = async (data, jsContext) => {
               // If Python executor is available, call the function directly
               if (this.pythonExecutor && this.pythonExecutor.available()) {
                 try {
@@ -332,6 +335,9 @@ class ImportResolver {
           functions: functionMatches ? functionMatches.map(m => m.replace(/^def\s+(\w+)\s*\(.*/, '$1')) : [],
           available: this.pythonExecutor?.available() || false
         };
+
+        console.log(`🐍 .py IMPORT DEBUG: pythonFunctions keys: [${Object.keys(pythonFunctions).join(', ')}]`);
+        console.log(`🐍 .py IMPORT DEBUG: Caching and returning pythonFunctions`);
 
         this.cache.set(cacheKey, pythonFunctions);
         return pythonFunctions;

@@ -19,7 +19,7 @@
  * - 404 handling
  */
 
-import { getBaseUrl, findServerPort } from './test-helper.js';
+import { getBaseUrl, findServerPort, cleanupTests } from './test-helper.js';
 
 describe('PureMix Routing Integration Tests', () => {
   let BASE_URL = '';
@@ -39,6 +39,7 @@ describe('PureMix Routing Integration Tests', () => {
     }
   });
 
+
   describe('Server Availability', () => {
     test('should have dev server running on localhost:3000', () => {
       if (!serverRunning) {
@@ -54,7 +55,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Static Routes', () => {
     test('should serve static route: /', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/`);
       expect(response.status).toBe(200);
@@ -66,7 +66,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should serve dashboard page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`);
       expect(response.status).toBe(200);
@@ -76,7 +75,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should serve admin dashboard', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/admin-dashboard`);
       expect(response.status).toBe(200);
@@ -88,7 +86,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Dynamic Routes - API Endpoints', () => {
     test('should handle dynamic user ID route: /api/users/:id', async () => {
-      if (!serverRunning) return;
 
       const userId = '12345';
       const response = await fetch(`${BASE_URL}/api/users/${userId}`);
@@ -105,7 +102,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should handle different user IDs on same route', async () => {
-      if (!serverRunning) return;
 
       const userIds = ['1', '999', 'abc123', 'user-uuid-here'];
 
@@ -116,7 +112,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should handle webhook service route: /api/webhook/:service', async () => {
-      if (!serverRunning) return;
 
       const services = ['stripe', 'github', 'slack'];
 
@@ -134,7 +129,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Test Routes - Comprehensive Test Project', () => {
     test('should serve Python ML test page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/python-ml-test`);
       expect(response.status).toBe(200);
@@ -144,7 +138,6 @@ describe('PureMix Routing Integration Tests', () => {
     }, 55000); // Increase timeout for heavy ML operations
 
     test('should serve TypeScript/JavaScript test page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/typescript-javascript-test`);
       expect(response.status).toBe(200);
@@ -154,7 +147,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should serve conditional test page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/conditional-test`);
       expect(response.status).toBe(200);
@@ -164,7 +156,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should serve props test page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/props-test`);
       expect(response.status).toBe(200);
@@ -174,7 +165,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should serve security test page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/security-test`);
       expect(response.status).toBe(200);
@@ -184,7 +174,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should serve file upload test page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/file-upload-test`);
       expect(response.status).toBe(200);
@@ -196,7 +185,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Server Function Endpoints', () => {
     test('should handle server function calls via POST', async () => {
-      if (!serverRunning) return;
 
       // Many PureMix pages have server functions
       // Test that POST requests are accepted
@@ -213,14 +201,12 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('HTTP Methods Support', () => {
     test('should support GET requests', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`, { method: 'GET' });
       expect(response.status).toBeLessThan(500);
     });
 
     test('should support POST requests', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`, {
         method: 'POST',
@@ -231,7 +217,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('API routes should support multiple HTTP methods', async () => {
-      if (!serverRunning) return;
 
       const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
@@ -250,7 +235,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Content Type Handling', () => {
     test('should serve HTML for page routes', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`);
       const contentType = response.headers.get('content-type');
@@ -259,7 +243,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should serve JSON for API routes', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/api/users/123`);
       const contentType = response.headers.get('content-type');
@@ -273,7 +256,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Error Handling', () => {
     test('should handle non-existent routes gracefully', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/this-route-does-not-exist-12345`);
 
@@ -282,7 +264,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should handle malformed requests without crashing', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`, {
         method: 'POST',
@@ -297,7 +278,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Client Runtime Injection', () => {
     test('should inject PureMix client runtime in HTML', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`);
       const html = await response.text();
@@ -308,7 +288,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should inject loader data into window.PureMix', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`);
       const html = await response.text();
@@ -320,7 +299,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Form Handling', () => {
     test('should accept form submissions', async () => {
-      if (!serverRunning) return;
 
       const formData = new URLSearchParams();
       formData.append('name', 'Test User');
@@ -338,7 +316,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Performance and Response Times', () => {
     test('should respond to page requests within reasonable time', async () => {
-      if (!serverRunning) return;
 
       const startTime = Date.now();
       const response = await fetch(`${BASE_URL}/dashboard`);
@@ -351,7 +328,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should handle concurrent requests', async () => {
-      if (!serverRunning) return;
 
       const requests = [
         fetch(`${BASE_URL}/dashboard`),
@@ -371,7 +347,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Real-World Routing Scenarios', () => {
     test('should handle complex test routes', async () => {
-      if (!serverRunning) return;
 
       const routes = [
         '/python-financial-test',
@@ -400,7 +375,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Static Assets and Resources', () => {
     test('should serve pages without throwing errors', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/`);
       const html = await response.text();
@@ -413,7 +387,6 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Session and Cookie Handling', () => {
     test('should set session cookies', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/dashboard`);
       const cookies = response.headers.get('set-cookie');
@@ -426,14 +399,12 @@ describe('PureMix Routing Integration Tests', () => {
 
   describe('Edge Cases and Security', () => {
     test('should handle special characters in URLs', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/api/users/${encodeURIComponent('user@example.com')}`);
       expect(response.status).toBeLessThan(500);
     });
 
     test('should handle very long URLs', async () => {
-      if (!serverRunning) return;
 
       const longId = 'a'.repeat(1000);
       const response = await fetch(`${BASE_URL}/api/users/${longId}`);
@@ -443,7 +414,6 @@ describe('PureMix Routing Integration Tests', () => {
     });
 
     test('should prevent directory traversal in routes', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/../../../etc/passwd`);
 

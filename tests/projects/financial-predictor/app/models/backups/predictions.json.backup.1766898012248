@@ -19,26 +19,5 @@
     },
     "success": true,
     "timestamp": "2025-12-28T05:00:12.248Z"
-  },
-  {
-    "id": "mjp9gkub8d4hzl8hhkv",
-    "type": "real-estate",
-    "input": {
-      "location": "Miami",
-      "neighborhood": "South Beach",
-      "square_meters": 100,
-      "rooms": 2,
-      "bathrooms": 1,
-      "age_years": 10,
-      "distance_to_center_km": 5,
-      "has_parking": true,
-      "has_pool": false,
-      "floor_number": 3,
-      "total_floors": 20,
-      "heating_type": "central",
-      "energy_efficiency": "A"
-    },
-    "success": true,
-    "timestamp": "2025-12-28T05:00:18.947Z"
   }
 ]

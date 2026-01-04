@@ -17,19 +17,13 @@ import { getBaseUrl, findServerPort } from './test-helper.js';
 
 describe('AST Tree Integration Tests', () => {
   let BASE_URL = '';
-  let serverRunning = false;
 
   beforeAll(async () => {
-    const port = await findServerPort();
-    if (port) {
-      BASE_URL = `http://localhost:${port}`;
-      serverRunning = true;
-    }
+    BASE_URL = `http://localhost:${await findServerPort()}`;
   });
 
   describe('Basic Expression Parsing', () => {
     test('should parse and evaluate simple identifiers', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/123`);
       const html = await response.text();
@@ -39,7 +33,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse member access chains', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/456`);
       const html = await response.text();
@@ -51,7 +44,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse array index access', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/api/reference/guide`);
       const html = await response.text();
@@ -66,7 +58,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('Conditional Expression Parsing', () => {
     test('should parse ternary conditionals with HTML', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/laptop-pro`);
       const html = await response.text();
@@ -77,7 +68,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle nested ternary conditionals', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/clothing/tshirt-basic`);
       const html = await response.text();
@@ -87,7 +77,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse boolean comparisons', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/test-user`);
       const html = await response.text();
@@ -99,7 +88,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('Array Method Parsing', () => {
     test('should parse .map() method with arrow functions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/api/users/create`);
       const html = await response.text();
@@ -111,7 +99,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse .filter() with conditions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/`);
       const html = await response.text();
@@ -121,7 +108,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle chained array methods', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2024/03/advanced-routing-patterns`);
       const html = await response.text();
@@ -133,7 +119,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('JavaScript Block Parsing', () => {
     test('should parse multi-line JavaScript blocks', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/typescript-javascript-test`);
       const html = await response.text();
@@ -143,7 +128,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle __export pattern in JavaScript blocks', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/typescript-javascript-test`);
       const html = await response.text();
@@ -153,7 +137,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse complex JavaScript expressions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/python-financial-test`);
       const html = await response.text();
@@ -165,7 +148,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('String Literal Handling', () => {
     test('should correctly handle string literals in expressions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2024/05/this-is-a-test-post`);
       const html = await response.text();
@@ -175,7 +157,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle template literals', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/books/javascript-guide`);
       const html = await response.text();
@@ -185,7 +166,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle escaped quotes in strings', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/`);
       const html = await response.text();
@@ -197,7 +177,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('Operator Parsing', () => {
     test('should parse equality operators (===, !==)', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/laptop-pro`);
       const html = await response.text();
@@ -207,7 +186,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse logical operators (&&, ||)', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/typescript-javascript-test`);
       const html = await response.text();
@@ -217,7 +195,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse arithmetic operators (+, -, *, /)', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/python-financial-test`);
       const html = await response.text();
@@ -227,7 +204,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle nullish coalescing (??)', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/`);
       const html = await response.text();
@@ -239,7 +215,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('HTML Tag Parsing', () => {
     test('should parse HTML tags within expressions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/789`);
       const html = await response.text();
@@ -251,7 +226,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle self-closing tags', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/`);
       const html = await response.text();
@@ -261,7 +235,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should preserve HTML attributes', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/123`);
       const html = await response.text();
@@ -274,7 +247,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('Nested Expression Parsing', () => {
     test('should parse deeply nested expressions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/tablet-max`);
       const html = await response.text();
@@ -284,7 +256,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle nested conditionals', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/books/web-patterns`);
       const html = await response.text();
@@ -294,7 +265,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse nested array methods', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2025/06/future-of-web-development`);
       const html = await response.text();
@@ -306,7 +276,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('Edge Cases and Error Handling', () => {
     test('should handle undefined variables gracefully', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/unknown/product`);
       const html = await response.text();
@@ -316,7 +285,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle null values in expressions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/`);
       const html = await response.text();
@@ -326,7 +294,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should parse expressions with special characters', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/api/users@v2`);
       const html = await response.text();
@@ -336,7 +303,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle very long expressions', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/python-financial-test`);
       const html = await response.text();
@@ -348,7 +314,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('AST Token Recognition', () => {
     test('should recognize identifier tokens', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/token-test`);
       const html = await response.text();
@@ -358,7 +323,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should recognize literal tokens', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/phone-x`);
       const html = await response.text();
@@ -369,7 +333,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should recognize operator tokens', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/typescript-javascript-test`);
       const html = await response.text();
@@ -379,7 +342,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should recognize HTML tag tokens', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2024/01/introduction-to-puremix`);
       const html = await response.text();
@@ -393,7 +355,6 @@ describe('AST Tree Integration Tests', () => {
 
   describe('Performance and Optimization', () => {
     test('should parse expressions efficiently', async () => {
-      if (!serverRunning) return;
 
       const startTime = Date.now();
       const response = await fetch(`${BASE_URL}/python-financial-test`);
@@ -405,7 +366,6 @@ describe('AST Tree Integration Tests', () => {
     });
 
     test('should handle multiple concurrent AST parses', async () => {
-      if (!serverRunning) return;
 
       const requests = [
         fetch(`${BASE_URL}/users/concurrent-1`),

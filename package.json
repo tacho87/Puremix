@@ -1,6 +1,6 @@
 {
   "name": "puremix",
-  "version": "0.1.0-alpha.0.2.2",
+  "version": "0.1.0-alpha.0.2.3",
   "description": "HTML-first full-stack framework with seamless Python integration",
   "main": "lib/puremix-engine.ts",
   "type": "module",
@@ -88,5 +88,5 @@
   "bugs": {
     "url": "https://github.com/tacho87/Puremix/issues"
   },
-  "author": "Anastacio Gianareas <agianareas@devpath.io>"
+  "author": "Anastacio Gianareas <anastacio.gianareas@howaboutpalm.com>"
 }

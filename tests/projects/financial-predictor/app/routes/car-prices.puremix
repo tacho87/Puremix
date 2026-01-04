@@ -1,7 +1,7 @@
 <layout>main</layout>
 
 <imports>
-  import PredictionForm from '../components/PredictionForm.puremix'
+  import CarForm from '../components/CarForm.puremix'
   import ResultChart from '../components/ResultChart.puremix'
   import StatisticsPanel from '../components/StatisticsPanel.puremix'
 </imports>
@@ -52,14 +52,14 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Prediction Form -->
     <div class="lg:col-span-2">
-      <PredictionForm predictionType="car" notification={loadPage.data.notification} />
+      <CarForm notification={loadPage.data.notification} />
 
       <!-- Results Section -->
       {loadPage.data.predictionResult ?
         <div class="mt-8">
           <ResultChart prediction={loadPage.data.predictionResult} />
         </div>
-      : ''}
+      : <div></div>}
     </div>
 
     <!-- Statistics Sidebar -->
@@ -71,7 +71,9 @@
   <!-- Depreciation Chart -->
   <div class="mt-8 bg-white rounded-lg shadow p-6">
     <h2 class="text-xl font-bold text-gray-900 mb-4">Depreciation by Age</h2>
-    <canvas id="depreciation-chart" height="100"></canvas>
+    <div class="chart-container" style="height: 300px; position: relative;">
+      <canvas id="depreciation-chart"></canvas>
+    </div>
     <p class="text-sm text-gray-600 mt-2">
       Cars typically lose 15-20% of their value in the first year and about 10% each subsequent year.
     </p>
@@ -125,56 +127,72 @@
 </div>
 
 <script client>
-  document.addEventListener('DOMContentLoaded', function() {
+  // Global chart registry to prevent duplicate charts
+  window.puremixCharts = window.puremixCharts || {};
+
+  function initDepreciationChart() {
     const canvas = document.getElementById('depreciation-chart');
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
+    if (!canvas) return;
 
-      // Sample depreciation data
-      const years = [0, 1, 2, 3, 4, 5, 7, 10];
-      const values = [100, 85, 73, 63, 55, 48, 38, 25];
+    const ctx = canvas.getContext('2d');
 
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: years.map(y => y === 0 ? 'New' : `${y} year${y > 1 ? 's' : ''}`),
-          datasets: [{
-            label: 'Resale Value (%)',
-            data: values,
-            borderColor: 'rgb(59, 130, 246)',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `Value: ${context.parsed.y}% of original price`;
-                }
+    // Destroy existing chart if it exists
+    if (window.puremixCharts['depreciation']) {
+      window.puremixCharts['depreciation'].destroy();
+      delete window.puremixCharts['depreciation'];
+    }
+
+    // Sample depreciation data
+    const years = [0, 1, 2, 3, 4, 5, 7, 10];
+    const values = [100, 85, 73, 63, 55, 48, 38, 25];
+
+    window.puremixCharts['depreciation'] = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: years.map(y => y === 0 ? 'New' : `${y} year${y > 1 ? 's' : ''}`),
+        datasets: [{
+          label: 'Resale Value (%)',
+          data: values,
+          borderColor: 'rgb(59, 130, 246)',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Value: ${context.parsed.y}% of original price`;
               }
             }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 100,
-              ticks: {
-                callback: function(value) {
-                  return value + '%';
-                }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
               }
             }
           }
         }
-      });
-    }
-  });
+      }
+    });
+  }
+
+  // Initialize on DOMContentLoaded or immediately if DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDepreciationChart);
+  } else {
+    initDepreciationChart();
+  }
 </script>

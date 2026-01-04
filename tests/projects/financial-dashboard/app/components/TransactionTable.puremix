@@ -3,9 +3,9 @@
 </imports>
 
 <loader>
-  async function loadTransactionTable(request, actionResult) {
-    let transactions = request.props.transactions || await DataManager.readData('transactions.json');
-    const compact = request.props.compact || false;
+  async function loadTransactionTable(request, actionResult, props) {
+    let transactions = props.transactions || await DataManager.readData('transactions.json');
+    const compact = props.compact || false;
 
     // Sort transactions by date (newest first)
     transactions.sort((a, b) => new Date(b.date) - new Date(a.date));

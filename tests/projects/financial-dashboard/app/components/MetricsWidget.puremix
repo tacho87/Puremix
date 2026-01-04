@@ -1,11 +1,11 @@
 <loader>
-  async function loadMetricsWidget(request, actionResult) {
-    const metricType = request.props.metricType || 'revenue';
-    const title = request.props.title || 'Metric';
-    const value = request.props.value || 0;
-    const change = request.props.change || 0;
-    const period = request.props.period || 'This Month';
-    const icon = request.props.icon || 'chart';
+  async function loadMetricsWidget(request, actionResult, props) {
+    const metricType = props.metricType || 'revenue';
+    const title = props.title || 'Metric';
+    const value = props.value || 0;
+    const change = props.change || 0;
+    const period = props.period || 'This Month';
+    const icon = props.icon || 'chart';
 
     // Determine colors based on metric type and change
     let bgColor = 'bg-blue-500';

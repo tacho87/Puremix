@@ -1,0 +1,93 @@
+<layout>main</layout>
+
+<loader>
+  async function loadPage(request) {
+    return {
+      data: {
+        showContent: false,
+        items: [],
+        message: 'Hello'
+      }
+    };
+  }
+</loader>
+
+<div class="p-8 space-y-8">
+  <h1 class="text-2xl font-bold">Template Conditional Test</h1>
+
+  <!-- Test 1: Simple ternary with false condition -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 1: {loadPage.data.showContent ? 'True' : 'False'}</h2>
+    <p>Expected: "False"</p>
+  </div>
+
+  <!-- Test 2: Ternary with HTML elements -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 2 (HTML):</h2>
+    {loadPage.data.showContent ?
+      <div class="text-green">YES</div>
+    :
+      <div class="text-red">NO</div>
+    }
+  </div>
+
+  <!-- Test 3: Ternary with empty else -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 3 (empty else):</h2>
+    {loadPage.data.showContent ?
+      <div class="text-green">YES</div>
+    :
+      <div></div>
+    }
+  </div>
+
+  <!-- Test 4: Ternary with only else content -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 4 (else has content):</h2>
+    {loadPage.data.showContent ?
+      <div></div>
+    :
+      <div class="text-blue">ELSE CONTENT</div>
+    }
+  </div>
+
+  <!-- Test 5: Logical AND pattern -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 5 (&& pattern):</h2>
+    {loadPage.data.showContent && <div class="text-green">SHOW THIS</div>}
+  </div>
+
+  <!-- Test 6: Nested ternary (correct pattern) -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 6 (nested):</h2>
+    {loadPage.data.showContent ?
+      <div>First True</div>
+    :
+      {loadPage.data.items.length > 0 ?
+        <div>Has Items</div>
+      :
+        <div>No Items</div>
+      }
+    }
+  </div>
+
+  <!-- Test 7: Array map with ternary -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 7 (map with ternary):</h2>
+    {loadPage.data.items.length > 0 ?
+      <div>{loadPage.data.items.map(i => <span>{i}</span>)}</div>
+    :
+      <div>Empty</div>
+    }
+  </div>
+
+  <!-- Test 8: Direct property access in ternary -->
+  <div class="bg-gray-100 p-4 rounded">
+    <h2 class="font-bold">Test 8 (property access):</h2>
+    {loadPage.data.showContent ?
+      <div>{loadPage.data.message}</div>
+    :
+      <div>No Message</div>
+    }
+  </div>
+</div>

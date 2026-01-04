@@ -417,6 +417,8 @@ class FileParser {
         const resolved = await this.importResolver.resolveImports(imports, filePath);
         Object.assign(resolvedImports, resolved);
         console.log(`🔍 FILE PARSER: Resolved ${Object.keys(resolved).length} imports successfully`);
+        console.log(`🔍 FILE PARSER DEBUG: 'resolved' keys from ImportResolver: [${Object.keys(resolved).join(', ')}]`);
+        console.log(`🔍 FILE PARSER DEBUG: 'resolvedImports' keys after Object.assign: [${Object.keys(resolvedImports).join(', ')}]`);
       } else {
         // Fallback to old logic for backward compatibility
         console.warn(`⚠️ FILE PARSER: No ImportResolver available, using fallback import logic`);
@@ -493,6 +495,14 @@ class FileParser {
         console.log(`Function code preview: "${functionCode.substring(0, 500)}..."`);
       }
       
+      // DEBUG: Log what's being compiled for troubleshooting
+      console.log(`🐛 DEBUG COMPILATION: Compiling function for ${path.basename(filePath)}`);
+      console.log(`🐛 Parameters: [${paramNames.join(', ')}]`);
+      console.log(`🐛 FULL Function code being passed to new Function():`);
+      console.log(`---START---`);
+      console.log(functionCode);
+      console.log(`---END---`);
+
       // Create and execute the function with the resolved imports
       const compiledFunction = new Function(...paramNames, functionCode);
       const result = compiledFunction(...paramValues);

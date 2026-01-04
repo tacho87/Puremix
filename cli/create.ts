@@ -115,7 +115,7 @@ export async function createProject(projectName: string, options: CreateOptions 
     packageManager = 'npm',
     skipInstall = false,
     typescript = false,
-    interactive = true  // Default to interactive for better UX
+    interactive = false  // Default to non-interactive when template is specified
   } = options;
 
   const projectPath = path.resolve(projectName);
@@ -201,13 +201,14 @@ export async function createProject(projectName: string, options: CreateOptions 
     packageJson.name = projectName;
     
     // Update scripts to use CLI commands directly (no server.js needed)
+    // Spread template scripts first to preserve their custom dev/build scripts
     packageJson.scripts = {
-      'dev': 'puremix dev',
-      'build': 'puremix build',
-      'start': 'puremix start',
-      'doctor': 'puremix doctor',
-      'generate-docs': 'puremix generate-docs',
-      ...packageJson.scripts
+      ...packageJson.scripts,
+      'build': packageJson.scripts.build || 'puremix build',
+      'start': packageJson.scripts.start || 'puremix start',
+      'doctor': packageJson.scripts.doctor || 'puremix doctor',
+      'generate-docs': packageJson.scripts['generate-docs'] || 'puremix generate-docs'
+      // Note: 'dev' script is NOT overridden - template's CSS build step is preserved
     };
     
     // Add TypeScript support if requested
@@ -299,11 +300,11 @@ function getAvailableTemplates(templatesDir: string): string[] {
 
 function copyDirectory(src, dest) {
   const items = fs.readdirSync(src);
-  
+
   for (const item of items) {
     const srcPath = path.join(src, item);
     const destPath = path.join(dest, item);
-    
+
     if (fs.statSync(srcPath).isDirectory()) {
       fs.mkdirSync(destPath, { recursive: true });
       copyDirectory(srcPath, destPath);

@@ -682,7 +682,9 @@ class PureMixEngine {
           };
 
           // Register function globally with descriptive name
-          const globalFunctionName = `${moduleName}_${functionName}`;
+          // Sanitize moduleName to be a valid JavaScript identifier (replace hyphens etc with underscores)
+          const sanitizedModuleName = moduleName.replace(/[^a-zA-Z0-9_]/g, '_');
+          const globalFunctionName = `${sanitizedModuleName}_${functionName}`;
           this.globalPythonFunctions.set(globalFunctionName, globalWrapper);
 
           // Also register with simple function name (if no conflict)
@@ -693,7 +695,8 @@ class PureMixEngine {
 
         // Log in development mode
         if (this.config.isDev && this.config.verboseDebug?.enabled) {
-          console.log(`   📜 ${moduleKey}: ${functionNames.join(', ')} (global: ${functionNames.map(f => `${moduleName}_${f}`).join(', ')})`);
+          const sanitizedModuleName = moduleName.replace(/[^a-zA-Z0-9_]/g, '_');
+          console.log(`   📜 ${moduleKey}: ${functionNames.join(', ')} (global: ${functionNames.map(f => `${sanitizedModuleName}_${f}`).join(', ')})`);
         }
       }
     } catch (error: any) {
@@ -1445,6 +1448,7 @@ class PureMixEngine {
         const _context = { ...request, ...resolvedImports };
 
         // Execute loader function with props as third parameter
+        console.log(`🔍 LOADER CALL DEBUG: ${loaderName} called with props:`, JSON.stringify(props));
         const result = await loaders[loaderName].function(request, actionResult, props);
 
         results[loaderName] = result;

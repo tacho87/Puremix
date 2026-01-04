@@ -1,0 +1,249 @@
+/* SCSS Mixins and Variables for PureMix Framework */
+
+/* SCSS Variables */
+:root {
+  /* Color Palette */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Border Radius */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+}
+
+/* SCSS Mixins */
+
+/* Button Mixin */
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  text-decoration: none;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-variant($bg-color, $text-color: white, $hover-color: null) {
+  @include button-base;
+  background-color: $bg-color;
+  color: $text-color;
+  
+  $hover-bg: if($hover-color, $hover-color, darken($bg-color, 10%));
+  
+  &:hover:not(:disabled) {
+    background-color: $hover-bg;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+/* Card Mixin */
+@mixin card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  
+  .card-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid #e5e7eb;
+    background: #fafafa;
+  }
+  
+  .card-body {
+    padding: var(--spacing-lg);
+  }
+  
+  .card-footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid #e5e7eb;
+    background: #fafafa;
+  }
+}
+
+/* Form Input Mixin */
+@mixin form-input {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  background: white;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  &::placeholder {
+    color: #9ca3af;
+  }
+  
+  &:disabled {
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+  }
+}
+
+/* Alert/Status Mixin */
+@mixin alert($bg-color, $text-color, $border-color) {
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid $border-color;
+  background: $bg-color;
+  color: $text-color;
+  font-size: 0.875rem;
+  
+  .alert-title {
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
+/* Responsive Mixins */
+@mixin mobile-only {
+  @media (max-width: 640px) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: 641px) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+/* Animation Mixins */
+@mixin fade-in($duration: 0.3s) {
+  animation: fadeIn $duration ease-out;
+}
+
+@mixin slide-up($distance: 10px, $duration: 0.3s) {
+  animation: slideUpCustom $duration ease-out;
+  @keyframes slideUpCustom {
+    from { 
+      opacity: 0;
+      transform: translateY($distance);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Layout Components */
+
+/* Flexbox utilities */
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grid utilities */
+@mixin grid-auto($columns: auto-fit, $min-width: 250px) {
+  display: grid;
+  grid-template-columns: repeat($columns, minmax($min-width, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* CSS Custom Properties with SCSS variables */
+:root {
+  --color-success: #{var(--color-success)};
+  --color-warning: #{var(--color-warning)};
+  --color-error: #{var(--color-error)};
+  --color-info: #{var(--color-info)};
+}

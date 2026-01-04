@@ -1,48 +1,60 @@
 /**
  * Test helper utilities for PureMix integration tests
+ *
+ * The server is started by jest.global-setup.ts before any tests run.
+ * These helpers just read the server port from the temp file.
  */
 
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+
+let cachedPort: number | null = null;
+
+/**
+ * Get the port of the running PureMix test server
+ * The server is started by jest.global-setup.ts
+ */
 export async function findServerPort(): Promise<number> {
-  // Try common ports that the server might be running on
-  const possiblePorts = [3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009];
+  if (cachedPort) {
+    return cachedPort;
+  }
 
-  for (const port of possiblePorts) {
+  // Read port from temp file written by globalSetup
+  const portFile = path.join(os.tmpdir(), 'puremix-test-port.txt');
+
+  // Try up to 10 times with 500ms delays (5 seconds total)
+  for (let i = 0; i < 10; i++) {
     try {
-      const response = await fetch(`http://localhost:${port}/`, {
-        method: 'GET',
-        signal: AbortSignal.timeout(1000) // Quick timeout
-      });
-
-      if (response.ok) {
-        // Check if this is a PureMix server
-        const text = await response.text();
-
-        // Skip DocumentMind AI explicitly
-        if (text.includes('DocumentMind AI') || text.includes('Document Processing Platform')) {
-          continue;
-        }
-
-        // Look for PureMix-specific indicators
-        const isPureMixServer =
-          text.includes('PureMix Framework') ||
-          text.includes('PureMix Test Suite') ||
-          text.includes('.puremix') ||
-          text.includes('<loader>') ||
-          (text.includes('PureMix') && text.includes('HTML-first'));
-
-        if (isPureMixServer) {
+      if (fs.existsSync(portFile)) {
+        const port = parseInt(fs.readFileSync(portFile, 'utf-8').trim(), 10);
+        if (port && port > 0) {
+          cachedPort = port;
+          console.log(`📋 Using PureMix test server on port ${port}`);
           return port;
         }
       }
-    } catch (error) {
-      // Port not available, continue to next
-      continue;
+    } catch {
+      // File not ready yet
     }
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  throw new Error('PureMix server not found on any port. Please start the server with: cd tests/projects/comprehensive-test && npm run dev');
+  throw new Error(
+    'PureMix test server not found. It should be started by jest.global-setup.ts. ' +
+    'If this error persists, check that the global setup is running correctly.'
+  );
 }
 
-export function getBaseUrl(): Promise<string> {
-  return findServerPort().then(port => `http://localhost:${port}`);
+export async function getBaseUrl(): Promise<string> {
+  const port = await findServerPort();
+  return `http://localhost:${port}`;
+}
+
+/**
+ * Cleanup function - no longer needed as server is managed globally
+ */
+export function cleanupTests(): void {
+  // Server is managed by jest.global-setup.ts and jest.global-teardown.ts
+  // Nothing to clean up here
 }

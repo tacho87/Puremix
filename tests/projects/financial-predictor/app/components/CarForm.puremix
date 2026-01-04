@@ -1,0 +1,174 @@
+<imports>
+  import { DataManager } from '../lib/data-manager.js'
+  import { predict_car_price } from '../services/car-predictor.py'
+</imports>
+
+<loader>
+  async function loadCarForm(request, actionResult, props) {
+    actionResult = actionResult || null;
+    const cars = await DataManager.readData('cars.json');
+    const carBrands = [...new Set(cars.map(c => c.brand))];
+    const maxYear = new Date().getFullYear() + 1;
+
+    const carsByBrand = cars.reduce((acc, car) => {
+      if (!acc[car.brand]) acc[car.brand] = [];
+      acc[car.brand].push(car.model);
+      return acc;
+    }, {});
+
+    return {
+      data: {
+        carBrands,
+        cars: carsByBrand,
+        maxYear,
+        notification: actionResult || null
+      }
+    };
+  }
+</loader>
+
+<div class="car-form bg-white rounded-lg shadow p-6">
+  <h2 class="text-xl font-bold text-gray-900 mb-6">
+    🚗 Car Price Predictor
+  </h2>
+
+  {loadCarForm.data.notification ?
+    <div class="p-4 rounded-lg mb-4 bg-green-50 border border-green-200">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-green-800">{loadCarForm.data.notification.message}</span>
+      </div>
+    </div>
+    : <div></div>
+  }
+
+  <form onsubmit="CarForm.predictCar" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+        <select name="brand" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          onchange="CarForm.updateModels(this.value)">
+          <option value="">Select a brand</option>
+          {loadCarForm.data.carBrands.map(brand =>
+            <option value={brand}>{brand}</option>
+          )}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Model</label>
+        <select name="model" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          id="model-select" disabled>
+          <option value="">Select brand first</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
+        <input type="number" name="year" min="1990" max={loadCarForm.data.maxYear} value="2020" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Mileage (km)</label>
+        <input type="number" name="mileage_km" min="0" max="500000" value="50000" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Fuel Type</label>
+        <select name="fuel_type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="gas">Gasoline</option>
+          <option value="diesel">Diesel</option>
+          <option value="hybrid">Hybrid</option>
+          <option value="electric">Electric</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Condition</label>
+        <select name="condition" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="excellent">Excellent</option>
+          <option value="good">Good</option>
+          <option value="fair">Fair</option>
+          <option value="poor">Poor</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pt-4">
+      <button type="submit" class="w-full md:w-auto px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+        <span>Get Prediction</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script client>
+  document.addEventListener('DOMContentLoaded', function() {
+    const carsData = PureMix.data?.loadCarForm?.data?.cars;
+    if (!carsData) return;
+
+    window.CarForm = window.CarForm || {};
+    window.CarForm.updateModels = function(brand) {
+      const modelSelect = document.getElementById('model-select');
+      modelSelect.innerHTML = '<option value="">Select a model</option>';
+
+      if (brand && carsData[brand]) {
+        modelSelect.disabled = false;
+        carsData[brand].forEach(model => {
+          const option = document.createElement('option');
+          option.value = model;
+          option.textContent = model;
+          modelSelect.appendChild(option);
+        });
+      } else {
+        modelSelect.disabled = true;
+      }
+    };
+  });
+</script>
+
+<script server>
+  async function predictCar(formData, request) {
+    // DataManager is already available from <imports> block
+    // formData is a plain object after sanitization - use direct property access
+    const carData = {
+      brand: formData.brand,
+      model: formData.model,
+      year: formData.year,
+      mileage_km: formData.mileage_km,
+      fuel_type: formData.fuel_type,
+      transmission: 'automatic',
+      condition: formData.condition,
+      engine_size: 2.5,
+      drivetrain: 'FWD',
+      color: 'white',
+      doors: 4,
+      features: []
+    };
+
+    // Call Python function directly like a normal JS function
+    const result = await predict_car_price(carData);
+
+    if (result.success) {
+      await DataManager.savePrediction({
+        type: 'car',
+        input: carData,
+        result: result,
+        success: true
+      });
+
+      return {
+        success: true,
+        message: `Prediction complete: Estimated price is $${result.predicted_price.toLocaleString()}`,
+        prediction: result
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Prediction failed: ' + (result.error || 'Unknown error')
+      };
+    }
+  }
+</script>

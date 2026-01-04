@@ -42,8 +42,14 @@ class RealEstatePredictor:
             if feature in df.columns:
                 df[feature + '_encoded'] = self.label_encoders[feature].transform(df[feature])
 
-        # Create new features
-        df['price_per_sqm'] = df['actual_price'] / df['square_meters']
+        # Create new features (only if actual_price is available)
+        if 'actual_price' in df.columns:
+            df['price_per_sqm'] = df['actual_price'] / df['square_meters']
+        else:
+            # For prediction, estimate price_per_sqm based on location
+            # This is a rough approximation since we don't know the actual price yet
+            df['price_per_sqm'] = 0  # Will be overridden during training
+
         df['room_density'] = df['rooms'] / df['square_meters']
         df['age_squared'] = df['age_years'] ** 2
         df['distance_squared'] = df['distance_to_center_km'] ** 2
@@ -52,7 +58,7 @@ class RealEstatePredictor:
         df['has_garage'] = df['has_parking'].astype(int)
         df['has_pool'] = df['has_pool'].astype(int)
 
-        # Select features for model
+        # Select features for model (removed price_per_sqm since it requires actual_price)
         feature_columns = [
             'square_meters', 'rooms', 'bathrooms', 'age_years',
             'distance_to_center_km', 'has_garage', 'has_pool',
@@ -128,7 +134,7 @@ class RealEstatePredictor:
         # Load model if not already loaded
         if self.model is None:
             if not self.load_model():
-                # Train with sample data if no model exists
+                # Train with sample data if no model exists (need at least 2 samples for train_test_split)
                 sample_data = [
                     {
                         'location': 'New York', 'square_meters': 120, 'rooms': 3,
@@ -136,6 +142,41 @@ class RealEstatePredictor:
                         'distance_to_center_km': 2, 'has_parking': True, 'has_pool': False,
                         'floor_number': 12, 'total_floors': 20, 'heating_type': 'central',
                         'energy_efficiency': 'A', 'actual_price': 750000
+                    },
+                    {
+                        'location': 'New York', 'square_meters': 90, 'rooms': 2,
+                        'bathrooms': 1, 'age_years': 10, 'neighborhood': 'Brooklyn',
+                        'distance_to_center_km': 5, 'has_parking': False, 'has_pool': False,
+                        'floor_number': 3, 'total_floors': 10, 'heating_type': 'central',
+                        'energy_efficiency': 'B', 'actual_price': 450000
+                    },
+                    {
+                        'location': 'Los Angeles', 'square_meters': 150, 'rooms': 4,
+                        'bathrooms': 3, 'age_years': 2, 'neighborhood': 'Beverly Hills',
+                        'distance_to_center_km': 8, 'has_parking': True, 'has_pool': True,
+                        'floor_number': 1, 'total_floors': 1, 'heating_type': 'central',
+                        'energy_efficiency': 'A', 'actual_price': 1200000
+                    },
+                    {
+                        'location': 'Chicago', 'square_meters': 100, 'rooms': 2,
+                        'bathrooms': 2, 'age_years': 15, 'neighborhood': 'Loop',
+                        'distance_to_center_km': 1, 'has_parking': True, 'has_pool': False,
+                        'floor_number': 20, 'total_floors': 30, 'heating_type': 'central',
+                        'energy_efficiency': 'B', 'actual_price': 380000
+                    },
+                    {
+                        'location': 'San Francisco', 'square_meters': 80, 'rooms': 1,
+                        'bathrooms': 1, 'age_years': 8, 'neighborhood': 'Mission',
+                        'distance_to_center_km': 3, 'has_parking': False, 'has_pool': False,
+                        'floor_number': 5, 'total_floors': 8, 'heating_type': 'electric',
+                        'energy_efficiency': 'A', 'actual_price': 650000
+                    },
+                    {
+                        'location': 'Miami', 'square_meters': 140, 'rooms': 3,
+                        'bathrooms': 2, 'age_years': 3, 'neighborhood': 'South Beach',
+                        'distance_to_center_km': 4, 'has_parking': True, 'has_pool': True,
+                        'floor_number': 8, 'total_floors': 15, 'heating_type': 'central',
+                        'energy_efficiency': 'A', 'actual_price': 580000
                     }
                 ]
                 self.train(sample_data)

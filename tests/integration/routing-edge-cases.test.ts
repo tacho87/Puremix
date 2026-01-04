@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { getBaseUrl, findServerPort } from './test-helper.js';
+import { getBaseUrl, findServerPort, cleanupTests } from './test-helper.js';
 
 /**
  * ROUTING EDGE CASES INTEGRATION TESTS
@@ -22,15 +22,13 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   beforeAll(async () => {
     const port = await findServerPort();
-    if (port) {
-      BASE_URL = `http://localhost:${port}`;
-      serverRunning = true;
-    }
+    BASE_URL = `http://localhost:${port}`;
+    serverRunning = true;
   });
+
 
   describe('Route Priority and Resolution', () => {
     test('should prioritize static routes over dynamic routes', async () => {
-      if (!serverRunning) return;
 
       // If there's a static /users/new route, it should take priority over /users/:id
       const response = await fetch(`${BASE_URL}/users/123`);
@@ -42,7 +40,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should resolve nested dynamic routes correctly', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2024/03/my-post`);
       expect(response.status).toBe(200);
@@ -54,7 +51,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle catch-all routes properly', async () => {
-      if (!serverRunning) return;
 
       const deepPath = '/docs/api/v2/users/create/advanced';
       const response = await fetch(`${BASE_URL}${deepPath}`);
@@ -67,7 +63,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Parameter Edge Values', () => {
     test('should handle numeric IDs', async () => {
-      if (!serverRunning) return;
 
       const numericIds = ['0', '1', '999999', '12345678901234567890'];
 
@@ -81,7 +76,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle string slugs with special formats', async () => {
-      if (!serverRunning) return;
 
       const slugs = [
         'simple',
@@ -103,7 +97,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle UUID-like identifiers', async () => {
-      if (!serverRunning) return;
 
       const uuids = [
         'abc123-def456-ghi789',
@@ -121,7 +114,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle empty path segments gracefully', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/`);
       expect(response.status).toBe(200);
@@ -133,7 +125,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Special Characters in Routes', () => {
     test('should handle URL-encoded special characters', async () => {
-      if (!serverRunning) return;
 
       const encoded = encodeURIComponent('user@example.com');
       const response = await fetch(`${BASE_URL}/users/${encoded}`);
@@ -142,7 +133,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle spaces in parameters', async () => {
-      if (!serverRunning) return;
 
       const withSpaces = encodeURIComponent('user with spaces');
       const response = await fetch(`${BASE_URL}/users/${withSpaces}`);
@@ -151,7 +141,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle international characters', async () => {
-      if (!serverRunning) return;
 
       const international = encodeURIComponent('用户-名');
       const response = await fetch(`${BASE_URL}/users/${international}`);
@@ -160,7 +149,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle special URL characters', async () => {
-      if (!serverRunning) return;
 
       const special = encodeURIComponent('user#123$test%');
       const response = await fetch(`${BASE_URL}/users/${special}`);
@@ -171,7 +159,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Deeply Nested Routes', () => {
     test('should handle 5+ level nesting', async () => {
-      if (!serverRunning) return;
 
       const deepPath = '/docs/api/v2/users/profile/settings/notifications';
       const response = await fetch(`${BASE_URL}${deepPath}`);
@@ -183,7 +170,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle 10+ level nesting', async () => {
-      if (!serverRunning) return;
 
       const veryDeepPath = '/docs/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p';
       const response = await fetch(`${BASE_URL}${veryDeepPath}`);
@@ -192,7 +178,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should maintain parameter values at all nesting levels', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2025/12/year-end-review`);
       expect(response.status).toBe(200);
@@ -206,7 +191,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Catch-All vs Specific Routes', () => {
     test('should prefer specific routes over catch-all', async () => {
-      if (!serverRunning) return;
 
       // Docs has catch-all, but specific routes should take priority if they exist
       const response = await fetch(`${BASE_URL}/docs/getting-started`);
@@ -217,7 +201,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle catch-all with no path segments', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/`);
       expect(response.status).toBe(200);
@@ -227,7 +210,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle catch-all with very long paths', async () => {
-      if (!serverRunning) return;
 
       const longPath = Array(20).fill('segment').join('/');
       const response = await fetch(`${BASE_URL}/docs/${longPath}`);
@@ -238,7 +220,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Multiple Dynamic Parameters', () => {
     test('should extract all parameters in correct order', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2023/06/summer-update`);
       expect(response.status).toBe(200);
@@ -251,7 +232,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle mixed static and dynamic segments', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/laptop-pro`);
       expect(response.status).toBe(200);
@@ -262,7 +242,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should validate parameter format', async () => {
-      if (!serverRunning) return;
 
       // Invalid year format - should still work but might show different data
       const response = await fetch(`${BASE_URL}/blog/invalid/01/test`);
@@ -275,7 +254,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Route Conflicts and Ambiguity', () => {
     test('should resolve /users/:id vs /users/:username', async () => {
-      if (!serverRunning) return;
 
       // Should match the defined route pattern
       const response = await fetch(`${BASE_URL}/users/john-doe`);
@@ -286,7 +264,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle conflicting catch-all routes', async () => {
-      if (!serverRunning) return;
 
       // If multiple catch-all patterns exist, should use the most specific
       const response = await fetch(`${BASE_URL}/docs/api/reference`);
@@ -294,7 +271,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should resolve /blog/:year/:month vs /blog/latest/:id', async () => {
-      if (!serverRunning) return;
 
       // Dynamic patterns with different segment counts
       const response = await fetch(`${BASE_URL}/blog/2024/05/test`);
@@ -307,7 +283,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Query String Handling', () => {
     test('should preserve query strings with dynamic routes', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/123?page=2&limit=10`);
       expect(response.status).toBe(200);
@@ -318,7 +293,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle complex query strings', async () => {
-      if (!serverRunning) return;
 
       const query = 'filter=active&sort=name&order=asc&tags[]=tag1&tags[]=tag2';
       const response = await fetch(`${BASE_URL}/users/456?${query}`);
@@ -326,7 +300,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle URL fragments with routes', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/api/reference#section-1`);
       expect(response.status).toBe(200);
@@ -335,7 +308,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Trailing Slash Handling', () => {
     test('should handle routes with trailing slashes', async () => {
-      if (!serverRunning) return;
 
       const withSlash = await fetch(`${BASE_URL}/users/123/`);
       const withoutSlash = await fetch(`${BASE_URL}/users/123`);
@@ -346,7 +318,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should normalize trailing slashes consistently', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/api/`);
       expect(response.status).toBe(200);
@@ -355,7 +326,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Case Sensitivity', () => {
     test('should handle case variations in routes', async () => {
-      if (!serverRunning) return;
 
       const lower = await fetch(`${BASE_URL}/users/test`);
       const upper = await fetch(`${BASE_URL}/users/TEST`);
@@ -370,7 +340,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Performance with Complex Routes', () => {
     test('should resolve routes quickly', async () => {
-      if (!serverRunning) return;
 
       const startTime = Date.now();
       const response = await fetch(`${BASE_URL}/blog/2024/03/performance-test`);
@@ -381,7 +350,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle concurrent complex route requests', async () => {
-      if (!serverRunning) return;
 
       const requests = [
         fetch(`${BASE_URL}/blog/2024/01/post1`),
@@ -404,7 +372,6 @@ describe('Routing Edge Cases Integration Tests', () => {
 
   describe('Error Cases and Validation', () => {
     test('should handle malformed route parameters', async () => {
-      if (!serverRunning) return;
 
       const malformed = '../../etc/passwd';
       const response = await fetch(`${BASE_URL}/users/${malformed}`);
@@ -414,7 +381,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle null byte injection attempts', async () => {
-      if (!serverRunning) return;
 
       const nullByte = encodeURIComponent('test\x00malicious');
       const response = await fetch(`${BASE_URL}/users/${nullByte}`);
@@ -423,7 +389,6 @@ describe('Routing Edge Cases Integration Tests', () => {
     });
 
     test('should handle extremely long parameter values', async () => {
-      if (!serverRunning) return;
 
       const longParam = 'a'.repeat(10000);
       const response = await fetch(`${BASE_URL}/users/${longParam}`);

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { getBaseUrl, findServerPort } from './test-helper.js';
+import { getBaseUrl, findServerPort, cleanupTests } from './test-helper.js';
 
 /**
  * FILE-BASED ROUTING INTEGRATION TESTS
@@ -20,15 +20,13 @@ describe('File-Based Routing Integration Tests', () => {
 
   beforeAll(async () => {
     const port = await findServerPort();
-    if (port) {
-      BASE_URL = `http://localhost:${port}`;
-      serverRunning = true;
-    }
+    BASE_URL = `http://localhost:${port}`;
+    serverRunning = true;
   });
+
 
   describe('Dynamic ID Routes: users/[id].puremix', () => {
     test('should route /users/123 to users/[id].puremix', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/123`);
       expect(response.status).toBe(200);
@@ -40,7 +38,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle different user IDs', async () => {
-      if (!serverRunning) return;
 
       const userIds = ['456', 'abc', 'test-user', 'user-uuid-12345'];
 
@@ -54,7 +51,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should extract ID parameter correctly', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/test-123`);
       const html = await response.text();
@@ -66,7 +62,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Catch-All Routes: docs/[...slug].puremix', () => {
     test('should route /docs/getting-started to docs/[...slug].puremix', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/getting-started`);
       expect(response.status).toBe(200);
@@ -78,7 +73,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle multi-level paths', async () => {
-      if (!serverRunning) return;
 
       const paths = [
         'api/reference',
@@ -97,7 +91,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should show path segments correctly', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/api/users/create`);
       const html = await response.text();
@@ -111,7 +104,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Multiple Dynamic Parameters: blog/[year]/[month]/[slug].puremix', () => {
     test('should route /blog/2024/01/introduction-to-puremix correctly', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2024/01/introduction-to-puremix`);
       expect(response.status).toBe(200);
@@ -124,7 +116,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should extract all dynamic parameters', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2023/12/year-end-review`);
       const html = await response.text();
@@ -135,7 +126,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle different years and months', async () => {
-      if (!serverRunning) return;
 
       const posts = [
         { year: '2024', month: '03', slug: 'advanced-routing-patterns' },
@@ -155,7 +145,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should format blog post title from slug', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2024/05/this-is-a-test-post`);
       const html = await response.text();
@@ -167,7 +156,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Nested Dynamic Parameters: shop/[category]/[productId].puremix', () => {
     test('should route /shop/electronics/laptop-pro correctly', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/laptop-pro`);
       expect(response.status).toBe(200);
@@ -180,7 +168,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle different categories', async () => {
-      if (!serverRunning) return;
 
       const products = [
         { category: 'electronics', id: 'phone-x', name: 'Phone X' },
@@ -200,7 +187,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should show product details with pricing', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/laptop-pro`);
       const html = await response.text();
@@ -210,7 +196,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle unknown products gracefully', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/unknown-category/unknown-product`);
       expect(response.status).toBe(200);
@@ -222,7 +207,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Route Parameter Types', () => {
     test('should handle numeric IDs', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/12345`);
       expect(response.status).toBe(200);
@@ -232,7 +216,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle string IDs', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/john-doe`);
       expect(response.status).toBe(200);
@@ -242,7 +225,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle UUID-like IDs', async () => {
-      if (!serverRunning) return;
 
       const uuid = 'abc123-def456-ghi789';
       const response = await fetch(`${BASE_URL}/users/${uuid}`);
@@ -253,7 +235,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle special characters in slugs', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/docs/api/users@v2`);
       expect(response.status).toBe(200);
@@ -262,7 +243,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Loader Data in Dynamic Routes', () => {
     test('should execute loader with correct params', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/test-loader-123`);
       const html = await response.text();
@@ -273,7 +253,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should inject loader data into PureMix.data', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/456`);
       const html = await response.text();
@@ -286,7 +265,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Complex Path Combinations', () => {
     test('should handle very deep nested paths in catch-all', async () => {
-      if (!serverRunning) return;
 
       const deepPath = 'level1/level2/level3/level4/level5/level6';
       const response = await fetch(`${BASE_URL}/docs/${deepPath}`);
@@ -297,7 +275,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle paths with dashes and underscores', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/blog/2024/03/advanced-routing_patterns-v2`);
       expect(response.status).toBe(200);
@@ -309,7 +286,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('HTML Output Validation', () => {
     test('should render complete HTML page', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/123`);
       const html = await response.text();
@@ -321,7 +297,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should include route testing information', async () => {
-      if (!serverRunning) return;
 
       const routes = [
         { url: '/users/123', file: '/app/routes/users/[id].puremix', pattern: '/users/:id' },
@@ -342,7 +317,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Navigation Links', () => {
     test('should provide working navigation links', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/users/123`);
       const html = await response.text();
@@ -353,7 +327,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should have category navigation in shop', async () => {
-      if (!serverRunning) return;
 
       const response = await fetch(`${BASE_URL}/shop/electronics/laptop-pro`);
       const html = await response.text();
@@ -367,7 +340,6 @@ describe('File-Based Routing Integration Tests', () => {
 
   describe('Performance', () => {
     test('should respond quickly to dynamic routes', async () => {
-      if (!serverRunning) return;
 
       const startTime = Date.now();
       const response = await fetch(`${BASE_URL}/users/performance-test`);
@@ -378,7 +350,6 @@ describe('File-Based Routing Integration Tests', () => {
     });
 
     test('should handle concurrent requests to different dynamic routes', async () => {
-      if (!serverRunning) return;
 
       const requests = [
         fetch(`${BASE_URL}/users/concurrent-1`),

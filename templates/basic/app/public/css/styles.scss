@@ -1,0 +1,311 @@
+/* SCSS Entry Point for PureMix Projects */
+
+/* Import Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import SCSS mixins and variables */
+@import './_mixins.scss';
+
+/* Global Styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Focus styles for accessibility */
+  *:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+/* Component Classes */
+@layer components {
+  /* Button Components */
+  .btn {
+    @include button-base;
+  }
+  
+  .btn-primary {
+    @include button-variant(var(--color-primary-600), white, var(--color-primary-700));
+  }
+  
+  .btn-secondary {
+    @include button-variant(#f3f4f6, #374151, #e5e7eb);
+  }
+  
+  .btn-success {
+    @include button-variant(var(--color-success), white, darken(#10b981, 10%));
+  }
+  
+  .btn-warning {
+    @include button-variant(var(--color-warning), white, darken(#f59e0b, 10%));
+  }
+  
+  .btn-danger {
+    @include button-variant(var(--color-error), white, darken(#ef4444, 10%));
+  }
+  
+  .btn-outline {
+    @include button-base;
+    background: transparent;
+    border-color: #d1d5db;
+    color: #374151;
+    
+    &:hover:not(:disabled) {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+  }
+  
+  .btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  /* Card Components */
+  .card {
+    @include card;
+  }
+  
+  .card-compact .card-body {
+    padding: var(--spacing-md);
+  }
+  
+  .card-ghost {
+    @include card;
+    box-shadow: none;
+    border: 1px solid #f3f4f6;
+  }
+  
+  /* Form Components */
+  .form-input {
+    @include form-input;
+  }
+  
+  .form-textarea {
+    @include form-input;
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .form-select {
+    @include form-input;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .form-error {
+    color: var(--color-error);
+    font-size: 0.75rem;
+    margin-top: var(--spacing-xs);
+  }
+  
+  .form-help {
+    color: #6b7280;
+    font-size: 0.75rem;
+    margin-top: var(--spacing-xs);
+  }
+  
+  /* Alert/Status Components */
+  .alert {
+    @include alert(#f3f4f6, #374151, #d1d5db);
+  }
+  
+  .alert-success {
+    @include alert(#d1fae5, #065f46, #6ee7b7);
+  }
+  
+  .alert-warning {
+    @include alert(#fef3c7, #92400e, #fcd34d);
+  }
+  
+  .alert-error {
+    @include alert(#fee2e2, #991b1b, #fca5a5);
+  }
+  
+  .alert-info {
+    @include alert(#dbeafe, #1e40af, #93c5fd);
+  }
+  
+  /* Navigation Components */
+  .nav {
+    @include flex-between;
+    padding: var(--spacing-md) 0;
+    
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #1f2937;
+      text-decoration: none;
+      
+      &:hover {
+        color: var(--color-primary-600);
+      }
+    }
+    
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      
+      @include mobile-only {
+        display: none;
+      }
+    }
+    
+    .nav-item {
+      color: #4b5563;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+      
+      &:hover {
+        color: var(--color-primary-600);
+      }
+    }
+  }
+  
+  /* Layout Components */
+  .container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    
+    @include tablet-up {
+      max-width: 768px;
+    }
+    
+    @include desktop-up {
+      max-width: 1024px;
+    }
+  }
+  
+  .container-lg {
+    @extend .container;
+    
+    @include desktop-up {
+      max-width: 1280px;
+    }
+  }
+  
+  .grid-auto {
+    @include grid-auto;
+  }
+  
+  .flex-center {
+    @include flex-center;
+  }
+  
+  .flex-between {
+    @include flex-between;
+  }
+  
+  .flex-column {
+    @include flex-column;
+  }
+}
+
+/* Utility Classes */
+@layer utilities {
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  
+  /* Animation utilities */
+  .animate-fade-in {
+    @include fade-in;
+  }
+  
+  .animate-slide-up {
+    @include slide-up;
+  }
+  
+  /* Interactive utilities */
+  .interactive {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Loading states */
+  .loading {
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: loading 1.5s infinite;
+    }
+  }
+  
+  @keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1f2937;
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+  }
+}
+
+.dark {
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1f2937;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+}
