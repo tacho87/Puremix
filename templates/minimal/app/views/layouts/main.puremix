@@ -7,7 +7,10 @@
   <meta name="description" content="{description || 'PureMix Framework - Server-side rendering with Python integration'}">
   
   <!-- Plain CSS -->
-  <link href="/css/style.css" rel="stylesheet">
+  <link href="/public/css/style.css" rel="stylesheet">
+
+  <!-- Optional: Uncomment to enable Tailwind CSS -->
+  <!-- <link href="/public/css/output.css" rel="stylesheet"> -->
   
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">

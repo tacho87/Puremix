@@ -8,7 +8,7 @@
     "build": "npm run css:build && echo 'PureMix project ready for deployment'",
     "start": "npm run css:build && puremix start",
     "doctor": "puremix doctor",
-    "css:build": "echo 'Using plain CSS - no build step needed'",
+    "css:build": "tailwindcss -i ./app/public/css/style.css -o ./app/public/css/output.css --postcss",
     "css:watch": "npm run css:tailwind -- --watch",
     "css:minify": "NODE_ENV=production npm run css:build",
     "css:dev": "npm run css:tailwind",
@@ -18,12 +18,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "puremix": "latest"
+    "puremix": "latest",
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6"
   },
   "devDependencies": {
-    "tailwindcss": "^3.3.3",
-    "autoprefixer": "^10.4.15",
-    "postcss": "^8.4.28",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
     "@tailwindcss/container-queries": "^0.1.1",

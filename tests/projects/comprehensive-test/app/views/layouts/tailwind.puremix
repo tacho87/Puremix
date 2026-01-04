@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title || 'PureMix with Tailwind CSS'}</title>
+  <meta name="description" content="{description || 'PureMix Framework with Tailwind CSS'}">
+
+  <!-- Tailwind CSS -->
+  <link href="/public/css/output.css" rel="stylesheet">
+
+  <!-- Google Fonts for better typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  {head}
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="/" class="text-xl font-bold text-gray-900 hover:text-primary-600 transition-colors">
+            🚀 PureMix Test Suite
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+          <a href="/tailwind-test" class="bg-primary-600 text-white px-3 py-2 rounded-md text-sm font-medium">🎨 Tailwind Test</a>
+          <a href="/basic-form-test" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Form Test</a>
+          <a href="/security-test" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Security Test</a>
+          <a href="/props-test" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Props Test</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div id="app">
+    {content}
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white mt-12">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <p class="text-gray-400">Built with ❤️ using PureMix Framework & Tailwind CSS</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Global loading indicator -->
+  <div id="loading-indicator" data-loading style="display: none;">
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-8 flex flex-col items-center">
+        <div class="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+        <p class="mt-4 text-gray-600">Loading...</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

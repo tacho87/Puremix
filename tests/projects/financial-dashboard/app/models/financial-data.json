@@ -1,0 +1,60 @@
+{
+  "revenue": [
+    { "month": "2024-01", "amount": 125000, "growth": 5.2 },
+    { "month": "2024-02", "amount": 132000, "growth": 5.6 },
+    { "month": "2024-03", "amount": 141000, "growth": 6.8 },
+    { "month": "2024-04", "amount": 138000, "growth": -2.1 },
+    { "month": "2024-05", "amount": 145000, "growth": 5.1 },
+    { "month": "2024-06", "amount": 152000, "growth": 4.8 },
+    { "month": "2024-07", "amount": 161000, "growth": 5.9 },
+    { "month": "2024-08", "amount": 158000, "growth": -1.9 },
+    { "month": "2024-09", "amount": 167000, "growth": 5.7 },
+    { "month": "2024-10", "amount": 173000, "growth": 3.6 },
+    { "month": "2024-11", "amount": 181000, "growth": 4.6 },
+    { "month": "2024-12", "amount": 189000, "growth": 4.4 }
+  ],
+  "expenses": [
+    { "month": "2024-01", "amount": 82000, "category": "Operations" },
+    { "month": "2024-02", "amount": 85000, "category": "Operations" },
+    { "month": "2024-03", "amount": 87000, "category": "Operations" },
+    { "month": "2024-04", "amount": 84000, "category": "Operations" },
+    { "month": "2024-05", "amount": 86000, "category": "Operations" },
+    { "month": "2024-06", "amount": 89000, "category": "Operations" },
+    { "month": "2024-07", "amount": 92000, "category": "Operations" },
+    { "month": "2024-08", "amount": 90000, "category": "Operations" },
+    { "month": "2024-09", "amount": 93000, "category": "Operations" },
+    { "month": "2024-10", "amount": 95000, "category": "Operations" },
+    { "month": "2024-11", "amount": 97000, "category": "Operations" },
+    { "month": "2024-12", "amount": 99000, "category": "Operations" }
+  ],
+  "profit": [
+    { "month": "2024-01", "amount": 43000, "margin": 34.4 },
+    { "month": "2024-02", "amount": 47000, "margin": 35.6 },
+    { "month": "2024-03", "amount": 54000, "margin": 38.3 },
+    { "month": "2024-04", "amount": 54000, "margin": 39.1 },
+    { "month": "2024-05", "amount": 59000, "margin": 40.7 },
+    { "month": "2024-06", "amount": 63000, "margin": 41.4 },
+    { "month": "2024-07", "amount": 69000, "margin": 42.9 },
+    { "month": "2024-08", "amount": 68000, "margin": 43.0 },
+    { "month": "2024-09", "amount": 74000, "margin": 44.3 },
+    { "month": "2024-10", "amount": 78000, "margin": 45.1 },
+    { "month": "2024-11", "amount": 84000, "margin": 46.4 },
+    { "month": "2024-12", "amount": 90000, "margin": 47.6 }
+  ],
+  "categories": [
+    { "name": "Product Sales", "value": 145000, "percentage": 76.7, "color": "#3b82f6" },
+    { "name": "Services", "value": 28000, "percentage": 14.8, "color": "#10b981" },
+    { "name": "Subscriptions", "value": 12000, "percentage": 6.3, "color": "#8b5cf6" },
+    { "name": "Other", "value": 4000, "percentage": 2.2, "color": "#f59e0b" }
+  ],
+  "metrics": {
+    "totalRevenue": 189000,
+    "totalExpenses": 99000,
+    "totalProfit": 90000,
+    "profitMargin": 47.6,
+    "growthRate": 4.4,
+    "activeUsers": 4,
+    "totalTransactions": 1247,
+    "avgTransactionValue": 151.56
+  }
+}

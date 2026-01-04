@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { getBaseUrl, findServerPort } from './test-helper.js';
+
 /**
  * ROUTING EDGE CASES INTEGRATION TESTS
  *
@@ -15,15 +17,14 @@
  */
 
 describe('Routing Edge Cases Integration Tests', () => {
-  const BASE_URL = 'http://localhost:3000';
+  let BASE_URL = '';
   let serverRunning = false;
 
   beforeAll(async () => {
-    try {
-      const response = await fetch(BASE_URL);
-      serverRunning = response.ok || response.status === 404;
-    } catch (error) {
-      serverRunning = false;
+    const port = await findServerPort();
+    if (port) {
+      BASE_URL = `http://localhost:${port}`;
+      serverRunning = true;
     }
   });
 

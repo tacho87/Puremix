@@ -1,0 +1,34 @@
+{
+  "name": "tests/projects/financial-predictor",
+  "version": "1.0.0",
+  "description": "Financial Predictor - PureMix ML application",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "../../../puremix dev",
+    "build": "../../../puremix build",
+    "start": "../../../puremix start",
+    "doctor": "../../../puremix doctor"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [
+    "puremix",
+    "web",
+    "framework",
+    "html-first",
+    "machine-learning",
+    "prediction",
+    "financial"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puremix": "file:../../",
+    "chart.js": "^4.4.0",
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6"
+  }
+}

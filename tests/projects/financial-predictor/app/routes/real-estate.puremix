@@ -1,0 +1,116 @@
+<layout>main</layout>
+
+<imports>
+  import PredictionForm from '../components/PredictionForm.puremix'
+  import ResultChart from '../components/ResultChart.puremix'
+  import StatisticsPanel from '../components/StatisticsPanel.puremix'
+</imports>
+
+<loader>
+  async function loadPage(request, actionResult) {
+    actionResult = actionResult || null;
+    // Handle action results (from form submissions)
+    let predictionResult = null;
+    let notification = null;
+
+    if (actionResult) {
+      if (actionResult.success && actionResult.prediction) {
+        predictionResult = actionResult.prediction;
+        notification = {
+          success: true,
+          message: actionResult.message
+        };
+      } else if (!actionResult.success) {
+        notification = {
+          success: false,
+          message: actionResult.message
+        };
+      }
+    }
+
+    return {
+      data: {
+        predictionResult,
+        notification,
+        pageTitle: 'Real Estate Price Predictor'
+      }
+    };
+  }
+</loader>
+
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Real Estate Price Predictor</h1>
+    <p class="mt-2 text-gray-600">
+      Get accurate property price predictions using our machine learning model trained on thousands of real estate listings.
+      Our model considers location, size, age, and various features to provide reliable estimates.
+    </p>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Prediction Form -->
+    <div class="lg:col-span-2">
+      <PredictionForm predictionType="real-estate" notification={loadPage.data.notification} />
+
+      <!-- Results Section -->
+      {loadPage.data.predictionResult ?
+        <div class="mt-8">
+          <ResultChart prediction={loadPage.data.predictionResult} />
+        </div>
+      : ''}
+    </div>
+
+    <!-- Statistics Sidebar -->
+    <div>
+      <StatisticsPanel predictionType="real-estate" />
+    </div>
+  </div>
+
+  <!-- Additional Information -->
+  <div class="mt-12 bg-white rounded-lg shadow p-6">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">How Our Model Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="font-semibold text-gray-900 mb-2">Factors Considered</h3>
+        <ul class="space-y-1 text-sm text-gray-600">
+          <li>• Location and neighborhood</li>
+          <li>• Property size (square meters)</li>
+          <li>• Number of rooms and bathrooms</li>
+          <li>• Age of the property</li>
+          <li>• Distance to city center</li>
+          <li>• Parking and pool availability</li>
+          <li>• Floor number and building details</li>
+          <li>• Energy efficiency rating</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gray-900 mb-2">Model Accuracy</h3>
+        <div class="space-y-2">
+          <div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">R² Score</span>
+              <span class="font-medium">0.85</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Average Error</span>
+              <span class="font-medium">8.5%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-green-600 h-2 rounded-full" style="width: 91.5%"></div>
+            </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          Our model achieves high accuracy with an average error rate of less than 10%.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

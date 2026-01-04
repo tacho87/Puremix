@@ -1,0 +1,33 @@
+{
+  "name": "tests/projects/financial-dashboard",
+  "version": "1.0.0",
+  "description": "Financial Dashboard - PureMix component-based application",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "../../../puremix dev",
+    "build": "../../../puremix build",
+    "start": "../../../puremix start",
+    "doctor": "../../../puremix doctor"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [
+    "puremix",
+    "web",
+    "framework",
+    "html-first",
+    "dashboard",
+    "financial"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puremix": "file:../../",
+    "chart.js": "^4.4.0",
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6"
+  }
+}

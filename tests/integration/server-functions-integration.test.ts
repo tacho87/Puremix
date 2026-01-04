@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { getBaseUrl, findServerPort } from './test-helper.js';
+
 /**
  * SERVER FUNCTIONS INTEGRATION TESTS
  *
@@ -6,7 +8,7 @@
  * APPROACH: Integration testing - test actual server function execution
  *
  * REQUIREMENTS:
- * - Dev server running on port 3000
+ * - Dev server running
  *
  * TEST COVERAGE:
  * - Server function execution via POST
@@ -18,15 +20,14 @@
  */
 
 describe('Server Functions Integration Tests', () => {
-  const BASE_URL = 'http://localhost:3000';
+  let BASE_URL = '';
   let serverRunning = false;
 
   beforeAll(async () => {
-    try {
-      const response = await fetch(BASE_URL);
-      serverRunning = response.ok || response.status === 404;
-    } catch (error) {
-      serverRunning = false;
+    const port = await findServerPort();
+    if (port) {
+      BASE_URL = `http://localhost:${port}`;
+      serverRunning = true;
     }
   });
 

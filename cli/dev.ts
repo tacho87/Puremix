@@ -8,6 +8,7 @@ import { loadConfigWithEnvironment } from './config-loader';
 import { generateDocs } from './generate-docs';
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 interface DevOptions {
   port?: number | string;
@@ -49,6 +50,79 @@ function checkPortAvailable(port: number): Promise<boolean> {
 
     server.listen(port);
   });
+}
+
+// Helper function to check if CSS build is needed for Tailwind projects
+function hasTailwindSupport(): boolean {
+  const cwd = process.cwd();
+
+  // Check for Tailwind indicators
+  const hasTailwindConfig = fs.existsSync(path.join(cwd, 'tailwind.config.js')) ||
+                           fs.existsSync(path.join(cwd, 'tailwind.config.ts'));
+
+  const hasPostcssConfig = fs.existsSync(path.join(cwd, 'postcss.config.js')) ||
+                          fs.existsSync(path.join(cwd, 'postcss.config.ts'));
+
+  const hasTailwindDeps = checkPackageJsonForTailwind();
+
+  return hasTailwindConfig && hasPostcssConfig && hasTailwindDeps;
+}
+
+// Check if package.json contains Tailwind dependencies
+function checkPackageJsonForTailwind(): boolean {
+  try {
+    const packageJsonPath = path.join(process.cwd(), 'package.json');
+    if (!fs.existsSync(packageJsonPath)) return false;
+
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    const deps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+
+    return !!deps.tailwindcss;
+  } catch {
+    return false;
+  }
+}
+
+// Run CSS build for Tailwind projects
+function runCssBuild(): void {
+  if (!hasTailwindSupport()) return;
+
+  try {
+    console.log('\n🎨 Running CSS build for Tailwind...');
+
+    // Check for CSS build script
+    const packageJsonPath = path.join(process.cwd(), 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+    if (packageJson.scripts && packageJson.scripts['css:build']) {
+      // Use project's CSS build script if available
+      execSync('npm run css:build', {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+        timeout: 30000
+      });
+    } else if (fs.existsSync('./scripts/build-css.js')) {
+      // Use the build-css.js script if available
+      execSync('node scripts/build-css.js', {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+        timeout: 30000
+      });
+    } else {
+      // Fallback: Run Tailwind directly
+      const hasInputCss = fs.existsSync('./app/public/css/style.css');
+      if (hasInputCss) {
+        execSync('npx tailwindcss -i ./app/public/css/style.css -o ./app/public/css/output.css --postcss', {
+          stdio: 'inherit',
+          cwd: process.cwd(),
+          timeout: 30000
+        });
+        console.log('✅ Tailwind CSS compiled to output.css');
+      }
+    }
+  } catch (error) {
+    console.warn('⚠️  CSS build failed, continuing without CSS compilation:', error instanceof Error ? error.message : error);
+  }
 }
 
 // Helper function to determine if PROJECT_STRUCTURE.md should be regenerated
@@ -122,6 +196,11 @@ export async function devServer(options: DevOptions = {}) {
   };
 
   
+  // Run CSS build if this is a Tailwind project
+  if (hasTailwindSupport()) {
+    runCssBuild();
+  }
+
   // Create PureMix engine with merged configuration
   const engine = new PureMixEngine(finalConfig);
 
@@ -185,7 +264,11 @@ function setupFileWatcher(engine, wss) {
     'app/**/*.py',
     'app/public/**/*',
     'puremix.config.js',
-    '.env'
+    '.env',
+    'tailwind.config.js',
+    'postcss.config.js',
+    'app/public/css/**/*.css',
+    'app/public/css/**/*.scss'
   ];
 
   const watcher = chokidar.watch(watchPaths, {
@@ -214,6 +297,16 @@ function setupFileWatcher(engine, wss) {
       try {
         console.log(`\\n🔄 File changed: ${filePath} (${eventType})`);
         
+        // Check if CSS rebuild is needed
+        const isCssFile = /\.(css|scss|sass)$/.test(filePath) ||
+                         filePath.includes('tailwind.config') ||
+                         filePath.includes('postcss.config');
+
+        if (isCssFile && hasTailwindSupport()) {
+          console.log('🎨 CSS file changed, rebuilding...');
+          runCssBuild();
+        }
+
         // Reload routes
         await engine.scanRoutes();
         

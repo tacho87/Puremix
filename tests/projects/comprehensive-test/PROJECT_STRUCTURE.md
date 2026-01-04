@@ -1,18 +1,18 @@
 # Project Structure - tests/projects/comprehensive-test
 
-*Auto-generated on 12/7/2025, 11:33:02 PM*
+*Auto-generated on 12/9/2025, 4:16:59 PM*
 
 **This file is automatically regenerated. Do not edit manually.**
 
 ## 📊 Overview
 
-- **Total Routes**: 46 (34 pages, 12 API)
+- **Total Routes**: 47 (35 pages, 12 API)
 - **Components**: 7
-- **Python Modules**: 8 (33 functions)
+- **Python Modules**: 7 (31 functions)
 - **Authentication**: hybrid
 - **Action Results Flow**: 15 route(s) use POST-redirect-GET pattern
 
-## 🗺️ Routes Map (46 routes)
+## 🗺️ Routes Map (47 routes)
 
 | URL | Type | File | Loader | Actions | Auth | Language |
 |-----|------|------|--------|---------|------|----------|
@@ -59,6 +59,7 @@
 | `/seamless-python-test` | 📄 page | `routes/seamless-python-test.puremix` | ✅ | — | 🔓 Public | 📗 puremix |
 | `/security-test` | 📄 page | `routes/security-test.puremix` | ✅🔄 | 15 | 🔒 hybrid | 📗 puremix |
 | `/shop/[category]/:productId` | 📄 page | `routes/shop/[category]/[productId].puremix` | ✅ | — | 🔓 Public | 📗 puremix |
+| `/tailwind-test` | 📄 page | `routes/tailwind-test.puremix` | — | — | 🔓 Public | 📗 puremix |
 | `/typescript-javascript-test` | 📄 page | `routes/typescript-javascript-test.puremix` | — | 2 | 🔓 Public | 📗 puremix |
 | `/unified-template-literals` | 📄 page | `routes/unified-template-literals.puremix` | ✅🔄 | 3 | 🔓 Public | 📗 puremix |
 | `/users/:id` | 📄 page | `routes/users/[id].puremix` | ✅ | — | 🔓 Public | 📗 puremix |
@@ -465,6 +466,12 @@
 
 ---
 
+### `/tailwind-test` - page
+
+**File**: `routes/tailwind-test.puremix`
+
+---
+
 ### `/typescript-javascript-test` - page
 
 **File**: `routes/typescript-javascript-test.puremix`
@@ -505,7 +512,7 @@
 | `UserCard` | `components/UserCard.puremix` | refreshCount, status | refreshProfile, updateStatus, toggleActive, updateUserData | — routes |
 | `UserStats` | `components/UserStats.puremix` | rate | refreshStats, sendAlert | — routes |
 
-## 🐍 Python Modules (8)
+## 🐍 Python Modules (7)
 
 | Module | File | Functions | Used In |
 |--------|------|-----------|----------|
@@ -514,7 +521,6 @@
 | `ml_analyzer` | `services/ml_analyzer.py` | analyze_dataset, train_simple_regression, classify_data_points, predict_time_series, test_ml_module | — |
 | `sample_data_generator` | `services/sample_data_generator.py` | generate_sample_data, _generate_classification_samples, _generate_regression_samples, _generate_description, _get_feature_ranges, generate_sample_data_for_specific_scenario, _generate_edge_case_samples, _generate_boundary_samples, _generate_performance_test_samples | — |
 | `data_processor` | `lib/data_processor.py` | process_data, validate_data, transform_data | — |
-| `ml_library_cache` | `lib/ml_library_cache.py` | get_cached_library_status, get_lightweight_library_status | — |
 | `string_helpers` | `lib/utils/string_helpers.py` | format_text, validate_email, generate_slug | — |
 | `user_controller` | `controllers/user_controller.py` | get_user_profile, update_user_settings, authenticate_user | — |
 

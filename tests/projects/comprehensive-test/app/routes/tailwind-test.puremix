@@ -1,0 +1,175 @@
+
+<layout>tailwind</layout>
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        🎨 Tailwind CSS Test Page
+      </h1>
+      <p class="text-xl text-gray-600">
+        Testing Tailwind CSS integration with PureMix Framework
+      </p>
+    </div>
+
+    <!-- Tailwind Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <!-- Colors -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-semibold text-primary-600 mb-4">Colors</h2>
+        <div class="space-y-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-primary-500 rounded"></div>
+            <span class="text-gray-700">Primary 500</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-secondary-500 rounded"></div>
+            <span class="text-gray-700">Secondary 500</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-green-500 rounded"></div>
+            <span class="text-gray-700">Green 500</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-red-500 rounded"></div>
+            <span class="text-gray-700">Red 500</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typography -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-semibold text-primary-600 mb-4">Typography</h2>
+        <div class="space-y-3">
+          <h1 class="text-4xl font-bold">Heading 1</h1>
+          <h2 class="text-3xl font-semibold">Heading 2</h2>
+          <p class="text-lg">Paragraph text large</p>
+          <p class="text-sm text-gray-600">Small muted text</p>
+          <p class="font-mono text-sm bg-gray-100 p-2 rounded">code: font-mono</p>
+        </div>
+      </div>
+
+      <!-- Spacing & Layout -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-semibold text-primary-600 mb-4">Layout</h2>
+        <div class="space-y-4">
+          <div class="bg-blue-100 p-4 rounded">
+            <p class="text-center">Padding: p-4</p>
+          </div>
+          <div class="bg-green-100 m-4 rounded">
+            <p class="text-center">Margin: m-4</p>
+          </div>
+          <div class="flex space-x-2">
+            <div class="flex-1 bg-purple-200 p-2 rounded text-center">Flex 1</div>
+            <div class="flex-2 bg-purple-300 p-2 rounded text-center">Flex 2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Elements -->
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">Interactive Elements</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Buttons -->
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Buttons</h3>
+          <div class="space-y-3">
+            <button class="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors">
+              Primary Button
+            </button>
+            <button class="px-4 py-2 bg-secondary-200 text-gray-800 rounded hover:bg-secondary-300 transition-colors">
+              Secondary Button
+            </button>
+            <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transform hover:scale-105 transition-all">
+              Green with Scale
+            </button>
+            <button class="px-4 py-2 border-2 border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors">
+              Outline Button
+            </button>
+          </div>
+        </div>
+
+        <!-- Form Elements -->
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Form Elements</h3>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Text Input</label>
+              <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="Enter text...">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Select</label>
+              <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <option>Option 1</option>
+                <option>Option 2</option>
+                <option>Option 3</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Textarea</label>
+              <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animations -->
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">Animations</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-blue-500 rounded-lg mx-auto animate-pulse"></div>
+          <p class="mt-2">Animate Pulse</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-green-500 rounded-lg mx-auto animate-bounce"></div>
+          <p class="mt-2">Animate Bounce</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-purple-500 rounded-lg mx-auto animate-spin"></div>
+          <p class="mt-2">Animate Spin</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark Mode Test -->
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">Dark Mode Toggle</h2>
+      <div class="flex items-center justify-between">
+        <p class="text-gray-700">Toggle dark mode to see styles change:</p>
+        <button onclick="toggleDarkMode()" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors">
+          Toggle Dark Mode
+        </button>
+      </div>
+    </div>
+
+    <!-- Custom Animations -->
+    <div class="bg-white rounded-lg shadow-lg p-8">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6">Custom Animations</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="animate-fade-in">
+          <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-2">Fade In Animation</h3>
+            <p>This card fades in when the page loads using custom keyframes.</p>
+          </div>
+        </div>
+        <div>
+          <div class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-lg animate-gradient">
+            <h3 class="text-xl font-semibold mb-2">Gradient Animation</h3>
+            <p>This background animates smoothly between gradient positions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script client>
+  function toggleDarkMode() {
+    document.documentElement.classList.toggle('dark');
+  }
+</script>

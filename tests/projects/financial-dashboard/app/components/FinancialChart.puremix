@@ -1,0 +1,167 @@
+<loader>
+  async function loadFinancialChart(request, actionResult) {
+    // Generate a unique chart ID for this component instance
+    const chartId = `chart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    return {
+      data: {
+        chartId
+      },
+      state: {
+        chartType: request.props.chartType || 'line',
+        title: request.props.title || 'Chart',
+        data: request.props.data || [],
+        height: request.props.height || '400'
+      }
+    };
+  }
+</loader>
+
+<div class="financial-chart" id={loadFinancialChart.data.chartId}>
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">{loadFinancialChart.state.title}</h3>
+  <div class="relative" style="height: {loadFinancialChart.state.height}px">
+    <canvas id="chart-canvas-{loadFinancialChart.data.chartId}"></canvas>
+  </div>
+</div>
+
+<script client>
+  // Wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const chartId = PureMix.data.loadFinancialChart.data.chartId;
+    const canvas = document.getElementById(`chart-canvas-${chartId}`);
+    const ctx = canvas.getContext('2d');
+
+    // Chart configuration
+    let config = {};
+
+    // Parse data based on chart type
+    const chartType = PureMix.data.loadFinancialChart.state.chartType;
+    const data = PureMix.data.loadFinancialChart.state.data;
+
+    if (chartType === 'line' && Array.isArray(data)) {
+      // Line chart for revenue/profit trends
+      config = {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.month),
+          datasets: [{
+            label: PureMix.data.loadFinancialChart.state.title,
+            data: data.map(d => d.amount),
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const value = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  }).format(context.parsed.y);
+                  return `Value: ${value}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '$' + (value / 1000) + 'k';
+                }
+              }
+            }
+          }
+        }
+      };
+    } else if (chartType === 'pie' && Array.isArray(data)) {
+      // Pie chart for categories
+      const colors = data.map(d => d.color || '#3b82f6');
+      config = {
+        type: 'doughnut',
+        data: {
+          labels: data.map(d => d.name),
+          datasets: [{
+            data: data.map(d => d.value),
+            backgroundColor: colors,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  }).format(context.parsed);
+                  const percentage = data[context.dataIndex].percentage || 0;
+                  return `${label}: ${value} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      };
+    } else if (chartType === 'bar' && Array.isArray(data)) {
+      // Bar chart for comparisons
+      config = {
+        type: 'bar',
+        data: {
+          labels: data.map(d => d.month || d.name),
+          datasets: [{
+            label: PureMix.data.loadFinancialChart.state.title,
+            data: data.map(d => d.amount || d.value),
+            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+            borderColor: 'rgb(59, 130, 246)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '$' + (value / 1000) + 'k';
+                }
+              }
+            }
+          }
+        }
+      };
+    }
+
+    // Create the chart
+    if (config.type) {
+      const chart = new Chart(ctx, config);
+
+      // Store chart instance for potential updates
+      window[`chart_${chartId}`] = chart;
+    }
+  });
+</script>

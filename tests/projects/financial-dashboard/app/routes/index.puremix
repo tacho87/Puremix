@@ -1,0 +1,17 @@
+<layout>main</layout>
+
+<imports>
+  import Dashboard from '../components/Dashboard.puremix'
+</imports>
+
+<loader>
+  async function loadPage(request, actionResult) {
+    // This loader just passes through to the Dashboard component
+    // The Dashboard component handles its own data loading
+    return {
+      data: { pageTitle: 'Financial Dashboard' }
+    };
+  }
+</loader>
+
+<Dashboard />

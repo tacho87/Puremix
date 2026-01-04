@@ -1,0 +1,296 @@
+<imports>
+  import { DataManager } from '../lib/data-manager.js'
+  import { predict_property_price } from '../services/real-estate-predictor.py'
+  import { predict_car_price } from '../services/car-predictor.py'
+</imports>
+
+<loader>
+  async function loadPredictionForm(request, actionResult) {
+    const predictionType = request.props.predictionType || 'real-estate';
+    actionResult = actionResult || null;
+    const properties = await DataManager.readData('real-estate.json');
+    const cars = await DataManager.readData('cars.json');
+
+    // Get unique values for dropdowns
+    const locations = [...new Set(properties.map(p => p.location))];
+    const carBrands = [...new Set(cars.map(c => c.brand))];
+
+    return {
+      data: {
+        predictionType,
+        locations,
+        carBrands,
+        cars: cars.reduce((acc, car) => {
+          if (!acc[car.brand]) acc[car.brand] = [];
+          acc[car.brand].push(car.model);
+          return acc;
+        }, {}),
+        notification: actionResult || null
+      }
+    };
+  }
+</loader>
+
+<div class="prediction-form bg-white rounded-lg shadow p-6">
+  <h2 class="text-xl font-bold text-gray-900 mb-6">
+    {loadPredictionForm.data.predictionType === 'real-estate' ? '🏠 Real Estate Price Predictor' : '🚗 Car Price Predictor'}
+  </h2>
+
+  {loadPredictionForm.data.notification ?
+    <div class={`p-4 rounded-lg mb-4 ${
+      loadPredictionForm.data.notification.success ? 'bg-green-50 border border-green-200' :
+      'bg-red-50 border border-red-200'
+    }`}>
+      <div class="flex items-center">
+        {loadPredictionForm.data.notification.success ?
+          `<svg class="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>`
+        :
+          `<svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>`
+        }
+        <span class={
+          loadPredictionForm.data.notification.success ? 'text-green-800' : 'text-red-800'
+        }>{loadPredictionForm.data.notification.message}</span>
+      </div>
+    </div>
+    : ''
+  }
+
+  <form onsubmit={loadPredictionForm.data.predictionType === 'real-estate' ? "predictRealEstate" : "predictCar"} class="space-y-6">
+    {loadPredictionForm.data.predictionType === 'real-estate' ?
+      // Real Estate Form Fields
+      <div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <select name="location" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="">Select a location</option>
+              {loadPredictionForm.data.locations.map(location =>
+                <option value={location}>{location}</option>
+              )}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Square Meters</label>
+            <input type="number" name="square_meters" min="20" max="1000" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Number of Rooms</label>
+            <input type="number" name="rooms" min="1" max="20" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Number of Bathrooms</label>
+            <input type="number" name="bathrooms" min="1" max="10" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Age (years)</label>
+            <input type="number" name="age_years" min="0" max="100" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Distance to Center (km)</label>
+            <input type="number" name="distance_to_center_km" min="0" max="100" step="0.1" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Has Parking</label>
+            <select name="has_parking" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Has Pool</label>
+            <select name="has_pool" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Floor Number</label>
+            <input type="number" name="floor_number" min="0" max="100" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+        </div>
+      </div>
+    :
+      // Car Form Fields
+      <div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+            <select name="brand" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              onchange="PredictionForm.updateModels(this.value)">
+              <option value="">Select a brand</option>
+              {loadPredictionForm.data.carBrands.map(brand =>
+                <option value={brand}>{brand}</option>
+              )}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Model</label>
+            <select name="model" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              id="model-select" disabled>
+              <option value="">Select brand first</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
+            <input type="number" name="year" min="1990" max={new Date().getFullYear() + 1} required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Mileage (km)</label>
+            <input type="number" name="mileage_km" min="0" max="500000" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Fuel Type</label>
+            <select name="fuel_type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="gas">Gasoline</option>
+              <option value="diesel">Diesel</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="electric">Electric</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Condition</label>
+            <select name="condition" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="excellent">Excellent</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair</option>
+              <option value="poor">Poor</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="pt-4">
+      <button type="submit" class="w-full md:w-auto px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+        <span>Get Prediction</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script client>
+  const carModels = PureMix.data.loadPredictionForm.data.cars;
+
+  function updateModels(brand) {
+    const modelSelect = document.getElementById('model-select');
+    modelSelect.innerHTML = '<option value="">Select a model</option>';
+
+    if (brand && carModels[brand]) {
+      modelSelect.disabled = false;
+      carModels[brand].forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        modelSelect.appendChild(option);
+      });
+    } else {
+      modelSelect.disabled = true;
+    }
+  }
+</script>
+
+<script server>
+  async function predictRealEstate(formData, request) {
+    const { DataManager } = await import('../lib/data-manager.js');
+
+    const propertyData = {
+      location: formData.get('location'),
+      square_meters: parseInt(formData.get('square_meters')),
+      rooms: parseInt(formData.get('rooms')),
+      bathrooms: parseInt(formData.get('bathrooms')),
+      age_years: parseInt(formData.get('age_years')),
+      distance_to_center_km: parseFloat(formData.get('distance_to_center_km')),
+      has_parking: formData.get('has_parking') === 'true',
+      has_pool: formData.get('has_pool') === 'true',
+      floor_number: parseInt(formData.get('floor_number')),
+      total_floors: 20, // Default value
+      heating_type: 'central', // Default value
+      energy_efficiency: 'A' // Default value
+    };
+
+    // Call Python ML function directly
+    const result = await predict_property_price(propertyData);
+
+    if (result.success) {
+      // Save prediction
+      await DataManager.savePrediction({
+        type: 'real-estate',
+        input: propertyData,
+        result: result.data,
+        success: true
+      });
+
+      return {
+        success: true,
+        message: `Prediction complete: Estimated price is $${result.data.predicted_price.toLocaleString()}`,
+        prediction: result.data
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Prediction failed: ' + (result.error || 'Unknown error')
+      };
+    }
+  }
+
+  async function predictCar(formData, request) {
+    const { DataManager } = await import('../lib/data-manager.js');
+
+    const carData = {
+      brand: formData.get('brand'),
+      model: formData.get('model'),
+      year: parseInt(formData.get('year')),
+      mileage_km: parseInt(formData.get('mileage_km')),
+      fuel_type: formData.get('fuel_type'),
+      transmission: 'automatic', // Default value
+      condition: formData.get('condition'),
+      engine_size: 2.5, // Default value
+      drivetrain: 'FWD', // Default value
+      color: 'white', // Default value
+      doors: 4, // Default value
+      features: [] // Default empty array
+    };
+
+    // Call Python ML function directly
+    const result = await predict_car_price(carData);
+
+    if (result.success) {
+      // Save prediction
+      await DataManager.savePrediction({
+        type: 'car',
+        input: carData,
+        result: result.data,
+        success: true
+      });
+
+      return {
+        success: true,
+        message: `Prediction complete: Estimated price is $${result.data.predicted_price.toLocaleString()}`,
+        prediction: result.data
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Prediction failed: ' + (result.error || 'Unknown error')
+      };
+    }
+  }
+</script>

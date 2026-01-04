@@ -1,0 +1,198 @@
+<loader>
+  async function loadResultChart(request, actionResult) {
+    const prediction = request.props.prediction || null;
+    const chartId = `chart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    return {
+      data: {
+        prediction,
+        chartId,
+        hasData: !!prediction
+      }
+    };
+  }
+</loader>
+
+<div class="result-chart bg-white rounded-lg shadow p-6">
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">Prediction Results</h3>
+
+  {loadResultChart.data.hasData ?
+    <div>
+      <!-- Prediction Summary -->
+      <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-blue-600 font-medium">Estimated Price</p>
+            <p class="text-3xl font-bold text-blue-900">
+              ${loadResultChart.data.prediction.predicted_price.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              })}
+            </p>
+            <p class="text-sm text-blue-600 mt-1">
+              Price per {loadResultChart.data.prediction.property_details ? 'sqm' : 'unit'}: ${loadResultChart.data.prediction.price_per_sqm.toLocaleString('en-US', {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0
+            })}
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-gray-600">Confidence Range</p>
+            <p class="text-lg font-semibold text-gray-900">
+              ${loadResultChart.data.prediction.confidence_interval.lower.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              })} - ${loadResultChart.data.prediction.confidence_interval.upper.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              })}
+            </p>
+            <p class="text-xs text-gray-500 mt-1">95% confidence</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confidence Visualization -->
+      <div class="mb-6">
+        <h4 class="text-md font-medium text-gray-700 mb-3">Price Range Visualization</h4>
+        <div class="relative h-12 bg-gray-200 rounded-full overflow-hidden">
+          <div class="absolute h-full bg-gradient-to-r from-green-400 via-blue-400 to-green-400 rounded-full"
+            style={{
+              left: `${(loadResultChart.data.prediction.confidence_interval.lower / loadResultChart.data.prediction.confidence_interval.upper) * 100}%`,
+              width: `${((loadResultChart.data.prediction.confidence_interval.upper - loadResultChart.data.prediction.confidence_interval.lower) / loadResultChart.data.prediction.confidence_interval.upper) * 100}%`
+            }}>
+          </div>
+          <div class="absolute top-1/2 transform -translate-y-1/2"
+            style={{ left: '50%', transform: 'translateX(-50%) translateY(-50%)' }}>
+            <div class="w-4 h-4 bg-white border-4 border-blue-600 rounded-full"></div>
+            <p class="text-xs font-semibold text-gray-900 mt-1">Estimated</p>
+          </div>
+        </div>
+        <div class="flex justify-between mt-2 text-xs text-gray-600">
+          <span>${loadResultChart.data.prediction.confidence_interval.lower.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+          <span>${loadResultChart.data.prediction.confidence_interval.upper.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+        </div>
+      </div>
+
+      <!-- Feature Importance -->
+      {loadResultChart.data.prediction.feature_importance ?
+        <div class="mb-6">
+          <h4 class="text-md font-medium text-gray-700 mb-3">Key Factors Affecting Price</h4>
+          <div class="space-y-2">
+            {Object.entries(loadResultChart.data.prediction.feature_importance).slice(0, 5).map(([feature, importance], index) =>
+              <div key={feature} class="flex items-center">
+                <div class="flex-1">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm text-gray-700 capitalize">{feature.replace(/_/g, ' ')}</span>
+                    <span class="text-sm font-medium text-gray-900">{importance.toFixed(1)}%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${importance}%` }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        : ''
+      }
+
+      <!-- Chart Canvas -->
+      <div>
+        <h4 class="text-md font-medium text-gray-700 mb-3">Price Distribution</h4>
+        <canvas id="chart-canvas-{loadResultChart.data.chartId}"></canvas>
+      </div>
+    </div>
+  :
+    <div class="text-center py-8 text-gray-500">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+      <p class="mt-2">No prediction data available</p>
+      <p class="text-sm">Please submit the form to see prediction results</p>
+    </div>
+  }
+</div>
+
+<script client>
+  // Wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const chartId = PureMix.data.loadResultChart.data.chartId;
+    const canvas = document.getElementById(`chart-canvas-${chartId}`);
+
+    if (canvas && PureMix.data.loadResultChart.data.hasData) {
+      const ctx = canvas.getContext('2d');
+      const prediction = PureMix.data.loadResultChart.data.prediction;
+
+      // Create a distribution chart
+      const labels = ['Min Estimate', 'Lower 95%', 'Predicted', 'Upper 95%', 'Max Estimate'];
+      const data = [
+        prediction.confidence_interval.lower * 0.9,
+        prediction.confidence_interval.lower,
+        prediction.predicted_price,
+        prediction.confidence_interval.upper,
+        prediction.confidence_interval.upper * 1.1
+      ];
+
+      const config = {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Price Range',
+            data: data,
+            backgroundColor: [
+              'rgba(156, 163, 175, 0.5)',
+              'rgba(59, 130, 246, 0.5)',
+              'rgba(16, 185, 129, 0.5)',
+              'rgba(59, 130, 246, 0.5)',
+              'rgba(156, 163, 175, 0.5)'
+            ],
+            borderColor: [
+              'rgb(156, 163, 175)',
+              'rgb(59, 130, 246)',
+              'rgb(16, 185, 129)',
+              'rgb(59, 130, 246)',
+              'rgb(156, 163, 175)'
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const value = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    maximumFractionDigits: 0
+                  }).format(context.parsed.y);
+                  return context.label + ': ' + value;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              ticks: {
+                callback: function(value) {
+                  return '$' + (value / 1000) + 'k';
+                }
+              }
+            }
+          }
+        }
+      };
+
+      new Chart(ctx, config);
+    }
+  });
+</script>

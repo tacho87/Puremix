@@ -6,7 +6,7 @@
  * APPROACH: Integration testing - no direct imports, test via HTTP endpoints
  *
  * REQUIREMENTS:
- * - Dev server must be running on port 3000
+ * - Dev server must be running (auto-detects port)
  * - Run with: npm run dev (in comprehensive-test directory)
  *
  * TEST COVERAGE:
@@ -19,17 +19,21 @@
  * - 404 handling
  */
 
+import { getBaseUrl, findServerPort } from './test-helper.js';
+
 describe('PureMix Routing Integration Tests', () => {
-  const BASE_URL = 'http://localhost:3000';
+  let BASE_URL = '';
   let serverRunning = false;
 
   beforeAll(async () => {
-    // Check if server is running
+    // Check if server is running and detect the port
     try {
-      const response = await fetch(BASE_URL);
-      serverRunning = response.ok || response.status === 404;
+      const port = await findServerPort();
+      BASE_URL = `http://localhost:${port}`;
+      serverRunning = true;
+      console.log(`✅ Found PureMix server on port ${port}`);
     } catch (error) {
-      console.error('⚠️  Dev server not running on port 3000');
+      console.error('⚠️  Dev server not running');
       console.error('   Please start server: cd tests/projects/comprehensive-test && npm run dev');
       serverRunning = false;
     }

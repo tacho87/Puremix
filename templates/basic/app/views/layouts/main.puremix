@@ -7,7 +7,7 @@
   <meta name="description" content="{description || 'Built with PureMix Framework'}">
   
   <!-- Tailwind CSS -->
-  <link href="/css/style.css" rel="stylesheet">
+  <link href="/public/css/output.css" rel="stylesheet">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

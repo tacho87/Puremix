@@ -1,0 +1,291 @@
+<imports>
+  import { DataManager } from '../lib/data-manager.js'
+</imports>
+
+<loader>
+  async function loadUserList(request, actionResult) {
+    const users = await DataManager.readData('users.json');
+    const compact = false; // Always use full view
+
+    // Handle action results
+    let notification = null;
+    if (actionResult) {
+      notification = {
+        message: actionResult.message,
+        type: actionResult.type || 'success'
+      };
+    }
+
+    return {
+      data: {
+        users,
+        compact,
+        notification
+      }
+    };
+  }
+</loader>
+
+<div class="user-list-component">
+  {loadUserList.data.notification ?
+    <div class={`p-4 rounded-lg mb-4 ${
+      loadUserList.data.notification.type === 'success' ? 'bg-green-50 border border-green-200' :
+      loadUserList.data.notification.type === 'error' ? 'bg-red-50 border border-red-200' :
+      'bg-blue-50 border border-blue-200'
+    }`}>
+      <div class="flex items-center">
+        {loadUserList.data.notification.type === 'success' ?
+          `<svg class="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>`
+        : loadUserList.data.notification.type === 'error' ?
+          `<svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>`
+        :
+          `<svg class="w-5 h-5 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>`
+        }
+        <span class={
+          loadUserList.data.notification.type === 'success' ? 'text-green-800' :
+          loadUserList.data.notification.type === 'error' ? 'text-red-800' :
+          'text-blue-800'
+        }>{loadUserList.data.notification.message}</span>
+      </div>
+    </div>
+    : ''
+  }
+
+  {loadUserList.data.compact ?
+    // Compact view - just show active users in a list
+    <div class="space-y-3">
+      {loadUserList.data.users.filter(u => u.isActive).map(user =>
+        <div class="flex items-center space-x-3">
+          <img src={user.avatar} alt={user.name} class="w-10 h-10 rounded-full" />
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-900">{user.name}</p>
+            <p class="text-xs text-gray-500">{user.role}</p>
+          </div>
+          <span class={`px-2 py-1 text-xs rounded-full ${
+            user.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
+            {user.isActive ? 'Active' : 'Inactive'}
+          </span>
+        </div>
+      )}
+    </div>
+  :
+    // Full view with CRUD operations
+    <div>
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-semibold text-gray-900">User Management</h2>
+        <button
+          onclick="UserList.showAddForm"
+          class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          <span>Add User</span>
+        </button>
+      </div>
+
+      <!-- Add/Edit User Form (hidden by default) -->
+      <div id="user-form" class="hidden bg-gray-50 p-6 rounded-lg mb-6">
+        <h3 class="text-md font-medium text-gray-900 mb-4">Add New User</h3>
+        <form onsubmit="UserList.saveUser">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <select name="role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="Administrator">Administrator</option>
+                <option value="Financial Analyst">Financial Analyst</option>
+                <option value="Accountant">Accountant</option>
+                <option value="Manager">Manager</option>
+                <option value="Viewer">Viewer</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select name="isActive" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex justify-end space-x-3 mt-4">
+            <button type="button" onclick="UserList.hideAddForm" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+              Cancel
+            </button>
+            <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600">
+              Save User
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Users Table -->
+      <div class="bg-white shadow overflow-hidden rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+              <th class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {loadUserList.data.users.map(user =>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img class="h-10 w-10 rounded-full" src={user.avatar} alt={user.name} />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">{user.name}</div>
+                      <div class="text-sm text-gray-500">{user.email}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    {user.role}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {user.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button onclick={'UserList.toggleStatus(\'' + user.id + '\')'} class="text-indigo-600 hover:text-indigo-900 mr-3">
+                    {user.isActive ? 'Deactivate' : 'Activate'}
+                  </button>
+                  <button onclick={'UserList.deleteUser(\'' + user.id + '\')'} class="text-red-600 hover:text-red-900">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<script server>
+  async function saveUser(formData, request) {
+    const { DataManager } = await import('../lib/data-manager.js');
+
+    const userData = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      role: formData.get('role'),
+      isActive: formData.get('isActive') === 'true',
+      avatar: `https://ui-avatars.com/api/?name=${formData.get('name').replace(' ', '+')}&background=3b82f6&color=fff`
+    };
+
+    const result = await DataManager.addRecord('users.json', userData);
+
+    if (result.success) {
+      return {
+        success: true,
+        message: `User "${userData.name}" has been added successfully.`,
+        type: 'success'
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Failed to add user. Please try again.',
+        type: 'error'
+      };
+    }
+  }
+
+  async function toggleStatus(userId, formData, request) {
+    const { DataManager } = await import('../lib/data-manager.js');
+
+    const user = await DataManager.getRecord('users.json', userId);
+    if (!user) {
+      return {
+        success: false,
+        message: 'User not found.',
+        type: 'error'
+      };
+    }
+
+    const result = await DataManager.updateRecord('users.json', userId, {
+      isActive: !user.isActive
+    });
+
+    if (result.success) {
+      return {
+        success: true,
+        message: `User "${user.name}" has been ${!user.isActive ? 'activated' : 'deactivated'} successfully.`,
+        type: 'success'
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Failed to update user status.',
+        type: 'error'
+      };
+    }
+  }
+
+  async function deleteUser(userId, formData, request) {
+    const { DataManager } = await import('../lib/data-manager.js');
+
+    const user = await DataManager.getRecord('users.json', userId);
+    if (!user) {
+      return {
+        success: false,
+        message: 'User not found.',
+        type: 'error'
+      };
+    }
+
+    const result = await DataManager.deleteRecord('users.json', userId);
+
+    if (result.success) {
+      return {
+        success: true,
+        message: `User "${user.name}" has been deleted successfully.`,
+        type: 'success'
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Failed to delete user.',
+        type: 'error'
+      };
+    }
+  }
+</script>
+
+<script client>
+  function showAddForm() {
+    document.getElementById('user-form').classList.remove('hidden');
+    document.getElementById('user-form').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function hideAddForm() {
+    document.getElementById('user-form').classList.add('hidden');
+  }
+</script>
